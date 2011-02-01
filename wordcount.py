@@ -3,6 +3,8 @@
 
 import xml.parsers.expat
 import sys
+from xml.sax.saxutils import escape
+
 
 class pers():
    count = 0
@@ -11,10 +13,12 @@ class pers():
    ownfoundlogcount = 0
    wordcount = 0
    inlogs = False
-   isown = False
-   isfound = True
    inlogtype = False
+   inlogfinder = False
+   isown = False
+   isfound = True   
    inownfoundlogtext = False
+   username = ''
 
 # 3 handler functions
 def start_element(name, attrs):
@@ -24,9 +28,8 @@ def start_element(name, attrs):
       #print 'Start element:', name, attrs
       pers.inlogs = True
       pers.logcount = pers.logcount + 1   
-   if name == 'groundspeak:finder' and pers.inlogs and attrs['id']=='1902380':
-      pers.isown = True
-      pers.ownlogcount = pers.ownlogcount + 1
+   if name == 'groundspeak:finder' and pers.inlogs:
+      pers.inlogfinder = True      
    if name == 'groundspeak:type' and pers.inlogs:
       pers.inlogtype = True   
    if name == 'groundspeak:text' and pers.inlogs and pers.isown and pers.isfound:      
@@ -45,6 +48,8 @@ def end_element(name):
       pers.inlogtype = False      
    if name == 'groundspeak:text':
       pers.inownfoundlogtext = False
+   if name == 'groundspeak:finder':
+      pers.inlogfinder = False
     
 def char_data(data):
     if pers.inlogtype:       
@@ -53,6 +58,10 @@ def char_data(data):
          pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
     if pers.inownfoundlogtext:       
        countWords(data)
+    if pers.inlogfinder:
+       if data == pers.username:
+          pers.isown = True
+          pers.ownlogcount = pers.ownlogcount + 1
 
 def countWords(_text):
    print 'Count'
@@ -70,9 +79,10 @@ p.CharacterDataHandler = char_data
 
 
 f = open(sys.argv[1],'r')
-
 p.Parse(f.read(), 1)
 f.close()
+
+pers.username = escape(sys.argv[2])
 
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
