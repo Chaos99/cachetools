@@ -7,7 +7,7 @@ from xml.sax.saxutils import escape
 
 
 class pers():
-   count = 0
+   count = 0   
    logcount = 0
    ownlogcount = 0
    ownfoundlogcount = 0
@@ -19,10 +19,14 @@ class pers():
    isfound = True   
    inownfoundlogtext = False
    username = ''
+   stack = []
+   
+
 
 # 3 handler functions
 def start_element(name, attrs):
-   if name == 'wpt':
+   pers.stack.append(name)
+   if name == 'wpt':      
       pers.count  = pers.count + 1
    if name == 'groundspeak:log':
       #print 'Start element:', name, attrs
@@ -39,6 +43,8 @@ def start_element(name, attrs):
       #print count
       
 def end_element(name):
+   if pers.stack.pop() != name:
+      print "badly formated XML"
    if name == 'groundspeak:log':
       #print 'End element:', name
       pers.inlogs = False
@@ -58,7 +64,7 @@ def char_data(data):
          pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
     if pers.inownfoundlogtext:       
        countWords(data)
-    if pers.inlogfinder:
+    if pers.inlogfinder:       
        if data == pers.username:
           pers.isown = True
           pers.ownlogcount = pers.ownlogcount + 1
@@ -72,17 +78,18 @@ def countWords(_text):
 
 
 p = xml.parsers.expat.ParserCreate()
+p.buffer_text = True
 
 p.StartElementHandler = start_element
 p.EndElementHandler = end_element
 p.CharacterDataHandler = char_data
 
+pers.username = sys.argv[2]
 
 f = open(sys.argv[1],'r')
 p.Parse(f.read(), 1)
 f.close()
 
-pers.username = escape(sys.argv[2])
 
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
