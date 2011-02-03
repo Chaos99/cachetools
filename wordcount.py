@@ -150,6 +150,8 @@ class htmlParser(HTMLParser):
       
    def handle_endtag(self, name):
       self.entity = None
+      if name == 'html':
+         self.finish()
       while self.stack.pop() != name:
          pass         
 
@@ -162,11 +164,15 @@ class htmlParser(HTMLParser):
             self.names.append(data)
          
       if self.descSig == self.stack:
-         if self.entity:
+         if self.entity and self.stack != []:
             self.descs.append(self.descs.pop() + self.entity + data)
-         else:
+         elif data.strip(' ()').startswith('award'):
             self.descs.append(data)
-         
+
+   def finish(self):
+      self.names = [a.strip() for a in self.names]
+      self.descs = [a.strip(' ()') for a in self.descs]
+           
          
       #if 'Traditional' in data:
       #   print str(self.stack)      
