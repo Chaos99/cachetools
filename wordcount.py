@@ -118,20 +118,24 @@ class gpxParser():
             pers.ownlogcount = pers.ownlogcount + 1
 
 class htmlParser(HTMLParser):
-   
-# 3 handler functions
+
    def __init__(self):
       HTMLParser.__init__(self)
       self.stack=[]
+      self.entity = None
       self.nameSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'b']
       self.descSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
       self.iconSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
       self.names=[]
       self.descs=[]
       self.icons=[]
-      self.paths=[]
-      
-      
+      self.paths=[]    
+   
+   def handle_charref(self, name):
+      print 'charref ' + name   
+
+   def handle_entityref(self, name):      
+      self.entity = self.unescape('&'+name+';')
 
    def handle_starttag(self, name, attrs):
       self.stack.append(name)
@@ -140,20 +144,29 @@ class htmlParser(HTMLParser):
          path,x,icon = src.rpartition('/')         
          self.icons.append(icon[:-5])
          self.paths.append(path+'/')
-         
-         print name, str(attrs)
-         
+         #print path
+         #print icon[:-5]        
       #print str(self.stack)
       
    def handle_endtag(self, name):
+      self.entity = None
       while self.stack.pop() != name:
          pass         
 
    def handle_data(self, data):
       if self.nameSig == self.stack:
-         self.names.append(data)
+         if self.entity:
+            self.names.append(self.names.pop() + self.entity + data)
+            self. entity = None
+         else:
+            self.names.append(data)
+         
       if self.descSig == self.stack:
-         self.descs.append(data[1:-1])
+         if self.entity:
+            self.descs.append(self.descs.pop() + self.entity + data)
+         else:
+            self.descs.append(data)
+         
          
       #if 'Traditional' in data:
       #   print str(self.stack)      
