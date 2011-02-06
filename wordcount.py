@@ -17,6 +17,7 @@ class pers():
    isfound = True
    username = ''
    stack = []
+   currentCache = ''
    
 
 class badge():
@@ -78,7 +79,7 @@ class badge():
    
 
 class gpxParser():
-# 3 handler functions
+   
    def __init__(self, _pers):
       self.pers = _pers
       self._parser = expat.ParserCreate()
@@ -95,7 +96,8 @@ class gpxParser():
       if name == 'wpt':      
          pers.count  = pers.count + 1
       if name == 'groundspeak:log':
-         pers.logcount = pers.logcount + 1   
+         pers.logcount = pers.logcount + 1
+                
 
    def end(self, name):
       if pers.stack.pop() != name:
@@ -103,6 +105,9 @@ class gpxParser():
       if name == 'groundspeak:log':
          pers.isown = False
          pers.isfound = False
+      if name == 'wpt':
+         if pers.currentCache != '' and pers.count != pers.logcount:
+            print "Cache wirthout log: " + str(pers.currentCache)  
 
    def data(self, data):
       if 'groundspeak:type' in pers.stack:       
@@ -116,6 +121,11 @@ class gpxParser():
          if data == pers.username:
             pers.isown = True
             pers.ownlogcount = pers.ownlogcount + 1
+         else:
+            print "Foreign Log from " + data + " found."
+      if pers.stack[-1] == 'name':
+         pers.currentCache = data
+         
 
 class htmlParser(HTMLParser):
 
@@ -129,7 +139,8 @@ class htmlParser(HTMLParser):
       self.names=[]
       self.descs=[]
       self.icons=[]
-      self.paths=[]    
+      self.paths=[]      
+      self.limits=[]    
    
    def handle_charref(self, name):
       print 'charref ' + name   
@@ -156,18 +167,30 @@ class htmlParser(HTMLParser):
          pass         
 
    def handle_data(self, data):
+      # get the name
       if self.nameSig == self.stack:
          if self.entity:
             self.names.append(self.names.pop() + self.entity + data)
             self. entity = None
          else:
             self.names.append(data)
-         
+            self.limits.append([])
+            
+      # get the description   
       if self.descSig == self.stack:
          if self.entity and self.stack != []:
             self.descs.append(self.descs.pop() + self.entity + data)
          elif data.strip(' ()').startswith('award'):
             self.descs.append(data)
+            
+      #get the levels
+      #if data.strip().startswith('Bron'):
+      if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:
+         limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]
+         #print limit
+         #self.limits[-1].append()         
+         #print data.strip() + ' -> ' + data.strip().partition('(' if '(' in data else '[')[2][:-1]
+         #print self.stack
 
    def finish(self):
       self.names = [a.strip() for a in self.names]
