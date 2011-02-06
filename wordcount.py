@@ -18,6 +18,7 @@ class pers():
    username = ''
    stack = []
    currentCache = ''
+   words = []
    
 
 class badge():
@@ -116,7 +117,7 @@ class gpxParser():
             pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
       if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:text':
          if pers.isown and pers.isfound:
-            countWords(data)
+            self.countWords(data)
       if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:finder':       
          if data == pers.username:
             pers.isown = True
@@ -125,7 +126,12 @@ class gpxParser():
             print "Foreign Log from " + data + " found."
       if pers.stack[-1] == 'name':
          pers.currentCache = data
-         
+   
+   def countWords(self, _text):   
+      words = _text.split(None)
+      wordcount = len(words)
+      pers.wordcount = pers.wordcount + wordcount  
+      pers.words.append(wordcount)    
 
 class htmlParser(HTMLParser):
 
@@ -201,10 +207,7 @@ class htmlParser(HTMLParser):
       #   print str(self.stack)      
 
 
-def countWords(_text):   
-   words = _text.split(None)
-   wordcount = len(words)
-   pers.wordcount = pers.wordcount + wordcount
+
 
 pers.username = sys.argv[2]
 
@@ -222,6 +225,7 @@ f.close()
 
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
+#print "Last 5 Logs: " + str(pers.words[-5])+ ' '+ str(pers.words[-4])+ ' '+ str(pers.words[-3])+ ' '+ str(pers.words[-2])+ ' '+ str(pers.words[-1])
 
 badge.setUser(pers.username, True)
 badge.setPath('./')
