@@ -15,9 +15,13 @@ class pers():
    wordcount = 0   
    isown = False
    isfound = True
+   haslog = False
+   hasownlog = False
+   hasownfoundlog = False
    username = ''
    stack = []
-   
+   currentCache = ''
+   words = []
 
 class badge():
    
@@ -78,7 +82,6 @@ class badge():
    
 
 class gpxParser():
-# 3 handler functions
    def __init__(self, _pers):
       self.pers = _pers
       self._parser = expat.ParserCreate()
@@ -95,7 +98,8 @@ class gpxParser():
       if name == 'wpt':      
          pers.count  = pers.count + 1
       if name == 'groundspeak:log':
-         pers.logcount = pers.logcount + 1   
+         pers.haslog = True
+         pers.logcount = pers.logcount + 1
 
    def end(self, name):
       if pers.stack.pop() != name:
@@ -103,35 +107,63 @@ class gpxParser():
       if name == 'groundspeak:log':
          pers.isown = False
          pers.isfound = False
+      if name == 'wpt':
+         if not pers.haslog:
+            print "Cache without log: " + str(pers.currentCache)
+         if not pers.hasownlog:
+            print "Cache without own log: " + str(pers.currentCache)
+         if not pers.hasownfoundlog:
+            print "Cache without own found log: " + str(pers.currentCache)
+         else:
+            pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
+         pers.haslog = False
+         pers.hasownlog = False
+         pers.hasownfoundlog = False
 
    def data(self, data):
       if 'groundspeak:type' in pers.stack:       
          if data == 'Found it' or data == 'Attended':
-            pers.isfound = True
-            pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
+            pers.isfound = True            
       if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:text':
          if pers.isown and pers.isfound:
-            countWords(data)
+            self.countWords(data)
+            pers.hasownfoundlog = True
       if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:finder':       
          if data == pers.username:
             pers.isown = True
+            pers.hasownlog = True
             pers.ownlogcount = pers.ownlogcount + 1
+         else:
+            print "Foreign Log from " + data + " found."
+      if pers.stack[-1] == 'name':
+         pers.currentCache = data
+   
+   def countWords(self, _text):   
+      words = _text.split(None)
+      wordcount = len(words)
+      pers.wordcount = pers.wordcount + wordcount  
+      pers.words.append(wordcount)    
 
 class htmlParser(HTMLParser):
-   
-# 3 handler functions
+
    def __init__(self):
       HTMLParser.__init__(self)
       self.stack=[]
+      self.entity = None
       self.nameSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'b']
       self.descSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
       self.iconSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
       self.names=[]
       self.descs=[]
       self.icons=[]
-      self.paths=[]
-      
-      
+      self.paths=[]      
+      self.limits=[]    
+   
+   def handle_charref(self, name):
+      print 'charref ' + name   
+
+   def handle_entityref(self, name):      
+      self.entity = self.unescape('&'+name+';')
 
    def handle_starttag(self, name, attrs):
       self.stack.append(name)
@@ -140,29 +172,50 @@ class htmlParser(HTMLParser):
          path,x,icon = src.rpartition('/')         
          self.icons.append(icon[:-5])
          self.paths.append(path+'/')
-         
-         print name, str(attrs)
-         
+         #print path
+         #print icon[:-5]        
       #print str(self.stack)
       
    def handle_endtag(self, name):
+      self.entity = None
+      if name == 'html':
+         self.finish()
       while self.stack.pop() != name:
          pass         
 
    def handle_data(self, data):
+      # get the name
       if self.nameSig == self.stack:
-         self.names.append(data)
+         if self.entity:
+            self.names.append(self.names.pop() + self.entity + data)
+            self. entity = None
+         else:
+            self.names.append(data)
+            self.limits.append([])
+            
+      # get the description   
       if self.descSig == self.stack:
-         self.descs.append(data[1:-1])
+         if self.entity and self.stack != []:
+            self.descs.append(self.descs.pop() + self.entity + data)
+         elif data.strip(' ()').startswith('award'):
+            self.descs.append(data)
+            
+      #get the levels
+      #if data.strip().startswith('Bron'):
+      if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:
+         limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]
+         #print limit
+         #self.limits[-1].append()         
+         #print data.strip() + ' -> ' + data.strip().partition('(' if '(' in data else '[')[2][:-1]
+         #print self.stack
+
+   def finish(self):
+      self.names = [a.strip() for a in self.names]
+      self.descs = [a.strip(' ()') for a in self.descs]
+           
          
       #if 'Traditional' in data:
       #   print str(self.stack)      
-
-
-def countWords(_text):   
-   words = _text.split(None)
-   wordcount = len(words)
-   pers.wordcount = pers.wordcount + wordcount
 
 pers.username = sys.argv[2]
 
@@ -180,6 +233,9 @@ f.close()
 
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
+
+#print "Last 5 Logs: " + str(pers.words[-5])+ ' '+ str(pers.words[-4])+ ' '+ str(pers.words[-3])+ ' '+ str(pers.words[-2])+ ' '+ str(pers.words[-1])
+
 
 badge.setUser(pers.username, True)
 badge.setPath('./')
