@@ -190,7 +190,7 @@ class htmlParser(HTMLParser):
             self.names.append(self.names.pop() + self.entity + data)
             self. entity = None
          else:
-            self.names.append(data)
+            self.names.append(data)            
             self.limits.append([])
             
       # get the description   
@@ -200,11 +200,24 @@ class htmlParser(HTMLParser):
          elif data.strip(' ()').startswith('award'):
             self.descs.append(data)
             
-      #get the levels
-      #if data.strip().startswith('Bron'):
-      if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:
-         limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]
-         #print limit
+      #get the levels      
+      if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:         
+         limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]         
+         if limit.count('-') == 1 and limit.strip(' -+').count('-')== 1: #only one - and not as polarity sign
+            self.limits[-1].append(limit.partition('-')[0].strip(' km'))            
+            #print self.limits[-1]
+         elif limit.count('-') == 0 and limit.count(',') == 0: # just a single number
+            self.limits[-1].append(limit.strip(' +km'))
+            #print self.limits[-1]
+         elif limit.count('-') == 3: #only one - and not as polarity sign
+            self.limits[-1].append('-' + limit[1:].partition('-')[0].strip(' km'))            
+            #print self.limits[-1]
+         elif limit.count(',') == 1:
+            self.limits[-1].append(limit.partition(',')[0].strip(' km'))
+         else:
+            print limit
+            
+         #self.limits.append(limit)
          #self.limits[-1].append()         
          #print data.strip() + ' -> ' + data.strip().partition('(' if '(' in data else '[')[2][:-1]
          #print self.stack
