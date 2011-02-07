@@ -23,6 +23,7 @@ class pers():
    currentCache = ''
    words = []
 
+
 class badgeManager():
    badges = []
    user = ""
@@ -63,6 +64,7 @@ class badgeManager():
       cls.user = user
       cls.isMultiple = isMultiple
 
+
 class badge():
    
    user = "TheSearchers"   
@@ -80,6 +82,7 @@ class badge():
       self.icon = _icon
       self.goals = []
       self.num=None
+
    
    @classmethod
    def setUser(_class, _user,_m):
@@ -95,6 +98,7 @@ class badge():
          self.goals= [int(g) for g in _goals]         
       else:
          print "Not a valid list of level goals" + str(_goals)
+
    
    def setStatus(self, _num):
       self.num = _num
@@ -145,6 +149,7 @@ class gpxParser():
          pers.haslog = True
          pers.logcount = pers.logcount + 1
 
+
    def end(self, name):
       if pers.stack.pop() != name:
          print "badly formated XML"
@@ -164,6 +169,7 @@ class gpxParser():
          pers.hasownlog = False
          pers.hasownfoundlog = False
 
+
    def data(self, data):
       if 'groundspeak:type' in pers.stack:       
          if data == 'Found it' or data == 'Attended':
@@ -176,6 +182,7 @@ class gpxParser():
          if data == pers.username:
             pers.isown = True
             pers.hasownlog = True
+
             pers.ownlogcount = pers.ownlogcount + 1
          else:
             print "Foreign Log from " + data + " found."
@@ -243,7 +250,6 @@ class htmlParser(HTMLParser):
             self.descs.append(self.descs.pop() + self.entity + data)
          elif data.strip(' ()').startswith('award'):
             self.descs.append(data)
-            
       #get the levels      
       if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:         
          limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]         
@@ -277,6 +283,7 @@ class htmlParser(HTMLParser):
       #if 'Traditional' in data:
       #   print str(self.stack)      
 
+
 pers.username = sys.argv[2]
 
 p = gpxParser(pers)
@@ -294,6 +301,7 @@ f.close()
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
 
+
 #print "Last 5 Logs: " + str(pers.words[-5])+ ' '+ str(pers.words[-4])+ ' '+ str(pers.words[-3])+ ' '+ str(pers.words[-2])+ ' '+ str(pers.words[-1])
 
 
@@ -310,3 +318,4 @@ badgeManager.getHTML('Tradi')
 #bb.setLevels([25,50,75,100,150,200,500,1000])
 #bb.setStatus(235)
 #print bb.getHTML()
+
