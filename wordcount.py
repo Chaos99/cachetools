@@ -23,6 +23,46 @@ class pers():
    currentCache = ''
    words = []
 
+class badgeManager():
+   badges = []
+   user = ""
+   cls.isMultiple=True
+   
+   @classmethod
+   def populate(cls, names, descs, icons, paths, levels):
+      if cls.user != '':
+         badge.setUser(cls.user,cls.isMultiple)
+      else:
+         print 'must set user before populating badge list'
+      for (n,d,i,p,l) in zip(names,descs,icons,paths,levels):
+         #print n + ' ' + d
+         #print p + '/' + i
+         #print l
+         ba = badge(n,d, _icon=i)
+         ba.overridePath(p)
+         ba.setLevels(l)
+         cls.badges.append(ba)
+   
+   @classmethod
+   def setStatus(cls, name, value):
+      for a in cls.badges:
+         if name in a.name:
+            a.setStatus(value)
+            return a.getHTML()
+   
+   @classmethod
+   def getHTML(cls, name='ALL'):
+      ret = []
+      for a in cls.badges:
+         if name in a.name or name=='ALL':
+            ret.append(a.getHTML())
+      return ret
+   
+   @classmethod
+   def setCredentials(cls, user, isMultiple=True):
+      cls.user = user
+      cls.isMultiple = isMultiple
+
 class badge():
    
    user = "TheSearchers"   
@@ -39,6 +79,7 @@ class badge():
       self.verbm = _verbm 
       self.icon = _icon
       self.goals = []
+      self.num=None
    
    @classmethod
    def setUser(_class, _user,_m):
@@ -51,9 +92,9 @@ class badge():
    
    def setLevels(self, _goals):
       if len(_goals) == 8:
-         self.goals= _goals
+         self.goals= [int(g) for g in _goals]         
       else:
-         print "Not a valid list of level goals"
+         print "Not a valid list of level goals" + str(_goals)
    
    def setStatus(self, _num):
       self.num = _num
@@ -70,6 +111,9 @@ class badge():
       self.path= _path
   
    def getHTML(self):
+      if self.num==None:
+         print 'No Value set for ' + self.name
+         return ''
       verb = self.verbm if self.userIsMult else self.verbs
       if self.level == 'D':
          alt = "%s, %s | %s %s %d, %s reached the highest level>"%(self.name, self.desc, self.user, verb, self.num, 'have' if self.userIsMult else 'has')
@@ -206,13 +250,16 @@ class htmlParser(HTMLParser):
          if limit.count('-') == 1 and limit.strip(' -+').count('-')== 1: #only one - and not as polarity sign
             self.limits[-1].append(limit.partition('-')[0].strip(' km'))            
             #print self.limits[-1]
-         elif limit.count('-') == 0 and limit.count(',') == 0: # just a single number
+         elif limit.count('-') == 1 and limit.strip(' -+').count('-')== 0: #only one negative number
+            self.limits[-1].append(limit.strip(' +km'))            
+            #print self.limits[-1]
+         elif limit.count('-') == 0 and limit.count(',') == 0: # just a single positive number
             self.limits[-1].append(limit.strip(' +km'))
             #print self.limits[-1]
-         elif limit.count('-') == 3: #only one - and not as polarity sign
+         elif limit.count('-') == 3: # two negative numbers
             self.limits[-1].append('-' + limit[1:].partition('-')[0].strip(' km'))            
             #print self.limits[-1]
-         elif limit.count(',') == 1:
+         elif limit.count(',') == 1: #new limit notation
             self.limits[-1].append(limit.partition(',')[0].strip(' km'))
          else:
             print limit
@@ -250,10 +297,16 @@ print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
 #print "Last 5 Logs: " + str(pers.words[-5])+ ' '+ str(pers.words[-4])+ ' '+ str(pers.words[-3])+ ' '+ str(pers.words[-2])+ ' '+ str(pers.words[-1])
 
 
-badge.setUser(pers.username, True)
-badge.setPath('./')
+#badge.setUser(pers.username, True)
+#badge.setPath('./')
 
-bb = badge('Traditional Badge', 'awarded for finding traditional caches','has found','have found','Trad') 
-bb.setLevels([25,50,75,100,150,200,500,1000])
-bb.setStatus(235)
-print bb.getHTML()
+badgeManager.setCredentials(pers.username, True)
+badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
+badgeManager.setStatus('Author', 47)
+badgeManager.getHTML('Author')
+badgeManager.getHTML('Tradi')
+
+#bb = badge('Traditional Badge', 'awarded for finding traditional caches','has found','have found','Trad') 
+#bb.setLevels([25,50,75,100,150,200,500,1000])
+#bb.setStatus(235)
+#print bb.getHTML()
