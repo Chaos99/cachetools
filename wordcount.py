@@ -36,7 +36,25 @@ badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
 badgeManager.setStatus('Author', pers.wordcount / pers.ownfoundlogcount)
 badgeManager.getHTML('Author')
 for k,v in zip(pers.typeCount.keys(), pers.typeCount.values()):
+   if not 'Event' in k:
+      badgeManager.setStatus(k[:5],v)
+   # Event is ambigous, need special attentions
+   else:
+      if 'Mega' in k:
+         badgeManager.setStatus('Mega',v)
+      else: #the tricky part: the normal event without the mega
+         for b in badgeManager.badges:
+            if 'event' in b.desc.lower() and not 'mega' in b.desc.lower() and not 'CITO' in b.desc.lower():
+               b.setStatus(v)
+               break
+         
+for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):   
    badgeManager.setStatus(k[:5],v)
+   
+
+badgeManager.setStatus('Lost',pers.tenCount)
+badgeManager.setStatus('Adventur',pers.HCCCount)
+badgeManager.setStatus('FTF',pers.FTFcount)
  
 badgeManager.getHTML('Tradi')
 
