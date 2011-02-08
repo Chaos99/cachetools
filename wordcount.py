@@ -27,7 +27,7 @@ class pers():
 class badgeManager():
    badges = []
    user = ""
-   cls.isMultiple=True
+   isMultiple=True
    
    @classmethod
    def populate(cls, names, descs, icons, paths, levels):
