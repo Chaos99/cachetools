@@ -33,8 +33,11 @@ print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
 
 badgeManager.setCredentials(pers.username, True)
 badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
-badgeManager.setStatus('Author', 47)
+badgeManager.setStatus('Author', pers.wordcount / pers.ownfoundlogcount)
 badgeManager.getHTML('Author')
+for k,v in zip(pers.typeCount.keys(), pers.typeCount.values()):
+   badgeManager.setStatus(k[:5],v)
+ 
 badgeManager.getHTML('Tradi')
 
 #bb = badge('Traditional Badge', 'awarded for finding traditional caches','has found','have found','Trad') 

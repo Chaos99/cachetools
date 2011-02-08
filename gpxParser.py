@@ -15,6 +15,9 @@ class pers():
    stack = []
    currentCache = ''
    words = []
+   typeCount ={}
+   
+   
 
 class gpxParser():
    def __init__(self, _pers):
@@ -58,7 +61,9 @@ class gpxParser():
 
 
    def data(self, data):
-      if 'groundspeak:type' in pers.stack:       
+      if 'groundspeak:log' not in pers.stack and pers.stack[-1]=='groundspeak:type':
+         self.countType(data.strip())
+      if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:type':       
          if data == 'Found it' or data == 'Attended':
             pers.isfound = True            
       if 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:text':
@@ -80,4 +85,11 @@ class gpxParser():
       words = _text.split(None)
       wordcount = len(words)
       pers.wordcount = pers.wordcount + wordcount  
-      pers.words.append(wordcount)    
+      pers.words.append(wordcount)
+   
+   def countType(self, name):
+      if name in pers.typeCount.keys():
+         pers.typeCount[name]=pers.typeCount[name] + 1
+      else:
+         pers.typeCount[name]=1
+      
