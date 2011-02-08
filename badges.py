@@ -21,22 +21,37 @@ class badgeManager():
    @classmethod
    def setStatus(cls, name, value):
       for a in cls.badges:
-         if name in a.name:
+         if name.lower() in a.name.lower():
             a.setStatus(value)
             return a.getHTML()
+         #no match in names? try in descriptions      
+         elif name.lower() in a.desc.lower():
+            a.setStatus(value)
+            return a.getHTML()
+      print 'Sorry, no matsch for badge name "' + name + '"'
    
    @classmethod
    def getHTML(cls, name='ALL'):
       ret = []
       for a in cls.badges:
-         if name in a.name or name=='ALL':
-            ret.append(a.getHTML())
+         if name.lower() in a.name.lower() or name.lower()=='all':
+            ret.append(a.getHTML())      
       return ret
    
    @classmethod
    def setCredentials(cls, user, isMultiple=True):
       cls.user = user
       cls.isMultiple = isMultiple
+   
+   @classmethod
+   def getBadge(cls, name):
+      for a in cls.badges:
+         if name in a.name:
+            return a
+         #no match in names? try in descriptions      
+         elif name in a.desc:
+            return a
+      print 'Sorry, no matsch for badge name "' + name + '"'
 
 
 class badge():
