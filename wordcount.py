@@ -1,11 +1,17 @@
 #!python
 # -*- coding: UTF-8 -*-
+
+#env GIT_AUTHOR_DATE='Mon Feb 07 17:01:00 2011 +0200' GIT_COMMITTER_DATE='Mon Feb 07 17:01:00 2011 +2000' git commit -a -m 'Merge and relocated counting to /wpt tag'
+
 import sys
 
 from badges import *
 from htmlParser import *
 from gpxParser import *
 
+if not sys.argv and not len(sys.argv) == 3:
+   print "Usage: python [-i] <gpx-file> <username> <badge html file>"
+   sys.exit()
 
 pers.username = sys.argv[2]
 
@@ -56,7 +62,12 @@ badgeManager.setStatus('Lost',pers.tenCount)
 badgeManager.setStatus('Adventur',pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
  
-badgeManager.getHTML('Tradi')
+text = badgeManager.getHTML('ALL')
+
+f = open("profile.html",'w')
+for t in text:
+   f.write(t)
+f.close()
 
 #bb = badge('Traditional Badge', 'awarded for finding traditional caches','has found','have found','Trad') 
 #bb.setLevels([25,50,75,100,150,200,500,1000])
