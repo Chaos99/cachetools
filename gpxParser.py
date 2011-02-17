@@ -102,11 +102,18 @@ class gpxParser():
          self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
          
    
-   def countWords(self, _text):   
-      words = _text.split(None)
+   def countWords(self, _text):
+      strippedText = ""
+      for t in _text:
+         if t.isalpha() or t==' ':
+            strippedText += t
+         else:
+            strippedText += ' '
+      words = strippedText.strip().split(None)
       wordcount = len(words)
       pers.wordcount = pers.wordcount + wordcount  
       pers.words.append(wordcount)
+      return wordcount
    
    def countType(self, name):
       if name in pers.typeCount.keys():
