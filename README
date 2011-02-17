@@ -1,4 +1,4 @@
 Various geocaching related python tools
 
 wordcount.py
-	calculates the average word count in found logs by parsing a pocket query
+	calculates varios values from a pocket query gpx, turns them into html code for badges generated from Kyle Mills BadgeGen tool.
