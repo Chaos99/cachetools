@@ -1,7 +1,7 @@
 #!python
 # -*- coding: UTF-8 -*-
 
-#env GIT_AUTHOR_DATE='Mon Feb 07 17:01:00 2011 +0200' GIT_COMMITTER_DATE='Mon Feb 07 17:01:00 2011 +2000' git commit -a -m 'Merge and relocated counting to /wpt tag'
+#env GIT_AUTHOR_DATE='Thu Feb 17 17:00:00 2011 +0200' GIT_COMMITTER_DATE='Thu Feb 17 17:00:00 2011 +2000' git commit -a -m ""
 
 import sys
 
@@ -63,6 +63,13 @@ badgeManager.setStatus('Adventur',pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
  
 text = badgeManager.getHTML('ALL')
+
+import spider
+
+c = spider.ConnectionManager()
+c.logon()
+r = c.getMyCoinList()
+
 
 f = open("profile.html",'w')
 for t in text:
