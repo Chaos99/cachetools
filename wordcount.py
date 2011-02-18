@@ -8,12 +8,22 @@ import sys
 from badges import *
 from htmlParser import *
 from gpxParser import *
+from ConfigParser import SafeConfigParser as ConfigParser
 
-if not sys.argv and not len(sys.argv) == 3:
-   print "Usage: python [-i] <gpx-file> <username> <badge html file>"
+if not len(sys.argv) == 2:
+   print "Usage: python [-i] <gpx-file> "
    sys.exit()
 
-pers.username = sys.argv[2]
+confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None})
+confParser.read('config')
+
+try:
+   pers.username = confParser.get('DEFAULT', 'username')
+   pers.password = confParser.get('DEFAULT', 'password')
+except:
+   print "No username and/or password given in config file"
+   sys.exit()
+
 
 p = gpxParser(pers)
 h = htmlParser()
@@ -22,13 +32,21 @@ f = open(sys.argv[1],'r')
 p.feed(f.read(), 1)
 f.close()
 
-f = open(sys.argv[3],'r')
+badgeHTMLname = confParser.get('DEFAULT', 'badgeHTMLfile')
+
+try:
+   f = open(badgeHTMLname,'r')
+except:
+   print "Badge definition HTML file could not be read from %s"%badgeHTMLname
+
 h.feed(f.read())
 h.close()
 f.close()
 
 print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
-print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
+avgWordCount = pers.wordcount / pers.ownfoundlogcount if pers.ownfoundlogcount > 0 else 0
+   
+print "Average  word count: " + str(avgWordCount)
 
 
 #print "Last 5 Logs: " + str(pers.words[-5])+ ' '+ str(pers.words[-4])+ ' '+ str(pers.words[-3])+ ' '+ str(pers.words[-2])+ ' '+ str(pers.words[-1])
@@ -39,7 +57,7 @@ print "Average  word count: " + str(pers.wordcount / pers.ownfoundlogcount)
 
 badgeManager.setCredentials(pers.username, True)
 badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
-badgeManager.setStatus('Author', pers.wordcount / pers.ownfoundlogcount)
+badgeManager.setStatus('Author', avgWordCount)
 badgeManager.getHTML('Author')
 for k,v in zip(pers.typeCount.keys(), pers.typeCount.values()):
    if not 'Event' in k:
@@ -67,10 +85,11 @@ badgeManager.setStatus('Travelbug',50)
 text = badgeManager.getHTML('ALL')
 
 import spider
+spider.ConnectionManager.setProxy(confParser.get('DEFAULT', 'proxy'))
+c = spider.ConnectionManager(pers.username, pers.password)
 
-#c = spider.ConnectionManager()
 #c.logon()
-#r = c.getMyCoinList()
+r = c.getMyCoinList()
 
 
 f = open("profile.html",'w')

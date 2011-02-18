@@ -12,41 +12,45 @@ import datetime
 import os.path
 import xml.parsers.expat
 
-class ConnectionManager():
-   myurl = ""
-   proxyurl = ""
+class ConnectionManager():   
+   proxyurl = None
    loginurl = 'http://www.geocaching.com/login/default.aspx'
-   searchurl = 'http://www.geocaching.com/seek/nearest.aspx' 
-   username = ""
-   password = ""
+   searchurl = 'http://www.geocaching.com/seek/nearest.aspx'
+   profileurl = "http://www.geocaching.com/profile/default.aspx"
    useragent = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3"
-   viewstate = ""
-   isLoggedIn = False
-   cachedFiles = []
+   
+
+   @classmethod
+   def setProxy(cls, proxy):
+      cls.proxyurl=proxy
       
-   def __init__(self):
-      self.myurl = urllib2
-      proxy = self.myurl.ProxyHandler({'http' : self.proxyurl}) 
-      cj = cookielib.LWPCookieJar()  
-      opener = self.myurl.build_opener(proxy, urllib2.HTTPCookieProcessor(cj), urllib2.HTTPRedirectHandler())    
-      self.myurl.install_opener(opener)
+   def __init__(self,username,password):
+      cj = cookielib.LWPCookieJar()
+      if self.proxyurl:
+         proxy = urllib2.ProxyHandler({'http' : self.proxyurl})      
+         opener = urllib2.build_opener(proxy, urllib2.HTTPCookieProcessor(cj), urllib2.HTTPRedirectHandler())
+      else:
+         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPRedirectHandler())    
+      urllib2.install_opener(opener)
       self.isLoggedIn = False
       self.cachedFiles = []
-   ##
+      self.viewstate = ""
+      self.username = username
+      self.password = password
+
 
    def logon(self):
       """Logs the user in to Geocaching.com."""
-      
       # Get the session STATE before requesting the login page
-      page = self.myurl.urlopen(self.loginurl)
+      page = urllib2.urlopen(self.loginurl)
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', page.read(), re.S)
       self.viewstate = m.group(1)      
-      fromvalues = {  '__VIEWSTATE' : self.viewstate, 'ctl00$ContentBody$myUsername' : self.username, 'ctl00$ContentBody$myPassword' : self.password, 'ctl00_ContentBody_cookie' : 'on', 'ctl00$ContentBody$Button1' : 'Login'}
+      fromvalues = (('__VIEWSTATE', self.viewstate), ('ctl00$ContentBody$myUsername', self.username), ('ctl00$ContentBody$myPassword', self.password),( 'ctl00_ContentBody_cookie', 'on'), ('ctl00$ContentBody$Button1', 'Login'))
       headers = { 'User-Agent' : self.useragent }
       fromdata = urlencode(fromvalues)   
       # Login to the site
-      request = self.myurl.Request(self.loginurl, fromdata, headers)
-      page = self.myurl.urlopen(request)
+      request = urllib2.Request(self.loginurl, fromdata, headers)
+      page = urllib2.urlopen(request)
       inpage =  page.read()
       # Check that logon was successfull      
       if "You are logged in" not in inpage:
@@ -57,39 +61,44 @@ class ConnectionManager():
          self.isLoggedIn = True     
    #
    def getMyCoinList(self):
-      page = self.myurl.urlopen("http://www.geocaching.com/profile")
+      if not self.isLoggedIn:
+         self.logon()
+      page = urllib2.urlopen(self.profileurl)
       pageC = page.read()
-      tempfile = open("temp.html",'w')
-      tempfile.write(pageC)
-      tempfile.close()
+      self.saveTemp(pageC)
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
       self.viewstate = m.group(1)
-      print "Profile page loaded..."
-      fromvalues = {  '__EVENTARGUMENT':'', '__EVENTTARGET':'ctl00$ContentBody$ProfilePanel1$lnkUserStats','__VIEWSTATE' : self.viewstate}
+      print "Profile page loaded..."      
+      fromvalues = (('__EVENTTARGET', 'ctl00$ContentBody$ProfilePanel1$lnkCollectibles'), ('__EVENTARGUMENT', ''), ('__VIEWSTATE', self.viewstate))
       headers = { 'User-Agent' : self.useragent }
       fromdata = urlencode(fromvalues)
-      request = self.myurl.Request(self.searchurl, fromdata, headers)      
+      print fromdata
+      self.request = urllib2.Request(self.profileurl, fromdata, headers) 
       print "Loading Coin page ..."
       try:
-         page = self.myurl.urlopen(request)   
+         page = urllib2.urlopen(self.request)   
       except:
          print "Error while loading page"
       inpage =  page.read()   
       print "... done!"
       #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
-      #self.viewstate = m.group(1)       
+      #self.viewstate = m.group(1)
+      self.saveTemp(inpage,"result.html")
       return (inpage)
       
   
    
    def getURL(self, text):
-      response = self.myurl.urlopen(text)
+      response = urllib2.urlopen(text)
       index = response.read()
       response.close()
       return index
 
+   def saveTemp(self, pagetext, filename='temp.html'):
+      tempfile = open(filename,'w')
+      tempfile.write(pagetext)
+      tempfile.close()
 
-      
 
 class GeoInfo():
    
