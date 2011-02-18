@@ -82,7 +82,7 @@ badgeManager.setStatus('FTF',pers.FTFcount)
 badgeManager.setStatus('Coin',67)
 badgeManager.setStatus('Travelbug',50)
  
-text = badgeManager.getHTML('ALL')
+#text = badgeManager.getHTML('ALL')
 
 import spider
 spider.ConnectionManager.setProxy(confParser.get('DEFAULT', 'proxy'))
@@ -93,8 +93,7 @@ r = c.getMyCoinList()
 
 
 f = open("profile.html",'w')
-for t in text:
-   f.write(t)
+f.write(r)
 f.close()
 
 #bb = badge('Traditional Badge', 'awarded for finding traditional caches','has found','have found','Trad') 

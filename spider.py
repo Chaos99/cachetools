@@ -4,13 +4,9 @@ import cookielib
 import htmlentitydefs
 import re
 import codecs
-import HTMLParser as mHTMLParser
 import time
-from HTMLParser import HTMLParser
-import pickle
-import datetime
 import os.path
-import xml.parsers.expat
+
 
 class ConnectionManager():   
    proxyurl = None
@@ -37,21 +33,34 @@ class ConnectionManager():
       self.viewstate = ""
       self.username = username
       self.password = password
-
+      self.graceTime = 3
+      self.lastConnection = 0
+      self.lastRequest = None
+      
+   def urlopen(self, request):
+      self.lastRequest = request 
+      while time.time() - self.lastConnection < self.graceTime:
+         sleep(0.5)
+      try:
+         page = urllib2.urlopen(request)
+      except:
+         print "Error retrieving %s"%request.get_full_url()
+      pageC = page.read()
+      page.close()
+      return pageC
 
    def logon(self):
       """Logs the user in to Geocaching.com."""
       # Get the session STATE before requesting the login page
-      page = urllib2.urlopen(self.loginurl)
-      m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', page.read(), re.S)
+      pageC = self.urlopen(self.loginurl)
+      m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
       self.viewstate = m.group(1)      
       fromvalues = (('__VIEWSTATE', self.viewstate), ('ctl00$ContentBody$myUsername', self.username), ('ctl00$ContentBody$myPassword', self.password),( 'ctl00_ContentBody_cookie', 'on'), ('ctl00$ContentBody$Button1', 'Login'))
       headers = { 'User-Agent' : self.useragent }
       fromdata = urlencode(fromvalues)   
       # Login to the site
       request = urllib2.Request(self.loginurl, fromdata, headers)
-      page = urllib2.urlopen(request)
-      inpage =  page.read()
+      inpage = self.urlopen(request)      
       # Check that logon was successfull      
       if "You are logged in" not in inpage:
          print('cannot logon to the site. '
@@ -63,36 +72,22 @@ class ConnectionManager():
    def getMyCoinList(self):
       if not self.isLoggedIn:
          self.logon()
-      page = urllib2.urlopen(self.profileurl)
-      pageC = page.read()
+      pageC = self.urlopen(self.profileurl)      
       self.saveTemp(pageC)
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
       self.viewstate = m.group(1)
       print "Profile page loaded..."      
       fromvalues = (('__EVENTTARGET', 'ctl00$ContentBody$ProfilePanel1$lnkCollectibles'), ('__EVENTARGUMENT', ''), ('__VIEWSTATE', self.viewstate))
       headers = { 'User-Agent' : self.useragent }
-      fromdata = urlencode(fromvalues)
-      print fromdata
-      self.request = urllib2.Request(self.profileurl, fromdata, headers) 
-      print "Loading Coin page ..."
-      try:
-         page = urllib2.urlopen(self.request)   
-      except:
-         print "Error while loading page"
-      inpage =  page.read()   
+      fromdata = urlencode(fromvalues)      
+      request = urllib2.Request(self.profileurl, fromdata, headers) 
+      print "Loading Coin page ..."      
+      pageC = self.urlopen(request)
       print "... done!"
       #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
       #self.viewstate = m.group(1)
-      self.saveTemp(inpage,"result.html")
-      return (inpage)
-      
-  
-   
-   def getURL(self, text):
-      response = urllib2.urlopen(text)
-      index = response.read()
-      response.close()
-      return index
+      self.saveTemp(pageC,"result.html")
+      return (pageC)
 
    def saveTemp(self, pagetext, filename='temp.html'):
       tempfile = open(filename,'w')
