@@ -6,11 +6,7 @@ class pers():
    ownlogcount = 0
    ownfoundlogcount = 0
    wordcount = 0   
-   #isown = False
-   #isfound = True
-   #haslog = False
-   #hasownlog = False
-   #hasownfoundlog = False
+   
    username = ''
    stack = []
    #currentCache = ''
@@ -32,6 +28,11 @@ class gpxParser():
       self._parser.StartElementHandler = self.start
       self._parser.EndElementHandler = self.end
       self._parser.CharacterDataHandler = self.data
+      self.isown = False
+      self.isfound = False
+      self.haslog = False
+      self.hasownlog = False
+      self.hasownfoundlog = False
 
    def feed(self, _file, n):
       return self._parser.Parse(_file,n)
