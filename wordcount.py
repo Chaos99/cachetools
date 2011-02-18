@@ -61,14 +61,16 @@ for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):
 badgeManager.setStatus('Lost',pers.tenCount)
 badgeManager.setStatus('Adventur',pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
+badgeManager.setStatus('Coin',67)
+badgeManager.setStatus('Travelbug',50)
  
 text = badgeManager.getHTML('ALL')
 
 import spider
 
-c = spider.ConnectionManager()
-c.logon()
-r = c.getMyCoinList()
+#c = spider.ConnectionManager()
+#c.logon()
+#r = c.getMyCoinList()
 
 
 f = open("profile.html",'w')

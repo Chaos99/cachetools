@@ -112,9 +112,9 @@ class badge():
       verb = self.verbm if self.userIsMult else self.verbs
       if self.level == 'D':
          alt = "%s, %s | %s %s %d, %s reached the highest level"%(self.name, self.desc, escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'have' if self.userIsMult else 'has')
-         return '<img src="%s%s%s.png" \n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+         return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
       if self.level != None:
          alt = "%s, %s | %s %s %d, %s %d (+%d) for next level"%(self.name, self.desc,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'need' if self.userIsMult else 'needs', self.goal, self.goal-self.num)
-         return '<img src="%s%s%s.png" \n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+         return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
       else:
          return '<! No %s generated. %s %s only %d. %s %d (+%d) for level 1.>\n'%(self.name,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'Need' if self.userIsMult else 'Needs', self.goals[0], self.goals[0]-self.num)
