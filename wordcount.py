@@ -18,9 +18,9 @@ confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None})
 if not confParser.read('config.cfg'):
     print "No config file found. A new one was generated, please fill in username and password"
     f = open('config.cfg','w')
-    f.write('[DEFAULT]')
-    f.write('username = ')
-    f.write('password = ')
+    f.write('[DEFAULT]\n\n')
+    f.write('username = \n')
+    f.write('password = \n')
     f.flush()
     f.close()
     sys.exit()
