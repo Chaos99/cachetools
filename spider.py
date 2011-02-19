@@ -18,7 +18,8 @@ class ConnectionManager():
 
    @classmethod
    def setProxy(cls, proxy):
-      cls.proxyurl=proxy
+      if proxy != None and proxy != 'None':
+         cls.proxyurl=proxy
       
    def __init__(self,username,password):
       cj = cookielib.LWPCookieJar()

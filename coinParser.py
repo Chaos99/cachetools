@@ -1,6 +1,6 @@
 from HTMLParser import HTMLParser
 
-class htmlParser(HTMLParser):
+class coinParser(HTMLParser):
 
    def __init__(self):
       HTMLParser.__init__(self)
@@ -9,6 +9,7 @@ class htmlParser(HTMLParser):
       self.tableSig = ['html', 'body', 'div', 'div', 'table', 'tr', 'td']
       self.totalSig = ['html', 'body', 'div', 'div', 'table', 'tr', 'td', 'strong']
       self.atTB = False
+      self.atTotal = False
       self.TBCount = 0
       self.TotalCount = 0
       self.CoinCount = 0
@@ -19,64 +20,33 @@ class htmlParser(HTMLParser):
    def handle_entityref(self, name):      
       self.entity = self.unescape('&'+name+';')
 
-   def handle_starttag(self, name, attrs):
+   def handle_starttag(self, name, attrs):      
       self.stack.append(name)
-      #if self.iconSig == self.stack[:-1] and name == 'img' and len(self.icons)+1 == len(self.names):
-         #src = attrs[2][1]
-         #path,x,icon = src.rpartition('/')         
-         #self.icons.append(icon[:-5])
-         #self.paths.append(path+'/')
-         #print path
-         #print icon[:-5]        
-      #print str(self.stack)
+      #print self.stack
       
    def handle_endtag(self, name):
-      self.entity = None
-      if name == 'html':
-         self.finish()
-      while self.stack.pop() != name:
-         pass         
-
-   def handle_data(self, data):
-      # get the name
-      if self.tableSig == self.stack:
-         if "Travel Bug Dog Tags" in data
-            self.atTB = True
-         elif self.atTB:
-            self.TBCount = int(data.strip)
-            self.atTB = False
+      #print str(self.stack) + ' <<<'
+      self.entity = None 
+      oldstack = self.stack
+      try:
+         while self.stack.pop() != name:
+            pass        
+      except:
+         #print 'Malformated html input at endtag ' + name +'\n resetting stack'
+         # this causes the parser to ingnore malformated html. may cause errors in the future
+         self.stack = oldstack
          
-     
-      if self.descSig == self.stack:
-         if self.entity and self.stack != []:
-            self.descs.append(self.descs.pop() + self.entity + data)
-         elif data.strip(' ()').startswith('award'):
-            self.descs.append(data)
-      #get the levels      
-      if self.stack == ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'img', 'br']:         
-         limit = data.strip().partition('(' if '(' in data else '[')[2][:-1]         
-         if limit.count('-') == 1 and limit.strip(' -+').count('-')== 1: #only one - and not as polarity sign
-            self.limits[-1].append(limit.partition('-')[0].strip(' km'))            
-            #print self.limits[-1]
-         elif limit.count('-') == 1 and limit.strip(' -+').count('-')== 0: #only one negative number
-            self.limits[-1].append(limit.strip(' +km'))            
-            #print self.limits[-1]
-         elif limit.count('-') == 0 and limit.count(',') == 0: # just a single positive number
-            self.limits[-1].append(limit.strip(' +km'))
-            #print self.limits[-1]
-         elif limit.count('-') == 3: # two negative numbers
-            self.limits[-1].append('-' + limit[1:].partition('-')[0].strip(' km'))            
-            #print self.limits[-1]
-         elif limit.count(',') == 1: #new limit notation
-            self.limits[-1].append(limit.partition(',')[0].strip(' km'))
-         else:
-            print limit
-            
-         #self.limits.append(limit)
-         #self.limits[-1].append()         
-         #print data.strip() + ' -> ' + data.strip().partition('(' if '(' in data else '[')[2][:-1]
-         #print self.stack
-
-   def finish(self):
-      self.names = [a.strip() for a in self.names]
-      self.descs = [a.strip(' ()') for a in self.descs]
+   def handle_data(self, data):            
+      if "Travel Bug Dog Tags" in data:         
+         self.atTB = True
+         self.tempstack = str(self.stack)        
+      elif self.atTB and self.tempstack == str(self.stack):
+         self.TBCount = int(data.strip())
+         self.atTB = False 
+      elif "Total Trackables Moved" in data:
+         self.tempstack= str(self.stack)
+         self.atTotal = True
+      elif self.atTotal and self.tempstack == str(self.stack):
+         self.TotalCount = int(data.strip())
+         self.atTotal = False
+         self.CoinCount = self.TotalCount - self.TBCount     
