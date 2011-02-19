@@ -23,6 +23,7 @@ if not confParser.read('config.cfg'):
     f.write('password = ')
     f.flush()
     f.close()
+    sys.exit()
 
 try:
    pers.username = confParser.get('DEFAULT', 'username')
