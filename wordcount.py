@@ -6,6 +6,7 @@
 import sys
 import spider
 import re
+import copy
 
 from badges import *
 from htmlParser import *
@@ -69,7 +70,8 @@ print "Average  word count: " + str(avgWordCount)
 badgeManager.setCredentials(pers.username, True)
 badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
 badgeManager.setStatus('Author', avgWordCount)
-badgeManager.getHTML('Author')
+badgeManager.setStatus('Geocacher', pers.ownfoundlogcount)
+#badgeManager.getHTML('Author')
 for k,v in zip(pers.typeCount.keys(), pers.typeCount.values()):
    if not 'Event' in k:
       badgeManager.setStatus(k[:5],v)
@@ -91,6 +93,42 @@ badgeManager.setStatus('Lost',pers.tenCount)
 badgeManager.setStatus('Adventur',pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
  
+badgeManager.setStatus('Virtual',0)
+badgeManager.setStatus('Mega Social',0)
+badgeManager.setStatus('Environmental',0)
+badgeManager.setStatus('Benchmark',0)
+badgeManager.setStatus('Waymark',0)
+badgeManager.setStatus('Photo',0)
+badgeManager.setStatus('Ape',0)
+badgeManager.setStatus('Travelling',7)
+#badgeManager.setStatus('Travelling',2)
+badgeManager.setStatus('Owner', 9)
+#badgeManager.setStatus('Owner', 1)
+badgeManager.setStatus('Clouds',1715)
+#badgeManager.setStatus('Clouds',1050)
+badgeManager.setStatus('Gound',-4)
+badgeManager.setStatus('Busy',22)
+#badgeManager.setStatus('Busy',10)
+badgeManager.setStatus('Daily',93)
+#badgeManager.setStatus('Daily',4)
+badgeManager.setStatus('Calendar',210)
+#badgeManager.setStatus('Calendar',34)
+badgeManager.setStatus('Scuba',0)
+badgeManager.setStatus('Host',0)
+badgeManager.setStatus('Distance',18418)
+#badgeManager.setStatus('Distance',2071)
+badgeManager.setStatus('Matrix',55)
+#badgeManager.setStatus('Matrix',18)
+#badgeManager.setStatus('State',10)
+
+s = badgeManager.getBadge('State')
+germ = copy.deepcopy(s)
+germ.name = 'LŠnderaward Deutschland'
+
+
+
+
+
 
 
 # debug version of caching

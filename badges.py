@@ -95,12 +95,20 @@ class badge():
       self.num = _num
       #if self.goals.isempty() :
       self.level = None
-      for g,l in zip(self.goals, self.levels):
-         if _num >= g:
-            self.level = l
-            self.goal = self.goals[self.goals.index(g)+1] if l != 'D' else 0
-         else:
-            pass
+      if self.goals[1] > self.goals[0]:
+         for g,l in zip(self.goals, self.levels):
+            if _num >= g:
+               self.level = l
+               self.goal = self.goals[self.goals.index(g)+1] if l != 'D' else 0
+            else:
+               pass
+      else:
+         for g,l in zip(self.goals, self.levels):
+            if _num <= g:
+               self.level = l
+               self.goal = self.goals[self.goals.index(g)+1] if l != 'D' else 0
+            else:
+               pass
    
    def overridePath(self, _path):
       self.path= _path

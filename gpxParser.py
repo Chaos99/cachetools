@@ -99,9 +99,11 @@ class gpxParser():
          self.currentTerrain = float(data)
          if self.currentTerrain == 5 and self.currentDifficult == 5:
             pers.HCCCount = pers.HCCCount + 1
-      elif pers.stack[-1]=='groundspeak:date':         
-         self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
-         
+      elif pers.stack[-1]=='groundspeak:date':    
+         try:     
+            self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
+         except:
+            self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
    
    def countWords(self, _text):
       strippedText = ""
