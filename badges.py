@@ -25,7 +25,7 @@ class badgeManager():
       try:
          a = cls.getBadge(name)
       except:
-         print "Couldnt set Value to %d."%(value)
+         #print "Couldnt set Value to %d."%(value)
          raise
       
       a.setStatus(value)
@@ -62,7 +62,7 @@ class badgeManager():
       elif len(candidates) > 1:
          return reduce(lambda x,y: x if len(x.name) < len(y.name) else y, candidates)
       else: 
-         print "Sorry, no match for badge name %s"%name
+         #print "Sorry, no match for badge name %s"%name
          raise NameError('BadgeName')
 
 

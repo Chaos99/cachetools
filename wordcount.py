@@ -74,28 +74,29 @@ badgeManager.setStatus('Author', avgWordCount)
 #### OVERALL COUNT #####
 
 badgeManager.setStatus('Geocacher', pers.ownfoundlogcount)
-
+print "Geocaches " + str(pers.ownfoundlogcount)
 
 ##### TYPES #####
 
 types = ['Traditional Cache', 'Multi-cache', 'Unknown Cache', 'Letterbox Hybrid', 'Earthcache', 'Wherigo Cache', 'CITO Event Cache','Event Cache','Virtual Cache','Mega Social Event Cache','Benchmark','Waymark','Webcam Cache','Project Ape Cache']
 
 for t in types:
-   if t in pers.typeCount.keys():
-      print t      
+   if t in pers.typeCount.keys():       
       key = filter(lambda x: t[:5].lower() in x.lower(), pers.typeCount.keys())
       if len(key) == 1:
          try:
             badgeManager.setStatus(t[:5].lower(),pers.typeCount[key[0]])
+            print t + ' ' + str(pers.typeCount[key[0]])
          except NameError('BadgeName'):
             print "No Match for Cachetype %s found. Nothing was set."%t
             pass
       else:
-         print "Ambiquious type name '"+t+"', found "+str(key)+" aborting..."
+         print "Ambiquious type name '"+t+"', found (gpx: "+str(key)+") aborting..."
          pass  
    else:
       try:
          badgeManager.setStatus(t[:5].lower(),0)
+         print t + ' ' + str(0)
       except NameError('BadgeName'):
             print "No Match for Cachetype %s found. Nothing was set."%t
             pass
@@ -105,14 +106,15 @@ for t in types:
 for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):
    try:
       badgeManager.setStatus(k[:5],v)
+      print k + ' ' + str(v)
    except NameError:
-            print "No Match for Cachesize %s found. Nothing was set."%k
+            print k + " No Match"
             pass
    
 
 ###### OTHERS #####
 
-badgeManager.setStatus('Lost',pers.tenCount)
+#badgeManager.setStatus('Lost',pers.tenCount)
 badgeManager.setStatus('Adventur',pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
  
@@ -175,8 +177,9 @@ coinP = coinParser()
 coinP.feed(r)
 
 badgeManager.setStatus('Coin',coinP.CoinCount)
+print "Coins " + str(coinP.CoinCount)
 badgeManager.setStatus('Travelbug',coinP.TBCount)
-
+print "Travelbugs " + str(coinP.TBCount)
 
 
 #### OUTPUT ##########
@@ -214,3 +217,8 @@ text += '\n</center>'
 c.saveTemp(text)
 
 
+
+for d in dif:
+   for t in ter:
+      print"%3d"%(pers.Matrix[d][t]),
+   print "\n"

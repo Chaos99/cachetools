@@ -1,5 +1,7 @@
 from xml.parsers import expat
 from datetime import datetime
+from collections import defaultdict
+
 class pers():
    count = 0   
    logcount = 0
@@ -17,7 +19,8 @@ class pers():
    dateCount = {}
    HCCCount = 0
    FTFcount = 0
-   
+   LostnFoundCount = 0
+   Matrix = defaultdict(lambda: defaultdict(lambda: 0))
    
 
 class gpxParser():
@@ -97,6 +100,7 @@ class gpxParser():
          self.currentDifficult = float(data)
       elif pers.stack[-1]=='groundspeak:terrain':
          self.currentTerrain = float(data)
+         pers.Matrix[self.currentDifficult][self.currentTerrain] +=1
          if self.currentTerrain == 5 and self.currentDifficult == 5:
             pers.HCCCount = pers.HCCCount + 1
       elif pers.stack[-1]=='groundspeak:date':    
@@ -104,6 +108,8 @@ class gpxParser():
             self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
          except:
             self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
+      elif pers.stack[-1]=="desc" and "10 Years!" in data:
+         pers.LostnFoundCount +=1
    
    def countWords(self, _text):
       strippedText = ""
