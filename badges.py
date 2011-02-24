@@ -6,12 +6,12 @@ class badgeManager():
    isMultiple=True
    
    @classmethod
-   def populate(cls, names, descs, icons, paths, levels):
+   def populate(cls, h): 
       if cls.user != '':
          badge.setUser(cls.user,cls.isMultiple)
       else:
          print 'must set user before populating badge list'
-      for (n,d,i,p,l) in zip(names,descs,icons,paths,levels):
+      for (n,d,i,p,l) in zip(h.names,h.descs,h.icons,h.paths,h.limits):
          #print n + ' ' + d
          #print p + '/' + i
          #print l
@@ -22,15 +22,16 @@ class badgeManager():
    
    @classmethod
    def setStatus(cls, name, value):
-      for a in cls.badges:
-         if name.lower() in a.name.lower():
-            a.setStatus(value)
-            return a.getHTML()
-         #no match in names? try in descriptions      
-         elif name.lower() in a.desc.lower():
-            a.setStatus(value)
-            return a.getHTML()
-      print 'Sorry, no matsch for badge name "' + name + '"'
+      try:
+         a = cls.getBadge(name)
+      except:
+         print "Couldnt set Value to %d."%(value)
+         raise
+      
+      a.setStatus(value)
+      return a.getHTML()
+
+      
    
    @classmethod
    def getHTML(cls, name='ALL'):
@@ -47,13 +48,22 @@ class badgeManager():
    
    @classmethod
    def getBadge(cls, name):
+      #horrible hack to solve event issue
+      if name == 'event': name='social' 
+      candidates = []
       for a in cls.badges:
-         if name in a.name:
-            return a
+         if name.lower() in a.name.lower():
+            candidates.append(a)
          #no match in names? try in descriptions      
-         elif name in a.desc:
-            return a
-      print 'Sorry, no matsch for badge name "' + name + '"'
+         elif name.lower() in a.desc.lower():
+            candidates.append(a)
+      if len(candidates) == 1:
+         return candidates[0]
+      elif len(candidates) > 1:
+         return reduce(lambda x,y: x if len(x.name) < len(y.name) else y, candidates)
+      else: 
+         print "Sorry, no match for badge name %s"%name
+         raise NameError('BadgeName')
 
 
 class badge():

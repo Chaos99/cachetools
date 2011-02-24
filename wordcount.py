@@ -49,7 +49,7 @@ f = open(sys.argv[1],'r')
 p.feed(f.read(), 1)
 f.close()
 
-
+##### BADGE DEFINITION #####
 
 try:
    f = open(badgeHTMLname,'r')
@@ -60,34 +60,57 @@ h.feed(f.read())
 h.close()
 f.close()
 
-print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
-avgWordCount = pers.wordcount / pers.ownfoundlogcount if pers.ownfoundlogcount > 0 else 0
-   
-print "Average  word count: " + str(avgWordCount)
-
 # create badges
-
+print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
 badgeManager.setCredentials(pers.username, True)
-badgeManager.populate(h.names,h.descs,h.icons,h.paths,h.limits)
+badgeManager.populate(h) #creates the standard badges from the website content
+
+##### LOGS ####
+
+avgWordCount = pers.wordcount / pers.ownfoundlogcount if pers.ownfoundlogcount > 0 else 0
+print "Average  word count: " + str(avgWordCount)
 badgeManager.setStatus('Author', avgWordCount)
+
+#### OVERALL COUNT #####
+
 badgeManager.setStatus('Geocacher', pers.ownfoundlogcount)
-#badgeManager.getHTML('Author')
-for k,v in zip(pers.typeCount.keys(), pers.typeCount.values()):
-   if not 'Event' in k:
-      badgeManager.setStatus(k[:5],v)
-   # Event is ambigous, need special attentions
+
+
+##### TYPES #####
+
+types = ['Traditional Cache', 'Multi-cache', 'Unknown Cache', 'Letterbox Hybrid', 'Earthcache', 'Wherigo Cache', 'CITO Event Cache','Event Cache','Virtual Cache','Mega Social Event Cache','Benchmark','Waymark','Webcam Cache','Project Ape Cache']
+
+for t in types:
+   if t in pers.typeCount.keys():
+      print t      
+      key = filter(lambda x: t[:5].lower() in x.lower(), pers.typeCount.keys())
+      if len(key) == 1:
+         try:
+            badgeManager.setStatus(t[:5].lower(),pers.typeCount[key[0]])
+         except NameError('BadgeName'):
+            print "No Match for Cachetype %s found. Nothing was set."%t
+            pass
+      else:
+         print "Ambiquious type name '"+t+"', found "+str(key)+" aborting..."
+         pass  
    else:
-      if 'Mega' in k:
-         badgeManager.setStatus('Mega',v)
-      else: #the tricky part: the normal event without the mega
-         for b in badgeManager.badges:
-            if 'event' in b.desc.lower() and not 'mega' in b.desc.lower() and not 'CITO' in b.desc.lower():
-               b.setStatus(v)
-               break
-         
-for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):   
-   badgeManager.setStatus(k[:5],v)
+      try:
+         badgeManager.setStatus(t[:5].lower(),0)
+      except NameError('BadgeName'):
+            print "No Match for Cachetype %s found. Nothing was set."%t
+            pass
+
+##### CONTAINERS #####3
+
+for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):
+   try:
+      badgeManager.setStatus(k[:5],v)
+   except NameError:
+            print "No Match for Cachesize %s found. Nothing was set."%k
+            pass
    
+
+###### OTHERS #####
 
 badgeManager.setStatus('Lost',pers.tenCount)
 badgeManager.setStatus('Adventur',pers.HCCCount)
@@ -100,6 +123,7 @@ badgeManager.setStatus('Benchmark',0)
 badgeManager.setStatus('Waymark',0)
 badgeManager.setStatus('Photo',0)
 badgeManager.setStatus('Ape',0)
+
 badgeManager.setStatus('Travelling',7)
 #badgeManager.setStatus('Travelling',2)
 badgeManager.setStatus('Owner', 9)
@@ -121,15 +145,14 @@ badgeManager.setStatus('Matrix',55)
 #badgeManager.setStatus('Matrix',18)
 #badgeManager.setStatus('State',10)
 
+##### COUNTRIES #######
+
 s = badgeManager.getBadge('State')
 germ = copy.deepcopy(s)
-germ.name = 'LŠnderaward Deutschland'
+germ.name = 'Lï¿½nderaward Deutschland'
 
 
-
-
-
-
+#### COINS ##########
 
 # debug version of caching
 # force new downlad by deleting cached file
@@ -153,6 +176,10 @@ coinP.feed(r)
 
 badgeManager.setStatus('Coin',coinP.CoinCount)
 badgeManager.setStatus('Travelbug',coinP.TBCount)
+
+
+
+#### OUTPUT ##########
 
 badgesEarned = badgeManager.getHTML('ALL')
 
