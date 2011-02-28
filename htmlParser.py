@@ -25,8 +25,11 @@ class htmlParser(HTMLParser):
       self.stack.append(name)
       if self.iconSig == self.stack[:-1] and name == 'img' and len(self.icons)+1 == len(self.names):
          src = attrs[2][1]
-         path,x,icon = src.rpartition('/')         
-         self.icons.append(icon[:-5])
+         path,x,icon = src.rpartition('/')
+         if '.png' in icon or '.jpg' in icon:
+            self.icons.append(icon[:-5])
+         else:
+            self.icons.append(icon)
          self.paths.append(path+'/')
          #print path
          #print icon[:-5]        

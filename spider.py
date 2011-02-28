@@ -48,7 +48,7 @@ class ConnectionManager():
          print "Error retrieving %s"%request.get_full_url()
       pageC = page.read()
       page.close()
-      return pageC
+      return pageC      
 
    def logon(self):
       """Logs the user in to Geocaching.com."""
@@ -89,7 +89,11 @@ class ConnectionManager():
       #self.viewstate = m.group(1)
       self.saveTemp(pageC,"result.html")
       return (pageC)
-
+   
+   def getCountryList(self):
+      page = self.urlopen('http://kylemills.net/Geocaching/BadgeGen/badgescripts/statelist.txt')
+      return page
+   
    def saveTemp(self, pagetext, filename='temp.html'):
       tempfile = open(filename,'w')
       tempfile.write(pagetext)

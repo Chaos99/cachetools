@@ -21,6 +21,7 @@ class pers():
    FTFcount = 0
    LostnFoundCount = 0
    Matrix = defaultdict(lambda: defaultdict(lambda: 0))
+   countryList = []
    
 
 class gpxParser():
@@ -110,6 +111,8 @@ class gpxParser():
             self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
       elif pers.stack[-1]=="desc" and "10 Years!" in data:
          pers.LostnFoundCount +=1
+      elif pers.stack[-1] == "groundspeak:country" and data not in pers.countryList:
+         pers.countryList.append(data.strip())
    
    def countWords(self, _text):
       strippedText = ""

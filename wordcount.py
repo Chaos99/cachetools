@@ -77,7 +77,7 @@ badgeManager.setStatus('Geocacher', pers.ownfoundlogcount)
 print "Geocaches " + str(pers.ownfoundlogcount)
 
 ##### TYPES #####
-
+print '\n'
 types = ['Traditional Cache', 'Multi-cache', 'Unknown Cache', 'Letterbox Hybrid', 'Earthcache', 'Wherigo Cache', 'CITO Event Cache','Event Cache','Virtual Cache','Mega Social Event Cache','Benchmark','Waymark','Webcam Cache','Project Ape Cache']
 
 for t in types:
@@ -100,9 +100,11 @@ for t in types:
       except NameError('BadgeName'):
             print "No Match for Cachetype %s found. Nothing was set."%t
             pass
-
+      
+badgeManager.setStatus('Lost',pers.LostnFoundCount)
+print '10 Years! Cache ' + str(pers.LostnFoundCount)
 ##### CONTAINERS #####3
-
+print '\n',
 for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):
    try:
       badgeManager.setStatus(k[:5],v)
@@ -112,21 +114,27 @@ for k,v in zip(pers.containerCount.keys(), pers.containerCount.values()):
             pass
    
 
+######### D/T Matrix #############
+print '\n\t',
+dif = ter = [1,1.5,2,2.5,3,3.5,4,4.5,5]
+mcount = 0;
+for d in dif:
+   for t in ter:
+      r = pers.Matrix[d][t]
+      print"%3d"%(r),
+      if r > 0: mcount += 1 
+   print "\n\n\t",
+print "Found %d of 81 D/T combinations"%mcount
+
+badgeManager.setStatus('Matrix',mcount)
+
 ###### OTHERS #####
-
-#badgeManager.setStatus('Lost',pers.tenCount)
+print '\n',
 badgeManager.setStatus('Adventur',pers.HCCCount)
+print 'HCC Caches ' + str(pers.HCCCount)
 badgeManager.setStatus('FTF',pers.FTFcount)
- 
-badgeManager.setStatus('Virtual',0)
-badgeManager.setStatus('Mega Social',0)
-badgeManager.setStatus('Environmental',0)
-badgeManager.setStatus('Benchmark',0)
-badgeManager.setStatus('Waymark',0)
-badgeManager.setStatus('Photo',0)
-badgeManager.setStatus('Ape',0)
+print 'FTF Caches ' + str(pers.FTFcount)
 
-badgeManager.setStatus('Travelling',7)
 #badgeManager.setStatus('Travelling',2)
 badgeManager.setStatus('Owner', 9)
 #badgeManager.setStatus('Owner', 1)
@@ -143,19 +151,33 @@ badgeManager.setStatus('Scuba',0)
 badgeManager.setStatus('Host',0)
 badgeManager.setStatus('Distance',18418)
 #badgeManager.setStatus('Distance',2071)
-badgeManager.setStatus('Matrix',55)
+
 #badgeManager.setStatus('Matrix',18)
 #badgeManager.setStatus('State',10)
 
 ##### COUNTRIES #######
+print '\n',
+badgeManager.setStatus('Travelling',len(pers.countryList))
+print 'Countries traveled ' + str(len(pers.countryList))
 
-s = badgeManager.getBadge('State')
-germ = copy.deepcopy(s)
-germ.name = 'L�nderaward Deutschland'
+try:
+   f = open("statelist.txt",'r')
+   r = f.read()
+   f.close()
+except:
+   r = c.getCountryList()
+   f = open("statelist.txt",'w')
+   f.write(r)
+   f.close()
 
+badgeManager.setCountryList(r)
+
+for country in pers.countryList:   
+   cBadge = countryBadge(_name=country)   
+   badgeManager.addBadge(cBadge)
 
 #### COINS ##########
-
+print '\n',
 # debug version of caching
 # force new downlad by deleting cached file
 try:
@@ -218,7 +240,4 @@ c.saveTemp(text)
 
 
 
-for d in dif:
-   for t in ter:
-      print"%3d"%(pers.Matrix[d][t]),
-   print "\n"
+
