@@ -20,8 +20,8 @@ class pers():
    HCCCount = 0
    FTFcount = 0
    LostnFoundCount = 0
-   Matrix = defaultdict(lambda: defaultdict(lambda: 0))
-   countryList = []
+   Matrix = defaultdict(lambda: defaultdict(lambda: 0))   
+   countryList = defaultdict(lambda: 0)
    
 
 class gpxParser():
@@ -112,7 +112,7 @@ class gpxParser():
       elif pers.stack[-1]=="desc" and "10 Years!" in data:
          pers.LostnFoundCount +=1
       elif pers.stack[-1] == "groundspeak:country" and data not in pers.countryList:
-         pers.countryList.append(data.strip())
+         pers.countryList[data] += 1
    
    def countWords(self, _text):
       strippedText = ""

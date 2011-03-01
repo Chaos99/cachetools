@@ -5,6 +5,7 @@ class badgeManager():
    user = ""
    isMultiple=True
    stateBadgeTemplate = None
+   countryList = {}
    
    @classmethod
    def populate(cls, h): 
@@ -34,12 +35,9 @@ class badgeManager():
          a = cls.getBadge(name)
       except:
          #print "Couldnt set Value to %d."%(value)
-         raise
-      
+         raise      
       a.setStatus(value)
       return a.getHTML()
-
-      
    
    @classmethod
    def getHTML(cls, name='ALL'):
@@ -73,6 +71,12 @@ class badgeManager():
          #print "Sorry, no match for badge name %s"%name
          raise NameError('BadgeName')
 
+   @classmethod
+   def setCountryList(cls, clist):
+      cdict = {}
+      for line in clist.split('\n'):
+         cdict[line.partition(',')[0].strip()] = int(line.partition(',')[2].strip())
+      cls.countryList = cdict
 
 class badge():
    
@@ -147,15 +151,18 @@ class badge():
 
 class stateBadge(badge):
    
-   def __init__(self, country, _iconPath):
+   def __init__(self, country, _iconPath=None):
       self.name  = 'State award %s'%country
       self.desc = 'award for finding caches in a percentage of states in %s'%country
       self.verbs = 'has visited'
       self.verbm = 'have visited' 
-      self.iconPath = _iconPath
+      if _iconPath == None:
+         self.iconPath = badgeManager.stateBadgeTemplate.path + badgeManager.stateBadgeTemplate.icon
+      else:
+         self.iconPath = _iconPath
       self.goals = []
       self.num=None
-      
+      self.setLevels([n*badgeManager.countryList[country]/8 for n in range(1,9)])
     
    def getHTML(self):
       if self.num==None:

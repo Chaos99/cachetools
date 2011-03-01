@@ -171,9 +171,8 @@ except:
    f.close()
 
 badgeManager.setCountryList(r)
-
-for country in pers.countryList:   
-   cBadge = countryBadge(_name=country)   
+for country in pers.countryList.keys():   
+   cBadge = stateBadge(country)   
    badgeManager.addBadge(cBadge)
 
 #### COINS ##########
@@ -185,6 +184,7 @@ try:
    r = f.read()
    f.close()
 except:
+   print 'No Coin list cached, retrieving new data ...'
    r = c.getMyCoinList()
    f = open("profile.html",'w')
    f.write(r)
