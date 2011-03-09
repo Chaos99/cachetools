@@ -1,6 +1,7 @@
 from xml.parsers import expat
 from datetime import datetime
 from collections import defaultdict
+from geoTools import geoTools
 
 class pers():
    count = 0   
@@ -22,6 +23,8 @@ class pers():
    LostnFoundCount = 0
    Matrix = defaultdict(lambda: defaultdict(lambda: 0))   
    countryList = defaultdict(lambda: 0)
+   stateList = defaultdict(lambda: defaultdict(lambda: 0))
+   allFound = []
    
 
 class gpxParser():
@@ -45,6 +48,7 @@ class gpxParser():
       pers.stack.append(name)
       if name == 'wpt':      
          pers.count  = pers.count + 1
+         self.currentCoords= (attrs['lat'],attrs['lon'])
       if name == 'groundspeak:log':
          self.haslog = True
          pers.logcount = pers.logcount + 1
@@ -80,6 +84,7 @@ class gpxParser():
          if self.isown and self.isfound:
             self.countWords(data)
             self.hasownfoundlog = True
+            pers.allFound.append(self.currentCache)
             if 'FTF' in data:
                pers.FTFcount = pers.FTFcount + 1 
       elif 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:finder':       
@@ -111,8 +116,15 @@ class gpxParser():
             self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
       elif pers.stack[-1]=="desc" and "10 Years!" in data:
          pers.LostnFoundCount +=1
-      elif pers.stack[-1] == "groundspeak:country" and data not in pers.countryList:
-         pers.countryList[data] += 1
+      elif pers.stack[-1] == "groundspeak:country": #and data not in pers.countryList:
+         pers.countryList[data.strip()] += 1
+         self.currentCountry = data.strip()
+      elif pers.stack[-1] == "groundspeak:state":
+         if data.strip() == "":
+            data = geoTools.getState(self.currentCoords)         
+         if data.strip() != "":
+            pers.stateList[self.currentCountry][data.strip()] += 1
+         
    
    def countWords(self, _text):
       strippedText = ""

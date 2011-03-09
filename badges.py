@@ -157,13 +157,14 @@ class stateBadge(badge):
       self.verbs = 'has visited'
       self.verbm = 'have visited' 
       if _iconPath == None:
-         self.iconPath = badgeManager.stateBadgeTemplate.path + badgeManager.stateBadgeTemplate.icon
+         self.iconPath = badgeManager.stateBadgeTemplate.path + badgeManager.stateBadgeTemplate.icon[:-1]
+         self.iconPath = self.iconPath.replace('Canada',country)
       else:
          self.iconPath = _iconPath
       self.goals = []
       self.num=None
       self.setLevels([n*badgeManager.countryList[country]/8 for n in range(1,9)])
-    
+          
    def getHTML(self):
       if self.num==None:
          print 'No Value set for ' + self.name
@@ -171,9 +172,9 @@ class stateBadge(badge):
       verb = self.verbm if self.userIsMult else self.verbs
       if self.level == 'D':
          alt = "%s, %s | %s %s %d, %s reached the highest level"%(self.name, self.desc, escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'have' if self.userIsMult else 'has')
-         return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+         return '<img src="%s%s" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.iconPath, self.level, alt, alt)
       if self.level != None:
          alt = "%s, %s | %s %s %d, %s %d (+%d) for next level"%(self.name, self.desc,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'need' if self.userIsMult else 'needs', self.goal, self.goal-self.num)
-         return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+         return '<img src="%s%s" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.iconPath, self.level, alt, alt)
       else:
          return '<! No %s generated. %s %s only %d. %s %d (+%d) for level 1.>\n'%(self.name,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'Need' if self.userIsMult else 'Needs', self.goals[0], self.goals[0]-self.num)

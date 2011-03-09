@@ -172,8 +172,11 @@ except:
 
 badgeManager.setCountryList(r)
 for country in pers.countryList.keys():   
-   cBadge = stateBadge(country)   
+   cBadge = stateBadge(country)
+   cBadge.setStatus(len(pers.stateList[country])) 
    badgeManager.addBadge(cBadge)
+   
+   print 'Visited ' + str(len(pers.stateList[country])) + ' state(s) in ' + country
 
 #### COINS ##########
 print '\n',
@@ -209,28 +212,28 @@ print "Travelbugs " + str(coinP.TBCount)
 badgesEarned = badgeManager.getHTML('ALL')
 
 text='<center>\n'
-for t in [b for b in badgesEarned if 'D.png' in b]:
+for t in [b for b in badgesEarned if 'D.png' in b or "level=D" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'E.png' in b]:
+for t in [b for b in badgesEarned if 'E.png' in b or "level=E" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'Sa.png' in b]:
+for t in [b for b in badgesEarned if 'Sa.png' in b or "level=Sa" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'R.png' in b]:
+for t in [b for b in badgesEarned if 'R.png' in b or "level=R" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'P.png' in b]:
+for t in [b for b in badgesEarned if 'P.png' in b or "level=P" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'G.png' in b]:
+for t in [b for b in badgesEarned if 'G.png' in b or "level=G" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'S.png' in b]:
+for t in [b for b in badgesEarned if 'S.png' in b or "level=S" in b]:
    text += t
 text += '\n<br/>\n'
-for t in [b for b in badgesEarned if 'B.png' in b]:
+for t in [b for b in badgesEarned if 'B.png' in b or "level=B" in b]:
    text += t
 text += '\n<br/>\n'
 for t in [b for b in badgesEarned if 'generated' in b]:
