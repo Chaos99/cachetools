@@ -11,7 +11,9 @@ import copy
 from badges import *
 from htmlParser import *
 from gpxParser import *
+from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
+
 
 if not len(sys.argv) == 2:
    print "Usage: python [-i] <gpx-file> "
@@ -41,6 +43,8 @@ badgeHTMLname = confParser.get('DEFAULT', 'badgeHTMLfile')
 
 spider.ConnectionManager.setProxy(confParser.get('DEFAULT', 'proxy'))
 c = spider.ConnectionManager(pers.username, pers.password)
+# set the connection manager to be used for geoTools
+geoTools.net = c
 
 p = gpxParser(pers)
 h = htmlParser()
@@ -138,9 +142,7 @@ print 'FTF Caches ' + str(pers.FTFcount)
 #badgeManager.setStatus('Travelling',2)
 badgeManager.setStatus('Owner', 9)
 #badgeManager.setStatus('Owner', 1)
-badgeManager.setStatus('Clouds',1715)
-#badgeManager.setStatus('Clouds',1050)
-badgeManager.setStatus('Gound',-4)
+
 badgeManager.setStatus('Busy',22)
 #badgeManager.setStatus('Busy',10)
 badgeManager.setStatus('Daily',93)
@@ -177,6 +179,11 @@ for country in pers.countryList.keys():
    badgeManager.addBadge(cBadge)
    
    print 'Visited ' + str(len(pers.stateList[country])) + ' state(s) in ' + country
+
+##### Geographie #######
+
+badgeManager.setStatus('Clouds', pers.hMax)
+badgeManager.setStatus('Gound', pers.hMin)
 
 #### COINS ##########
 print '\n',

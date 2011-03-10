@@ -100,6 +100,7 @@ class ConnectionManager():
       tempfile.close()
 
 
+
 class GeoInfo():
    
    net = None

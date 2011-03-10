@@ -48,7 +48,8 @@ class gpxParser():
       pers.stack.append(name)
       if name == 'wpt':      
          pers.count  = pers.count + 1
-         self.currentCoords= (attrs['lat'],attrs['lon'])
+         self.currentCoords= (float(attrs['lat']),float(attrs['lon']))
+         self.getHeight(self.currentCoords)
       if name == 'groundspeak:log':
          self.haslog = True
          pers.logcount = pers.logcount + 1
@@ -120,10 +121,11 @@ class gpxParser():
          pers.countryList[data.strip()] += 1
          self.currentCountry = data.strip()
       elif pers.stack[-1] == "groundspeak:state":
-         if data.strip() == "":
-            data = geoTools.getState(self.currentCoords)         
          if data.strip() != "":
             pers.stateList[self.currentCountry][data.strip()] += 1
+         else: 
+            data = geoTools.getState(self.currentCoords)         
+         
          
    
    def countWords(self, _text):
@@ -160,4 +162,13 @@ class gpxParser():
          pers.dateCount[date.year][date.month][date.day] = 1
       else:
          pers.dateCount[date.year][date.month][date.day] += 1
-      
+         
+   def getHeight(self, coords):
+      h = geoTools.getHeight(coords)
+      try:
+         pers.hMax = h if h > pers.hMax else pers.hMax
+         pers.hMin = h if h < pers.hMin else pers.hMin
+      except:
+         # doing thin in except instead of if/else cause this only happens once
+         pers.hMax = h
+         pers.hMin = h
