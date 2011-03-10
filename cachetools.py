@@ -179,11 +179,14 @@ for country in pers.countryList.keys():
    badgeManager.addBadge(cBadge)
    
    print 'Visited ' + str(len(pers.stateList[country])) + ' state(s) in ' + country
+   print "\t" + str(pers.stateList[country].keys())
 
-##### Geographie #######
-
+##### GEOGRAPHY #######
+print '\n',
 badgeManager.setStatus('Clouds', pers.hMax)
+print "Found cache above " + str(pers.hMax) + "m N.N."
 badgeManager.setStatus('Gound', pers.hMin)
+print "Found cache below " + str(pers.hMin) + "m N.N."
 
 #### COINS ##########
 print '\n',
