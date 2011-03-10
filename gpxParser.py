@@ -2,6 +2,7 @@ from xml.parsers import expat
 from datetime import datetime
 from collections import defaultdict
 from geoTools import geoTools
+from ConfigParser import SafeConfigParser as ConfigParser
 
 class pers():
    count = 0   
@@ -25,6 +26,7 @@ class pers():
    countryList = defaultdict(lambda: 0)
    stateList = defaultdict(lambda: defaultdict(lambda: 0))
    allFound = []
+   #completeCache= defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
    
 
 class gpxParser():
@@ -40,6 +42,22 @@ class gpxParser():
       self.haslog = False
       self.hasownlog = False
       self.hasownfoundlog = False
+      self.currentName = None
+      self.cache = ConfigParser()
+      try:
+         self.cache.read('cache.dat')
+         if not (self.cache.has_section('HEIGHT') and self.cache.has_section('STATE')):
+            raise Exception()
+                      
+      except:      
+         self.cache.add_section('HEIGHT')
+         self.cache.add_section('STATE')
+         with open('cache.dat', 'wb') as cachefile:
+            self.cache.write(cachefile)
+         print "No cache file found. A new one was generated."
+         self.cache.read('cache.dat')
+      #self.currentTime = None
+      #self.start = False
 
    def feed(self, _file, n):
       return self._parser.Parse(_file,n)
@@ -47,12 +65,15 @@ class gpxParser():
    def start(self, name, attrs):
       pers.stack.append(name)
       if name == 'wpt':      
+         #self.start = True
          pers.count  = pers.count + 1
          self.currentCoords= (float(attrs['lat']),float(attrs['lon']))
-         self.getHeight(self.currentCoords)
-      if name == 'groundspeak:log':
+      elif name == 'groundspeak:log':
          self.haslog = True
          pers.logcount = pers.logcount + 1
+      #elif self.start and len(attrs) > 0 and name != 'time':
+      #   for a in attrs:
+      #      pers.completeCache[self.currentName][name][a] = attrs[a]
 
 
    def end(self, name):
@@ -61,7 +82,7 @@ class gpxParser():
       if name == 'groundspeak:log':
          self.isown = False
          self.isfound = False
-      if name == 'wpt':
+      elif name == 'wpt':
          if not self.haslog:
             print "Cache without log: " + str(self.currentCache)
          if not self.hasownlog:
@@ -73,10 +94,33 @@ class gpxParser():
          self.haslog = False
          self.hasownlog = False
          self.hasownfoundlog = False
+      elif name == 'gpx':
+         with open('cache.dat', 'wb') as cachefile:
+            self.cache.write(cachefile)
 
 
    def data(self, data):
-      if 'groundspeak:log' not in pers.stack and pers.stack[-1]=='groundspeak:type':
+      #if self.start and pers.stack[-1] not in ('time','wpt','name','groundspeak:type'):
+      #   pers.completeCache[self.currentName][pers.stack[-1]]['data'] = data
+      #elif self.start and pers.stack[-1] == 'groundspeak:type':
+      #   if 'groundspeak:log' in pers.stack:
+      #      pers.completeCache[self.currentName]['groundspeak:logtype']['data'] = data
+      #   else:
+      #      pers.completeCache[self.currentName][pers.stack[-1]]['data'] = data
+         
+      if pers.stack[-1] == 'name' and 'wpt' in pers.stack:
+         self.currentName = data
+         #pers.completeCache[self.currentName][self.currentName]['data'] = self.currentName
+         #pers.completeCache[self.currentName]['time']['data'] = self.currentTime
+         #pers.completeCache[self.currentName]['wpt']['lat'] = self.currentCoords[0]
+         #pers.completeCache[self.currentName]['wpt']['lon'] = self.currentCoords[0]
+         #pers.completeCache[self.currentName]['cachetools:height']['data'] = self.currentHeight
+         self.getHeight(self.currentName, self.currentCoords)
+      #elif pers.stack[-1] == 'time':
+      #   self.currentTime = data
+      elif pers.stack[-1]=="desc" and "10 Years!" in data:
+         pers.LostnFoundCount +=1
+      elif 'groundspeak:log' not in pers.stack and pers.stack[-1]=='groundspeak:type':
          self.countType(data.strip())
       elif 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:type':       
          if data == 'Found it' or data == 'Attended':
@@ -114,18 +158,15 @@ class gpxParser():
          try:     
             self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
          except:
-            self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
-      elif pers.stack[-1]=="desc" and "10 Years!" in data:
-         pers.LostnFoundCount +=1
+            self.lastDate = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')      
       elif pers.stack[-1] == "groundspeak:country": #and data not in pers.countryList:
          pers.countryList[data.strip()] += 1
          self.currentCountry = data.strip()
       elif pers.stack[-1] == "groundspeak:state":
-         if data.strip() != "":
-            pers.stateList[self.currentCountry][data.strip()] += 1
-         else: 
-            data = geoTools.getState(self.currentCoords)         
-         
+         if data.strip() == "":
+            data = self.getState(self.currentName, self.currentCoords)
+            #pers.completeCache[self.currentName]["groundspeak:state"]['data'] = data.strip()
+         pers.stateList[self.currentCountry][data.strip()] += 1
          
    
    def countWords(self, _text):
@@ -163,8 +204,13 @@ class gpxParser():
       else:
          pers.dateCount[date.year][date.month][date.day] += 1
          
-   def getHeight(self, coords):
-      h = geoTools.getHeight(coords)
+   def getHeight(self, name, coords):
+      if self.cache.has_option('HEIGHT', name):
+         h = self.cache.getfloat('HEIGHT', name)
+      else:
+         h = geoTools.getHeight(coords)
+         self.cache.set('HEIGHT',name,str(h))
+      
       try:
          pers.hMax = h if h > pers.hMax else pers.hMax
          pers.hMin = h if h < pers.hMin else pers.hMin
@@ -172,3 +218,11 @@ class gpxParser():
          # doing thin in except instead of if/else cause this only happens once
          pers.hMax = h
          pers.hMin = h
+
+   def getState(self, name, coords):
+      if self.cache.has_option('STATE', name):
+         s = self.cache.get('STATE', name)
+      else:
+         s = geoTools.getState(coords)
+         self.cache.set('STATE',name,s)
+      return s
