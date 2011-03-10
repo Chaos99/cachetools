@@ -1,5 +1,6 @@
 import math
 import urllib2
+import json
 
 class geoTools():
    
@@ -7,16 +8,30 @@ class geoTools():
    
    @classmethod
    def getState(cls, (lat,lon)):      
-      text = urllib2.urlopen("http://ojw.dev.openstreetmap.org/WhatCountry/?lat=%f&lon=%f"%(lat,lon)).read()
-      data = text.strip().split('\n')
-      data = [a for a in data if a != '']
-      if len(data) == 0:
-         ret = ""
-      elif data[0] == 'United Kingdom':
-         ret = data[2]
-      elif len(data) > 1:
-         ret = data[1]
-      else:
+      #text = urllib2.urlopen("http://ojw.dev.openstreetmap.org/WhatCountry/?lat=%f&lon=%f"%(lat,lon)).read()
+      try:
+         text = urllib2.urlopen("http://open.mapquestapi.com/nominatim/v1/reverse?format=json&lat=%f&lon=%f"%(lat,lon)).read()
+         data = json.loads(text)
+         if data['address']['country'] == 'United Kingdom':
+            state = data['address']['state_district']
+         elif data['address']['country'] == u'\xd6sterreich':
+            state = data['address']['state']
+         elif data['address']['country'] == 'Danmark':
+            state = data['address']['country']
+         else:
+            print data['address']
+            state = data['address']['country']
+      #data = text.strip().split('\n')
+      #data = [a for a in data if a != '']
+      #if len(data) == 0:
+      #   ret = ""
+      #elif data[0] == 'United Kingdom':
+      #   ret = data[2]
+      #elif len(data) > 1:
+      #   ret = data[1]
+      #else:
+         ret = state
+      except:
          print "Unusual return value: " + str(data)
          ret = ""
       print "Asked to get state for lat " + str(lat) + ", lon " + str(lon) + "; returning " + ret 
@@ -55,18 +70,31 @@ class geoTools():
       return int(urllib2.urlopen("http://ws2.geonames.org/astergdem?lat=" + str(lat) + "&lng=" + str(lon)).read() )
    
    @classmethod
+   def getHeightOSM(cls, (lat, lon)):
+      d = json.loads(urllib2.urlopen("http://open.mapquestapi.com/elevation/v1/getElevationProfile?shapeFormat=raw&latLngCollection=%f,%f"%(lat,lon)).read())
+      return float(d['elevationProfile'][0]['height'])
+   
+   @classmethod
    def getHeight(cls, coords):   
          print "Getting elevation for %s" % ( str(coords) )
          source = "default"
          d_Elevation = 0         
-         # First try Geonames 30m
          try:
-            d_Elevation = cls.getHeightGeo3(coords)
-            d_resolution = "30m"
-            source = "Geo 30m"
+            d_Elevation = cls.getHeightOSM(coords)
+            d_resolution = "?m"
+            source = "OSM via Mapquest"
          except:
             d_Elevation = 0
-            print "Geo3 failed ..."
+            print "OSM failed ..."
+         # try Geonames 30m
+         if  d_Elevation == 0:
+            try:
+               d_Elevation = cls.getHeightGeo3(coords)
+               d_resolution = "30m"
+               source = "Geo 30m"
+            except:
+               d_Elevation = 0
+               print "Geo3 failed ..."
          #  If no 30m data and try Geonames 90m resolution       
          if d_Elevation == -9999 or d_Elevation == -32768:        
             try:
