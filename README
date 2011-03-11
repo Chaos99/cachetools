@@ -9,7 +9,10 @@ Usage: python cachetools.py <gpxfile>
 	- will download list of coins and TBs from you geocaching.com account
 	- will download list of badges and ranges/conditions from kyle mills website
 	- will download list of countries for state badges from kyle mills website
-	- all downloads are cached. delte cached files for re-download.
+        - will download elevation data for all geocaches
+        - will download state district information if not provided
+
+	- all downloads are cached. delete cached files for re-download.
 	
 	- outputs temp.html with badges to be included in profile page or in other tools like GCStatistics
 
@@ -26,3 +29,4 @@ License:
 
 This software is distributed under the CC Share Alike License
 http://creativecommons.org/licenses/by-sa/3.0/
+Fork it, use it, make it better!
