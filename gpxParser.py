@@ -5,15 +5,14 @@ from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
 
 class pers():
+   '''Persistent storage of global informations (including results)'''
    count = 0   
    logcount = 0
    ownlogcount = 0
    ownfoundlogcount = 0
-   wordcount = 0   
-   
+   wordcount = 0
    username = ''
-   stack = []
-   #currentCache = ''
+   stack = []   
    words = []
    typeCount ={}
    tenCount = 0
@@ -26,8 +25,21 @@ class pers():
    countryList = defaultdict(lambda: 0)
    stateList = defaultdict(lambda: defaultdict(lambda: 0))
    allFound = []
+   home = None
+   maxDistance = [None, 0]
    #completeCache= defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
-   
+
+class GeoCache():
+   class Logs():
+      def __init__(self, lid):
+         self.lid = lid
+         self.finder = dict(uid=None, name=None)
+   def __init__(self, gid):
+      self.gid = gid
+      self.owner = {}
+      self.attributes = {}
+      self.logs = {}
+      self.travelbugs = {}
 
 class gpxParser():
    def __init__(self, _pers):
@@ -44,6 +56,8 @@ class gpxParser():
       self.hasownfoundlog = False
       self.currentName = None
       self.cache = ConfigParser()
+      self.currentCache = None
+      
       try:
          self.cache.read('cache.dat')
          if not (self.cache.has_section('HEIGHT') and self.cache.has_section('STATE')):
@@ -84,11 +98,11 @@ class gpxParser():
          self.isfound = False
       elif name == 'wpt':
          if not self.haslog:
-            print "Cache without log: " + str(self.currentCache)
+            print "Cache without log: " + str(self.currentName)
          if not self.hasownlog:
-            print "Cache without own log: " + str(self.currentCache)
+            print "Cache without own log: " + str(self.currentName)
          if not self.hasownfoundlog:
-            print "Cache without own found log: " + str(self.currentCache)
+            print "Cache without own found log: " + str(self.currentName)
          else:
             pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
          self.haslog = False
@@ -100,22 +114,32 @@ class gpxParser():
 
 
    def data(self, data):
-      #if self.start and pers.stack[-1] not in ('time','wpt','name','groundspeak:type'):
-      #   pers.completeCache[self.currentName][pers.stack[-1]]['data'] = data
-      #elif self.start and pers.stack[-1] == 'groundspeak:type':
-      #   if 'groundspeak:log' in pers.stack:
-      #      pers.completeCache[self.currentName]['groundspeak:logtype']['data'] = data
-      #   else:
-      #      pers.completeCache[self.currentName][pers.stack[-1]]['data'] = data
+      if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type') and 'groundspeak:attributes' not in pers.stack:
+         if ":" in pers.stack[-1]:
+            exec("self.currentCache.%s = data"%(str(pers.stack[-1]).partition(':')[2]))
+         else:
+            exec("self.currentCache.%s = data"%(str(pers.stack[-1])))
+      elif 'wpt' in pers.stack and pers.stack[-1] == 'time':
+         self.currentTime = data         
+      elif pers.stack[-1] == 'groundspeak:type':
+         if 'groundspeak:log' in pers.stack:
+            self.currentCache.logtype = data
+         else:
+            self.currentCache.type = data
+      
          
       if pers.stack[-1] == 'name' and 'wpt' in pers.stack:
          self.currentName = data
-         #pers.completeCache[self.currentName][self.currentName]['data'] = self.currentName
-         #pers.completeCache[self.currentName]['time']['data'] = self.currentTime
-         #pers.completeCache[self.currentName]['wpt']['lat'] = self.currentCoords[0]
-         #pers.completeCache[self.currentName]['wpt']['lon'] = self.currentCoords[0]
-         #pers.completeCache[self.currentName]['cachetools:height']['data'] = self.currentHeight
          self.getHeight(self.currentName, self.currentCoords)
+         dist = geoTools.getDistance(pers.home, self.currentCoords)
+         pers.maxDistance = (data, dist) if dist > pers.maxDistance[1] else pers.maxDistance
+         # internal model
+         self.currentCache = GeoCache(data)
+         self.currentCache.coords = self.currentCoords
+         self.currentCache.placed = self.currentTime
+         self.currentCache.height = self.currentHeight
+         
+         
       #elif pers.stack[-1] == 'time':
       #   self.currentTime = data
       elif pers.stack[-1]=="desc" and "10 Years!" in data:
@@ -129,7 +153,7 @@ class gpxParser():
          if self.isown and self.isfound:
             self.countWords(data)
             self.hasownfoundlog = True
-            pers.allFound.append(self.currentCache)
+            pers.allFound.append(self.currentName)
             if 'FTF' in data:
                pers.FTFcount = pers.FTFcount + 1 
       elif 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:finder':       
@@ -139,9 +163,7 @@ class gpxParser():
             pers.ownlogcount = pers.ownlogcount + 1
             self.countDate(self.lastDate)
          else:
-            print "Foreign Log from " + data + " found."
-      elif pers.stack[-1] == 'name':
-         self.currentCache = data
+            print "Foreign Log from " + data + " found."      
       elif pers.stack[-1]=='groundspeak:name':
          if '10 Years!' in data:
             pers.tenCount = pers.tenCount + 1
@@ -210,7 +232,7 @@ class gpxParser():
       else:
          h = geoTools.getHeight(coords)
          self.cache.set('HEIGHT',name,str(h))
-      
+      self.currentHeight = h
       try:
          pers.hMax = h if h > pers.hMax else pers.hMax
          pers.hMin = h if h < pers.hMin else pers.hMin

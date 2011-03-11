@@ -1,7 +1,7 @@
 #!python
 # -*- coding: UTF-8 -*-
 
-#env GIT_AUTHOR_DATE='Thu Feb 17 17:00:00 2011 +0200' GIT_COMMITTER_DATE='Thu Feb 17 17:00:00 2011 +2000' git commit -a -m ""
+#env GIT_AUTHOR_DATE='Thu Mar 10 17:02:00 2011 +0200' GIT_COMMITTER_DATE='Thu Mar 10 17:03:00 2011 +2000' git commit -a -m ""
 
 import sys
 import spider
@@ -38,6 +38,8 @@ try:
 except:
    print "No username and/or password given in config file"
    sys.exit()
+
+pers.home = [float(a.strip()) for a in confParser.get('DEFAULT','home').split(',')]
 
 badgeHTMLname = confParser.get('DEFAULT', 'badgeHTMLfile')
 
@@ -151,7 +153,7 @@ badgeManager.setStatus('Calendar',210)
 #badgeManager.setStatus('Calendar',34)
 badgeManager.setStatus('Scuba',0)
 badgeManager.setStatus('Host',0)
-badgeManager.setStatus('Distance',18418)
+#badgeManager.setStatus('Distance',18418)
 #badgeManager.setStatus('Distance',2071)
 
 #badgeManager.setStatus('Matrix',18)
@@ -187,6 +189,8 @@ badgeManager.setStatus('Clouds', pers.hMax)
 print "Found cache above " + str(pers.hMax) + "m N.N."
 badgeManager.setStatus('Gound', pers.hMin)
 print "Found cache below " + str(pers.hMin) + "m N.N."
+badgeManager.setStatus('Distance',pers.maxDistance[1])
+print "Found cache " + pers.maxDistance[0]+ " in " + str(pers.maxDistance[1]) + "km distance"
 
 #### COINS ##########
 print '\n',
