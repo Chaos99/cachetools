@@ -1,6 +1,6 @@
 from HTMLParser import HTMLParser
 
-class htmlParser(HTMLParser):
+class badgeParser(HTMLParser):
 
    def __init__(self):
       HTMLParser.__init__(self)
@@ -12,8 +12,8 @@ class htmlParser(HTMLParser):
       self.names=[]
       self.descs=[]
       self.icons=[]
-      self.paths=[]      
-      self.limits=[]    
+      self.paths=[]
+      self.limits=[]
    
    def handle_charref(self, name):
       print 'charref ' + name   

@@ -9,7 +9,7 @@ import re
 import copy
 
 from badges import *
-from htmlParser import *
+from badgeParser import *
 from gpxParser import *
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
@@ -49,7 +49,7 @@ c = spider.ConnectionManager(pers.username, pers.password)
 geoTools.net = c
 
 p = gpxParser(pers)
-h = htmlParser()
+h = badgeParser()
 
 f = open(sys.argv[1],'r')
 p.feed(f.read(), 1)

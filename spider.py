@@ -112,6 +112,16 @@ class ConnectionManager():
       self.saveTemp(pageC,"%s.gpx"%cid.upper())
       return (pageC)
       
+   def getSingleCache(self, cid):
+      if not self.isLoggedIn:
+         self.logon()
+      guid = "c06c0ad5-707f-4fb6-9b63-2e55ee76ac2c"
+      cacheurl = "http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"%guid
+      pageC = self.urlopen(cacheurl)
+      cid = "GC0000"
+      self.saveTemp(pageC,"%s.html"%cid.upper())
+      return pageC
+      
       
       
    def getCountryList(self):
