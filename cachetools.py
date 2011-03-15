@@ -7,6 +7,7 @@ import sys
 import spider
 import re
 import copy
+import urllib2
 
 from badges import *
 from badgeParser import *
@@ -62,10 +63,16 @@ f.close()
 
 try:
    f = open(badgeHTMLname,'r')
+   fc = f.read()
 except:
+   f.close()
    print "Badge definition HTML file could not be read from %s"%badgeHTMLname
+   fc = c.getBadgeList()
+   f = open(badgeHTMLname,'w')
+   f.write(fc)
+   f.close()
 
-h.feed(f.read())
+h.feed(fc)
 h.close()
 f.close()
 

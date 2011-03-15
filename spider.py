@@ -13,6 +13,8 @@ class ConnectionManager():
    loginurl = 'http://www.geocaching.com/login/default.aspx'
    searchurl = 'http://www.geocaching.com/seek/nearest.aspx'
    profileurl = "http://www.geocaching.com/profile/default.aspx"
+   badgeurl = "http://kylemills.net/Geocaching/BadgeGen/badges.html"
+   privateurl= "http://www.geocaching.com/my/"
    useragent = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3"
    
 
@@ -112,21 +114,30 @@ class ConnectionManager():
       self.saveTemp(pageC,"%s.gpx"%cid.upper())
       return (pageC)
       
-   def getSingleCache(self, cid):
+   def getSingleCache(self, guid):
       if not self.isLoggedIn:
          self.logon()
-      guid = "c06c0ad5-707f-4fb6-9b63-2e55ee76ac2c"
       cacheurl = "http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"%guid
-      pageC = self.urlopen(cacheurl)
-      cid = "GC0000"
-      self.saveTemp(pageC,"%s.html"%cid.upper())
+      pageC = self.urlopen(cacheurl)      
+      self.saveTemp(pageC,"Cache.html")
       return pageC
       
-      
+   def getCacheList(self):
+      if not self.isLoggedIn:
+         self.logon()
+      pageC = self.urlopen(self.privateurl)      
+      self.saveTemp(pageC)      
+      print "Private page loaded..."            
+      self.saveTemp(pageC,"result.html")
+      return (pageC) 
       
    def getCountryList(self):
       page = self.urlopen('http://kylemills.net/Geocaching/BadgeGen/badgescripts/statelist.txt')
       return page
+      
+   def getBadgeList(self):
+      f = self.urlopen(urllib2.Request(self.badgeurl))
+      return f
    
    def saveTemp(self, pagetext, filename='temp.html'):
       tempfile = open(filename,'w')

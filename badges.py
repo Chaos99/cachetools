@@ -69,7 +69,7 @@ class badgeManager():
          return reduce(lambda x,y: x if len(x.name) < len(y.name) else y, candidates)
       else: 
          #print "Sorry, no match for badge name %s"%name
-         raise NameError('BadgeName')
+         raise NameError(name)
 
    @classmethod
    def setCountryList(cls, clist):

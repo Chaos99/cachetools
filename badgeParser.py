@@ -9,6 +9,7 @@ class badgeParser(HTMLParser):
       self.nameSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'b']
       self.descSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
       self.iconSig = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td']
+      self.iconSig2 = ['html', 'body', 'table', 'tr', 'td', 'table', 'tr', 'td', 'table', 'tbody', 'tr', 'td', 'p']
       self.names=[]
       self.descs=[]
       self.icons=[]
@@ -23,8 +24,9 @@ class badgeParser(HTMLParser):
 
    def handle_starttag(self, name, attrs):
       self.stack.append(name)
-      if self.iconSig == self.stack[:-1] and name == 'img' and len(self.icons)+1 == len(self.names):
+      if ( self.iconSig == self.stack[:-1] or self.iconSig2 == self.stack[:-1] ) and name == 'img' and len(self.icons)+1 == len(self.names):
          src = attrs[2][1]
+         print src
          path,x,icon = src.rpartition('/')
          if '.png' in icon or '.jpg' in icon:
             self.icons.append(icon[:-5])
