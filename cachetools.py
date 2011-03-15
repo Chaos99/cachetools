@@ -19,7 +19,7 @@ if not len(sys.argv) == 2:
    print "Usage: python [-i] <gpx-file> "
    sys.exit()
 
-confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None})
+confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None, 'home':None})
 if not confParser.read('config.cfg'):
     print "No config file found. A new one was generated, please fill in username and password"
     f = open('config.cfg','w')
@@ -39,7 +39,10 @@ except:
    print "No username and/or password given in config file"
    sys.exit()
 
-pers.home = [float(a.strip()) for a in confParser.get('DEFAULT','home').split(',')]
+if confParser.get('DEFAULT','home'):
+    pers.home = [float(a.strip()) for a in confParser.get('DEFAULT','home').split(',')]
+else:
+    pers.home = None
 
 badgeHTMLname = confParser.get('DEFAULT', 'badgeHTMLfile')
 

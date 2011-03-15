@@ -131,8 +131,9 @@ class gpxParser():
       if pers.stack[-1] == 'name' and 'wpt' in pers.stack:
          self.currentName = data
          self.getHeight(self.currentName, self.currentCoords)
-         dist = geoTools.getDistance(pers.home, self.currentCoords)
-         pers.maxDistance = (data, dist) if dist > pers.maxDistance[1] else pers.maxDistance
+         if pers.home:
+            dist = geoTools.getDistance(pers.home, self.currentCoords)
+            pers.maxDistance = (data, dist) if dist > pers.maxDistance[1] else pers.maxDistance
          # internal model
          self.currentCache = GeoCache(data)
          self.currentCache.coords = self.currentCoords
