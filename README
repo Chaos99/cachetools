@@ -3,7 +3,7 @@ Various geocaching related python tools
 cachetools.py
 	calculates varios values from a pocket query gpx, turns them into html code for badges generated from Kyle Mills BadgeGen tool
 	
-Usage: python cachetools.py <gpxfile>
+Usage: python cachetools.py <gpxfile> [-forceTBupdate] [-checkUpdate]
 	
 	- gets settings from a config.cfg file, will generate template if not found (needs at least username and password)
 	- will download list of coins and TBs from you geocaching.com account
@@ -13,6 +13,8 @@ Usage: python cachetools.py <gpxfile>
         - will download state district information if not provided
 
 	- all downloads are cached. delete cached files for re-download.
+	- use -forceTBupdate to re-download TB and Coin info
+	- use -checkUpdate to update local .gpx file with new logs from geocaching.com (premium members only) 
 	
 	- outputs temp.html with badges to be included in profile page or in other tools like GCStatistics
 
