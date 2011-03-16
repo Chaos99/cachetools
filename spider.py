@@ -24,12 +24,16 @@ class ConnectionManager():
          cls.proxyurl=proxy
       
    def __init__(self,username,password):
-      cj = cookielib.LWPCookieJar()
+      self.cj = cookielib.LWPCookieJar("cookies.txt")
+      try:
+         self.cj.load(ignore_discard = True)
+      except:
+         print "No old Cokkies loaded, starting new session"
       if self.proxyurl:
          proxy = urllib2.ProxyHandler({'http' : self.proxyurl})      
-         opener = urllib2.build_opener(proxy, urllib2.HTTPCookieProcessor(cj), urllib2.HTTPRedirectHandler())
+         opener = urllib2.build_opener(proxy, urllib2.HTTPCookieProcessor(self.cj), urllib2.HTTPRedirectHandler())
       else:
-         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPRedirectHandler())    
+         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj), urllib2.HTTPRedirectHandler())    
       urllib2.install_opener(opener)
       self.isLoggedIn = False
       self.cachedFiles = []
@@ -46,6 +50,7 @@ class ConnectionManager():
          sleep(0.5)
       try:
          page = urllib2.urlopen(request)
+         self.cj.save(ignore_discard = True)
       except:
          print "Error retrieving %s"%request.get_full_url()
       pageC = page.read()
@@ -56,6 +61,10 @@ class ConnectionManager():
       """Logs the user in to Geocaching.com."""
       # Get the session STATE before requesting the login page
       pageC = self.urlopen(self.loginurl)
+      if "You are logged in as" in pageC:
+         print "Already logged in from previous session"
+         return
+      # Get the session STATE before requesting the login page
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
       self.viewstate = m.group(1)      
       fromvalues = (('__VIEWSTATE', self.viewstate), ('ctl00$ContentBody$myUsername', self.username), ('ctl00$ContentBody$myPassword', self.password),( 'ctl00_ContentBody_cookie', 'on'), ('ctl00$ContentBody$Button1', 'Login'))
