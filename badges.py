@@ -107,10 +107,15 @@ class badge():
       _class.path= _path
    
    def setLevels(self, _goals):
+      #print "Set levels: "+ str(_goals)
       if len(_goals) == 8:
          self.goals= [int(g) for g in _goals]         
+      elif len(_goals) == 3:
+         levels = ['B','P','D']
+         self.goals= [int(g) for g in _goals]
       else:
          print "Not a valid list of level goals" + str(_goals)
+         raise
 
    
    def setStatus(self, _num):
