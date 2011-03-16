@@ -14,12 +14,21 @@ from badgeParser import *
 from gpxParser import *
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
+from coinParser import coinParser
 
-
-if not len(sys.argv) == 2:
-   print "Usage: python [-i] <gpx-file> "
+# check command line options
+if not len(sys.argv) <= 3:
+   print "Usage: python [-i] <gpx-file> [-forceTBupdate]"
    sys.exit()
+if len(sys.argv) > 2 and sys.argv[2] == "-forceTBupdate":
+   forceTBupdate = True
+elif len(sys.argv) > 2:
+   print "option %s unknown; aborting"%(sys.argv[2])
+   sys.exit()
+else:
+   forceTBupdate = False
 
+#general configuration
 confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None, 'home':None})
 if not confParser.read('config.cfg'):
     print "No config file found. A new one was generated, please fill in username and password"
@@ -47,17 +56,35 @@ else:
 
 badgeHTMLname = confParser.get('DEFAULT', 'badgeHTMLfile')
 
+# value caching (used for coin and TB counts)
+cache = ConfigParser()
+try:
+   cache.read('cache.dat')
+   if not cache.has_section('TRAVELITEMS'):
+      raise Exception()
+except:      
+   cache.add_section('TRAVELITEMS')   
+   with open('cache.dat', 'ab') as cachefile:
+      cache.write(cachefile)
+   print "No cache file or no Travelbug section found . A new one was generated."
+   cache.read('cache.dat')
+
+# configure connection manager for web spidering
 spider.ConnectionManager.setProxy(confParser.get('DEFAULT', 'proxy'))
 c = spider.ConnectionManager(pers.username, pers.password)
 # set the connection manager to be used for geoTools
 geoTools.net = c
 
+# init the parsers
 p = gpxParser(pers)
 h = badgeParser()
 
+# read the gpx file
 f = open(sys.argv[1],'r')
 p.feed(f.read(), 1)
 f.close()
+
+
 
 ##### BADGE DEFINITION #####
 
@@ -206,29 +233,28 @@ print "Found cache " + pers.maxDistance[0]+ " in " + str(pers.maxDistance[1]) + 
 print '\n',
 # debug version of caching
 # force new downlad by deleting cached file
-try:
-   f = open("profile.html",'r')
-   r = f.read()
-   f.close()
-except:
+if cache.has_option('TRAVELITEMS', 'coins') and cache.has_option('TRAVELITEMS', 'travelbugs') and not forceTBupdate:
+         coins = int(cache.get('TRAVELITEMS', 'coins'))
+         tbs   = int(cache.get('TRAVELITEMS', 'travelbugs'))         
+else:
    print 'No Coin list cached, retrieving new data ...'
    r = c.getMyCoinList()
-   f = open("profile.html",'w')
-   f.write(r)
-   f.close()
+   r = re.compile("<script([^>]*)>.*?</script>", re.DOTALL).sub("", r)
+   r = re.compile("<span([^>]*)>.*?</span>", re.DOTALL).sub("", r)
+   coinP = coinParser()
+   coinP.feed(r)
+   coins = coinP.CoinCount
+   tbs = coinP.TBCount
+   cache.set('TRAVELITEMS', 'travelbugs', str(tbs))
+   cache.set('TRAVELITEMS', 'coins', str(coins))
+   with open('cache.dat', 'ab') as cachefile:
+      cache.write(cachefile)
+   
 
-# remove scripts and spans, cause they are malformated
-r = re.compile("<script([^>]*)>.*?</script>", re.DOTALL).sub("", r)
-r = re.compile("<span([^>]*)>.*?</span>", re.DOTALL).sub("", r)
-
-from coinParser import coinParser
-coinP = coinParser()
-coinP.feed(r)
-
-badgeManager.setStatus('Coin',coinP.CoinCount)
-print "Coins " + str(coinP.CoinCount)
-badgeManager.setStatus('Travelbug',coinP.TBCount)
-print "Travelbugs " + str(coinP.TBCount)
+badgeManager.setStatus('Coin',coins)
+print "Coins " + str(coins)
+badgeManager.setStatus('Travelbug', tbs)
+print "Travelbugs " + str(tbs)
 
 
 #### OUTPUT ##########
