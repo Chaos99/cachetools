@@ -291,6 +291,6 @@ for t in [b for b in badgesEarned if 'generated' in b]:
 text += '\n</center>'
 c.saveTemp(text)
 
-
-
+#Cleanup
+c.cj.save(ignore_discard=True)
 
