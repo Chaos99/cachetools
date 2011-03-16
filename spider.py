@@ -103,9 +103,18 @@ class ConnectionManager():
       
    
    def getSingleGPX(self, cid):
+      try:
+         pageC = open(cid.strip().upper()+".gpx",'r').read()
+         print "Read cached file for " + cid
+         return pageC
+      except:
+         pass
       if not self.isLoggedIn:
          self.logon()
-      cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?wp=%s"%cid
+      if len(cid) < 10:
+         cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?wp=%s"%cid
+      else:
+         cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?guid=%s"%cid      
       pageC = self.urlopen(cacheurl)
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
       m2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', pageC, re.S)      
@@ -113,7 +122,7 @@ class ConnectionManager():
       self.viewstate1 = m2.group(1)
       self.saveTemp(pageC, "cache.html")
       print "Cache page %s loaded..."%cid
-      fromvalues = (('__EVENTTARGET', ''), ('__EVENTARGUMENT', ''), ('__VIEWSTATEFIELDCOUNT', '2'), ('__VIEWSTATE', self.viewstate),('__VIEWSTATE1',self.viewstate1), ('ctl00$ContentBody$btnGPXDL','GPX file'))
+      fromvalues = (('__EVENTTARGET', ''), ('__EVENTARGUMENT', ''), ('__VIEWSTATEFIELDCOUNT', '2'), ('__VIEWSTATE', self.viewstate),('__VIEWSTATE1',self.viewstate1), ('ctl00$ContentBody$btnGPXDL','GPX file'))      
       headers = { 'User-Agent' : self.useragent }
       fromdata = urlencode(fromvalues)      
       request = urllib2.Request(cacheurl, fromdata, headers)      
@@ -152,3 +161,8 @@ class ConnectionManager():
       tempfile = open(filename,'w')
       tempfile.write(pagetext)
       tempfile.close()
+      
+   def combineGPX(self, first, second):
+      data = re.compile("<wpt([^>]*)>.*</wpt>", re.DOTALL).search(second)
+      return first.rstrip()[:-6] + "\n" + data.group(0) + "\n</gpx>"
+ 

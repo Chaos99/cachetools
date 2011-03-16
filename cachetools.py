@@ -85,14 +85,40 @@ h = badgeParser()
 
 # read the gpx file
 f = open(sys.argv[1],'r')
-p.feed(f.read(), 1)
+originalGPX = f.read()
 f.close()
 
 # check for update
 if checkForUpdates:
    nCP = newCacheParser() 
-   nCP.feed(c.getCacheList())
-   newFound = [a[3] for a in nCP.entries if "Found" in a[0]]
+#   nCP.feed(c.getCacheList())
+   nCP.feed(open("result.html").read())
+   found = [a.url[-36:] for a in p.allCaches]
+   update = [unicode(b[2]) for b in nCP.entries if "Found" in b[0]]
+   [b[3] for b in nCP.entries if "Found" in b[0]]
+   new = [b for b in update if b not in found]
+   #toAdd = [b for b in nCP.entries if "Found" in b[0] and b[3] not in found]
+   if new:
+      first = True
+      new.reverse()
+      for guid in new:
+         if first:
+            newGPX = c.getSingleGPX(guid)
+            first = False
+         else:
+            newGPX = c.combineGPX(newGPX, c.getSingleGPX(guid))
+   f = open(sys.argv[1],'w')
+   combinedGPX = c.combineGPX(newGPX, originalGPX)
+   print "Updating .gpc file ...",
+   f.write(combinedGPX)
+   f.close()
+   print "done"
+   originalGPX = combinedGPX
+
+
+#parse the (maybe updated) gpx file
+p.feed(originalGPX, 1)
+
 
 ##### BADGE DEFINITION #####
 

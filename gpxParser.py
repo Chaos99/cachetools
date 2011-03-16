@@ -57,6 +57,7 @@ class gpxParser():
       self.currentName = None
       self.cache = ConfigParser()
       self.currentCache = None
+      self.allCaches = []
       
       try:
          self.cache.read('cache.dat')
@@ -98,16 +99,17 @@ class gpxParser():
          self.isfound = False
       elif name == 'wpt':
          if not self.haslog:
-            print "Cache without log: " + str(self.currentName)
+            print "Cache without log: " + str(self.currentName).encode('ascii', 'ignore')
          if not self.hasownlog:
-            print "Cache without own log: " + str(self.currentName)
+            print "Cache without own log: " + str(self.currentName).encode('ascii', 'ignore')
          if not self.hasownfoundlog:
-            print "Cache without own found log: " + str(self.currentName)
+            print "Cache without own found log: " + str(self.currentName).encode('ascii', 'ignore')
          else:
             pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
          self.haslog = False
          self.hasownlog = False
          self.hasownfoundlog = False
+         self.allCaches.append(self.currentCache)
       elif name == 'gpx':
          with open('cache.dat', 'wb') as cachefile:
             self.cache.write(cachefile)
@@ -164,7 +166,8 @@ class gpxParser():
             pers.ownlogcount = pers.ownlogcount + 1
             self.countDate(self.lastDate)
          else:
-            print "Foreign Log from " + data + " found."      
+            #print "Foreign Log from " + data.encode('ascii', 'ignore') + " found."
+            pass      
       elif pers.stack[-1]=='groundspeak:name':
          if '10 Years!' in data:
             pers.tenCount = pers.tenCount + 1
