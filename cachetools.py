@@ -15,18 +15,22 @@ from gpxParser import *
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
 from coinParser import coinParser
+from newCacheParser import newCacheParser
 
 # check command line options
-if not len(sys.argv) <= 3:
-   print "Usage: python [-i] <gpx-file> [-forceTBupdate]"
+if not len(sys.argv) <= 4:
+   print "Usage: python [-i] <gpx-file> [-forceTBupdate] [-checkForUpdates]"
    sys.exit()
-if len(sys.argv) > 2 and sys.argv[2] == "-forceTBupdate":
+if len(sys.argv) > 2 and "-forceTBupdate" in sys.argv:
    forceTBupdate = True
-elif len(sys.argv) > 2:
-   print "option %s unknown; aborting"%(sys.argv[2])
-   sys.exit()
 else:
    forceTBupdate = False
+if len(sys.argv) > 2 and "-checkForUpdates" in sys.argv:
+   checkForUpdates = True
+else:
+   checkForUpdates = False
+
+
 
 #general configuration
 confParser = ConfigParser({'badgeHTMLfile':'badges.html','proxy':None, 'home':None})
@@ -84,7 +88,11 @@ f = open(sys.argv[1],'r')
 p.feed(f.read(), 1)
 f.close()
 
-
+# check for update
+if checkForUpdates:
+   nCP = newCacheParser() 
+   nCP.feed(c.getCacheList())
+   newFound = [a[3] for a in nCP.entries if "Found" in a[0]]
 
 ##### BADGE DEFINITION #####
 
