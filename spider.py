@@ -28,7 +28,7 @@ class ConnectionManager():
       try:
          self.cj.load(ignore_discard = True)
       except:
-         print "No old Cokkies loaded, starting new session"
+         print "No old Cookies loaded, starting new session"
       if self.proxyurl:
          proxy = urllib2.ProxyHandler({'http' : self.proxyurl})      
          opener = urllib2.build_opener(proxy, urllib2.HTTPCookieProcessor(self.cj), urllib2.HTTPRedirectHandler())

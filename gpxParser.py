@@ -123,6 +123,9 @@ class gpxParser():
    def conddata(self,_data):
       if not self.ignoreWPT:
          self.data(_data)
+      else:
+        print 'ignore mode'
+        return
          
    def data(self, data):
       if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type') and 'groundspeak:attributes' not in pers.stack:

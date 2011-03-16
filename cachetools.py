@@ -263,7 +263,7 @@ print "Found cache above " + str(pers.hMax) + "m N.N."
 badgeManager.setStatus('Gound', pers.hMin)
 print "Found cache below " + str(pers.hMin) + "m N.N."
 badgeManager.setStatus('Distance',pers.maxDistance[1])
-print "Found cache " + pers.maxDistance[0]+ " in " + str(pers.maxDistance[1]) + "km distance"
+print "Found cache " + str(pers.maxDistance[0])+ " in " + str(pers.maxDistance[1]) + "km distance"
 
 #### COINS ##########
 print '\n',
