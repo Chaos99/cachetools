@@ -27,7 +27,6 @@ class pers():
    allFound = []
    home = None
    maxDistance = [None, 0]
-   #completeCache= defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
 
 class GeoCache():
    class Logs():
@@ -63,8 +62,7 @@ class gpxParser():
       try:
          self.cache.read('cache.dat')
          if not (self.cache.has_section('HEIGHT') and self.cache.has_section('STATE')):
-            raise Exception()
-                      
+            raise Exception()                      
       except:      
          self.cache.add_section('HEIGHT')
          self.cache.add_section('STATE')
@@ -72,26 +70,19 @@ class gpxParser():
             self.cache.write(cachefile)
          print "No cache file found. A new one was generated."
          self.cache.read('cache.dat')
-      #self.currentTime = None
-      #self.start = False
-
+      
    def feed(self, _file, n):
       return self._parser.Parse(_file,n)
 
    def start(self, name, attrs):
       pers.stack.append(name)
-      if name == 'wpt':      
-         #self.start = True
+      if name == 'wpt':               
          pers.count  += 1
          self.currentCoords= (float(attrs['lat']),float(attrs['lon']))
       elif name == 'groundspeak:log':
          self.haslog = True
          pers.logcount = pers.logcount + 1
-      #elif self.start and len(attrs) > 0 and name != 'time':
-      #   for a in attrs:
-      #      pers.completeCache[self.currentName][name][a] = attrs[a]
-
-
+      
    def end(self, name):
       if pers.stack.pop() != name:
          print "badly formated XML"
@@ -123,8 +114,7 @@ class gpxParser():
    def conddata(self,_data):
       if not self.ignoreWPT:
          self.data(_data)
-      else:
-        print 'ignore mode'
+      else:        
         return
          
    def data(self, data):
@@ -158,9 +148,6 @@ class gpxParser():
          self.currentCache.placed = self.currentTime
          self.currentCache.height = self.currentHeight
          
-         
-      #elif pers.stack[-1] == 'time':
-      #   self.currentTime = data
       elif pers.stack[-1]=="desc"  and "10 Years!" in data:
          pers.LostnFoundCount +=1
       elif 'groundspeak:log' not in pers.stack and pers.stack[-1]=='groundspeak:type':
@@ -206,8 +193,7 @@ class gpxParser():
          self.currentCountry = data.strip()
       elif pers.stack[-1] == "groundspeak:state":
          if data.strip() == "":
-            data = self.getState(self.currentName, self.currentCoords)
-            #pers.completeCache[self.currentName]["groundspeak:state"]['data'] = data.strip()
+            data = self.getState(self.currentName, self.currentCoords)            
          pers.stateList[self.currentCountry][data.strip()] += 1
          
    
@@ -257,7 +243,7 @@ class gpxParser():
          pers.hMax = h if h > pers.hMax else pers.hMax
          pers.hMin = h if h < pers.hMin else pers.hMin
       except:
-         # doing thin in except instead of if/else cause this only happens once
+         # doing this in except instead of if/else cause this only happens once
          pers.hMax = h
          pers.hMin = h
 

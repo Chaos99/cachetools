@@ -88,6 +88,13 @@ f = open(sys.argv[1],'r')
 originalGPX = f.read()
 f.close()
 
+print "Parsing caches from gpx ...",
+if checkForUpdates:
+   p.feed(originalGPX[:-6], 0)
+else:
+   p.feed(originalGPX, 1)
+print "done"
+
 # check for update
 if checkForUpdates:
    nCP = newCacheParser() 
@@ -98,29 +105,39 @@ if checkForUpdates:
    print "Found %d Cache logs online"%len(update)
    [b[3] for b in nCP.entries if "Found" in b[0]]
    new = [b for b in update if b not in found]
-   print "Thereof %d were new"%len(new)
-   #toAdd = [b for b in nCP.entries if "Found" in b[0] and b[3] not in found]
-   if new:
-      first = True
-      new.reverse()
-      for guid in new:
-         if first:
-            newGPX = c.getSingleGPX(guid)
-            first = False
-         else:
-            newGPX = c.combineGPX(newGPX, c.getSingleGPX(guid))
-   f = open(sys.argv[1],'w')
-   combinedGPX = c.combineGPX(newGPX, originalGPX)
-   print "Updating .gpc file ...",
-   f.write(combinedGPX)
-   f.close()
-   print "done"
-   originalGPX = combinedGPX
-
-
-#parse the (maybe updated) gpx file
-p.feed(originalGPX, 1)
-
+   if len(new) < len(found):
+      print "Thereof %d were new"%len(new)
+      #toAdd = [b for b in nCP.entries if "Found" in b[0] and b[3] not in found]
+      if new:
+         first = True
+         new.reverse()
+         for guid in new:
+            if first:
+               newGPX = c.getSingleGPX(guid)
+               first = False
+            else:
+               newGPX = c.combineGPX(newGPX, c.getSingleGPX(guid))
+         print "Parsing new caches ...",      
+         p.feed(newGPX[newGPX.find('<wpt'):],1)
+         print "done"
+         f = open(sys.argv[1],'w')
+         combinedGPX = c.combineGPX(newGPX, originalGPX)   
+         print "Updating .gpx file ...",
+         f.write(combinedGPX)
+         f.close()
+         print "done"
+         #cleanup
+         for guid in new:
+            if os.path.exists(guid+".gpx"):
+               try:
+                  os.remove(guid+".gpx")
+               except:
+                  print 'Problems removing temporary file %s, aborting deletion.'%(guid+".gpx")
+      else:
+         p.feed('</gpx>',1)
+   else:
+      print "All logs are new, you haven't updated for more than 30 days.\n Please consider downloading a new GPX file.\n No new Caches were loaded."
+      p.feed('</gpx>',1)
 
 ##### BADGE DEFINITION #####
 
