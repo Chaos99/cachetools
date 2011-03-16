@@ -91,12 +91,14 @@ f.close()
 # check for update
 if checkForUpdates:
    nCP = newCacheParser() 
-#   nCP.feed(c.getCacheList())
-   nCP.feed(open("result.html").read())
+   nCP.feed(c.getCacheList())
+   #nCP.feed(open("result.html").read())
    found = [a.url[-36:] for a in p.allCaches]
    update = [unicode(b[2]) for b in nCP.entries if "Found" in b[0]]
+   print "Found %d Cache logs online"%len(update)
    [b[3] for b in nCP.entries if "Found" in b[0]]
    new = [b for b in update if b not in found]
+   print "Thereof %d were new"%len(new)
    #toAdd = [b for b in nCP.entries if "Found" in b[0] and b[3] not in found]
    if new:
       first = True

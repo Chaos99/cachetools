@@ -48,7 +48,7 @@ class gpxParser():
       self._parser.buffer_text = True
       self._parser.StartElementHandler = self.start
       self._parser.EndElementHandler = self.end
-      self._parser.CharacterDataHandler = self.data
+      self._parser.CharacterDataHandler = self.conddata
       self.isown = False
       self.isfound = False
       self.haslog = False
@@ -120,9 +120,9 @@ class gpxParser():
          with open('cache.dat', 'wb') as cachefile:
             self.cache.write(cachefile)
 
-   def conddata(self,data):
+   def conddata(self,_data):
       if not self.ignoreWPT:
-         self.data(data)
+         self.data(_data)
          
    def data(self, data):
       if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type') and 'groundspeak:attributes' not in pers.stack:
@@ -137,10 +137,9 @@ class gpxParser():
             self.currentCache.logtype = data
          else:
             self.currentCache.type = data
-      
-         
+            
       if pers.stack[-2:] == ['wpt','name']:
-         if not data.startswith("GC"):
+         if not data.strip().startswith("GC"):
             # woah, ran into a waypoint
             self.ignoreWPT = True
             pers.count  -= 1

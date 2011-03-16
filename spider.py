@@ -63,6 +63,7 @@ class ConnectionManager():
       pageC = self.urlopen(self.loginurl)
       if "You are logged in as" in pageC:
          print "Already logged in from previous session"
+         self.isLoggedIn = True
          return
       # Get the session STATE before requesting the login page
       m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
@@ -102,35 +103,35 @@ class ConnectionManager():
       return (pageC)
       
    
-   def getSingleGPX(self, cid):
-      try:
-         pageC = open(cid.strip().upper()+".gpx",'r').read()
+   def getSingleGPX(self, cid):      
+      filename = cid.strip().upper()+".gpx"
+      if os.path.exists(filename):
+         pageC = open(filename,'r').read()
          print "Read cached file for " + cid
          return pageC
-      except:
-         pass
-      if not self.isLoggedIn:
-         self.logon()
-      if len(cid) < 10:
-         cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?wp=%s"%cid
-      else:
-         cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?guid=%s"%cid      
-      pageC = self.urlopen(cacheurl)
-      m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
-      m2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', pageC, re.S)      
-      self.viewstate = m.group(1)
-      self.viewstate1 = m2.group(1)
-      self.saveTemp(pageC, "cache.html")
-      print "Cache page %s loaded..."%cid
-      fromvalues = (('__EVENTTARGET', ''), ('__EVENTARGUMENT', ''), ('__VIEWSTATEFIELDCOUNT', '2'), ('__VIEWSTATE', self.viewstate),('__VIEWSTATE1',self.viewstate1), ('ctl00$ContentBody$btnGPXDL','GPX file'))      
-      headers = { 'User-Agent' : self.useragent }
-      fromdata = urlencode(fromvalues)      
-      request = urllib2.Request(cacheurl, fromdata, headers)      
-      print "Loading GPX file for %s ..."%cid
-      pageC = self.urlopen(request)
-      print "... done!"
-      self.saveTemp(pageC,"%s.gpx"%cid.upper())
-      return (pageC)
+      else:      
+         if not self.isLoggedIn:
+            self.logon()
+         if len(cid) < 10:
+            cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?wp=%s"%cid
+         else:
+            cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?guid=%s"%cid      
+         pageC = self.urlopen(cacheurl)
+         m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
+         m2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', pageC, re.S)      
+         self.viewstate = m.group(1)
+         self.viewstate1 = m2.group(1)
+         self.saveTemp(pageC, "cache.html")
+         print "Cache page %s loaded..."%cid
+         fromvalues = (('__EVENTTARGET', ''), ('__EVENTARGUMENT', ''), ('__VIEWSTATEFIELDCOUNT', '2'), ('__VIEWSTATE', self.viewstate),('__VIEWSTATE1',self.viewstate1), ('ctl00$ContentBody$btnGPXDL','GPX file'))      
+         headers = { 'User-Agent' : self.useragent }
+         fromdata = urlencode(fromvalues)      
+         request = urllib2.Request(cacheurl, fromdata, headers)      
+         print "Loading GPX file for %s ..."%cid
+         pageC = self.urlopen(request)
+         print "... done!"
+         self.saveTemp(pageC,"%s.gpx"%cid.upper())
+         return (pageC)
       
    def getSingleCache(self, guid):
       if not self.isLoggedIn:
