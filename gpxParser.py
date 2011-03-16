@@ -58,6 +58,7 @@ class gpxParser():
       self.cache = ConfigParser()
       self.currentCache = None
       self.allCaches = []
+      self.ignoreWPT = False
       
       try:
          self.cache.read('cache.dat')
@@ -81,7 +82,7 @@ class gpxParser():
       pers.stack.append(name)
       if name == 'wpt':      
          #self.start = True
-         pers.count  = pers.count + 1
+         pers.count  += 1
          self.currentCoords= (float(attrs['lat']),float(attrs['lon']))
       elif name == 'groundspeak:log':
          self.haslog = True
@@ -98,30 +99,38 @@ class gpxParser():
          self.isown = False
          self.isfound = False
       elif name == 'wpt':
-         if not self.haslog:
-            print "Cache without log: " + str(self.currentName).encode('ascii', 'ignore')
-         if not self.hasownlog:
-            print "Cache without own log: " + str(self.currentName).encode('ascii', 'ignore')
-         if not self.hasownfoundlog:
-            print "Cache without own found log: " + str(self.currentName).encode('ascii', 'ignore')
-         else:
-            pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
+         if self.ignoreWPT:
+            self.ignoreWPT = False
+         else:            
+            if not self.haslog:
+               print "Cache without log: " + str(self.currentName).encode('ascii', 'ignore')
+            if not self.hasownlog:
+               print "Cache without own log: " + str(self.currentName).encode('ascii', 'ignore')
+            if not self.hasownfoundlog:
+               print "Cache without own found log: " + str(self.currentName).encode('ascii', 'ignore')
+            else:
+               pers.ownfoundlogcount = pers.ownfoundlogcount + 1;
+            self.allCaches.append(self.currentCache)
+            
          self.haslog = False
          self.hasownlog = False
          self.hasownfoundlog = False
-         self.allCaches.append(self.currentCache)
+         
       elif name == 'gpx':
          with open('cache.dat', 'wb') as cachefile:
             self.cache.write(cachefile)
 
-
+   def conddata(self,data):
+      if not self.ignoreWPT:
+         self.data(data)
+         
    def data(self, data):
       if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type') and 'groundspeak:attributes' not in pers.stack:
          if ":" in pers.stack[-1]:
             exec("self.currentCache.%s = data"%(str(pers.stack[-1]).partition(':')[2]))
          else:
             exec("self.currentCache.%s = data"%(str(pers.stack[-1])))
-      elif 'wpt' in pers.stack and pers.stack[-1] == 'time':
+      elif pers.stack[-2:] == ['wpt','time']:
          self.currentTime = data         
       elif pers.stack[-1] == 'groundspeak:type':
          if 'groundspeak:log' in pers.stack:
@@ -130,7 +139,12 @@ class gpxParser():
             self.currentCache.type = data
       
          
-      if pers.stack[-1] == 'name' and 'wpt' in pers.stack:
+      if pers.stack[-2:] == ['wpt','name']:
+         if not data.startswith("GC"):
+            # woah, ran into a waypoint
+            self.ignoreWPT = True
+            pers.count  -= 1
+            return
          self.currentName = data
          self.getHeight(self.currentName, self.currentCoords)
          if pers.home:
@@ -145,7 +159,7 @@ class gpxParser():
          
       #elif pers.stack[-1] == 'time':
       #   self.currentTime = data
-      elif pers.stack[-1]=="desc" and "10 Years!" in data:
+      elif pers.stack[-1]=="desc"  and "10 Years!" in data:
          pers.LostnFoundCount +=1
       elif 'groundspeak:log' not in pers.stack and pers.stack[-1]=='groundspeak:type':
          self.countType(data.strip())
