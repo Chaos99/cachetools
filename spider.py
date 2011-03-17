@@ -164,6 +164,19 @@ class ConnectionManager():
       tempfile.close()
       
    def combineGPX(self, first, second):
-      data = re.compile("<wpt([^>]*)>.*</wpt>", re.DOTALL).search(second)
-      return first.rstrip()[:-6] + "\n" + data.group(0) + "\n</gpx>"
+      waypoints = []
+      #search for <wpt></wpt> pair
+      data = re.compile("<wpt([^>]*)>.*?</wpt>", re.DOTALL).search(second)
+      while(data):           
+         if not "<name>S" in data.group(0):
+            #discard stages and other non-cache waypoints
+            waypoints.append(data.group(0))
+         #remove first waypoint, should be the same as matched above
+         second = second[second.find("</wpt>")+6:]
+         data = re.compile("<wpt([^>]*)>.*?</wpt>", re.DOTALL).search(second)
+      #todo: filter foreign logs
+      text = ""
+      for a in waypoints:
+         text+=a      
+      return first.rstrip()[:-6] + "\n" + text + "\n</gpx>"
  
