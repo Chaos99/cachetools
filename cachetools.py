@@ -87,7 +87,7 @@ def main(gpxFilename, argv):
          checkForUpdates = True
       elif opt in ('-h', '--help'):
          print "Usage: python [-i] <gpx-file> [-forceTBupdate] [-checkForUpdates]"
-         sys.exit(0)
+         return(0)
           
 
    #general configuration
@@ -330,45 +330,31 @@ def main(gpxFilename, argv):
    print "Coins " + str(coins)
    badgeManager.setStatus('Travelbug', tbs)
    print "Travelbugs " + str(tbs)
+
+   outputToHTML(badgeManager, conMngr)
+   cleanUp(conMngr)
    
    
-   #### OUTPUT ##########
-   
-   badgesEarned = badgeManager.getHTML('ALL')
-   
+def outputToHTML(badgeManager, conMngr):
+   #### OUTPUT ##########   
+   badgesEarned = badgeManager.getHTML('ALL')   
    text='<center>\n'
-   for t in [b for b in badgesEarned if 'D.png' in b or "level=D" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'E.png' in b or "level=E" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'Sa.png' in b or "level=Sa" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'R.png' in b or "level=R" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'P.png' in b or "level=P" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'G.png' in b or "level=G" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'S.png' in b or "level=S" in b]:
-      text += t
-   text += '\n<br/>\n'
-   for t in [b for b in badgesEarned if 'B.png' in b or "level=B" in b]:
-      text += t
-   text += '\n<br/>\n'
+   #badges sortet per level
+   for level in ['D','E','Sa','R','P','G','S','P']:   
+      for t in [b for b in badgesEarned if '%s.png'%level in b or "level=%s"%level in b]:
+         text += t
+      text += '\n<br/>\n'
+   #comments for not generated badges 
    for t in [b for b in badgesEarned if 'generated' in b]:
       text += t
    text += '\n</center>'
-   conMngr.saveTemp(text)
-   
+   conMngr.saveTemp(text,'badges.html')
+
+
+def cleanUp(conMngr):
    #Cleanup
    conMngr.cj.save(ignore_discard=True)
 
 # if called directly execute main
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2:])
+    return main(sys.argv[1], sys.argv[2:])
