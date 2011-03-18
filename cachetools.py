@@ -143,7 +143,7 @@ def main(gpxFilename, argv):
    
    # read the gpx file
    try:
-      with open(gpxFilename,'r') as filehandle
+      with open(gpxFilename,'r') as filehandle:
          originalGPX = filehandle.read()
    except:
       print "GPX file '%s' could not be read. Aborting..."%gpxFilename
@@ -159,48 +159,8 @@ def main(gpxFilename, argv):
    
    # check for update
    if checkForUpdates:
-      nCPinst = newCacheParser() 
-      nCPinst.feed(conMngr.getCacheList())
-      #nCPinst.feed(open("result.html").read())
-      found = [a.url[-36:] for a in gpxPinst.allCaches]
-      update = [unicode(b[2]) for b in nCPinst.entries if "Found" in b[0]]
-      print "Found %d Cache logs online"%len(update)
-      [b[3] for b in nCPinst.entries if "Found" in b[0]]
-      new = [b for b in update if b not in found]
-      if len(new) < len(found):
-         print "Thereof %d were new"%len(new)
-         #toAdd = [b for b in nCPinst.entries if "Found" in b[0] and b[3] not in found]
-         if new:
-            first = True
-            new.reverse()
-            for guid in new:
-               if first:
-                  newGPX = conMngr.getSingleGPX(guid)
-                  first = False
-               else:
-                  newGPX = conMngr.combineGPX(newGPX, conMngr.getSingleGPX(guid))
-            print "Parsing new caches ...",      
-            gpxPinst.feed(newGPX[newGPX.find('<wpt'):],1)
-            print "done"
-            f = open(gpxFilename,'w')
-            combinedGPX = conMngr.combineGPX(originalGPX,newGPX)   
-            print "Updating .gpx file ...",
-            f.write(combinedGPX)
-            f.close()
-            print "done"
-            #cleanup
-            for guid in new:
-               if os.path.exists(guid+".gpx"):
-                  try:
-                     os.remove(guid+".gpx")
-                  except:
-                     print 'Problems removing temporary file %s, aborting deletion.'%(guid+".gpx")
-         else:
-            gpxPinst.feed('</gpx>',1)
-      else:
-         print "All logs are new, you haven't updated for more than 30 days.\n Please consider downloading a new GPX file.\n No new Caches were loaded."
-         gpxPinst.feed('</gpx>',1)
-   
+      checkUpdates(conMngr, gpxPinst, originalGPX)
+      
    ##### BADGE DEFINITION #####
    
    try:
@@ -221,7 +181,7 @@ def main(gpxFilename, argv):
    # create badges
    print "All: "+str(pers.count)+"  With logs: "+str(pers.logcount)+"  with own logs: "+str(pers.ownlogcount)+"  thereof found: "+str(pers.ownfoundlogcount)
    badgeManager.setCredentials(pers.username, True)
-   badgeManager.populate(h) #creates the standard badges from the website content
+   badgeManager.populate(badgePinst) #creates the standard badges from the website content
    
    ##### LOGS ####
    
