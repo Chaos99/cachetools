@@ -54,13 +54,13 @@ def main(gpx_filename, argv):
     force_tb_update = False
     check_for_updates = False
     try:
-        opts = getopt.getopt(argv, "fch", ["forceTBupdate", 
+        opts, args = getopt.getopt(argv, "fch", ["forceTBupdate", 
                                             "checkForUpdates", "help"])
     except getopt.GetoptError:           
         print("Usage: python [-i] <gpx-file> [-forceTBupdate] "
               "[-checkForUpdates]")
         sys.exit(2)
-    for opt in opts:
+    for opt, args in opts:
         if opt in ("-f", "--forceTBupdate"):
             force_tb_update = True
         elif opt in ('-c', '--checkForUpdates'):
@@ -383,26 +383,28 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
             # New will have the newest log first.
             # Reverse it so it's last in the file.
             new.reverse()
+            newgpx = []
             for guid in new:
-                if first:
-                    try:
-                        # Ssk connection manager for the gpx file of the 
-                        # new cache.
-                        newgpx = con_mngr.getSinglegpx(guid)
-                        first = False
-                    except Exception():
-                        print("Couldn't download cache gpx. Maybe there are "
-                              "connection problems?\n Aborting the update and "
-                              "continuing without.")
-                        gpx_inst.feed('</gpx>', 1)
-                        return
-                else:
-                    newgpx = con_mngr.combinegpx(newgpx, 
-                                                con_mngr.getSinglegpx(guid))
+                try:
+                    # Ssk connection manager for the gpx file of the 
+                    # new cache.
+                    newgpx.append(con_mngr.getSinglegpx(guid))
+                except Exception():
+                    print("Couldn't download cache gpx. Maybe there are "
+                          "connection problems?\n Aborting the update and "
+                          "continuing without.")
+                    gpx_inst.feed('</gpx>', 1)
+                    return
+            parsefrom = len(originalgpx)-6
+            print parsefrom
+            
+            for wpt in newgpx:
+                originalgpx = combinedgpx = con_mngr.combinegpx(originalgpx, wpt)
             print "Parsing new caches ...",      
-            gpx_inst.feed(newgpx[newgpx.find('<wpt'):], 1)
+            con_mngr.saveTemp(originalgpx[parsefrom:])
+            gpx_inst.feed(originalgpx[parsefrom:], 1)
             print "done"         
-            combinedgpx = con_mngr.combinegpx(originalgpx, newgpx)   
+              
             print "Updating .gpx file ...",
             with open(gpx_filename, 'w') as filehandle:
                 filehandle.write(combinedgpx)         
@@ -432,7 +434,7 @@ def outputhtml():
     badges_earned = badgeManager.getHTML('ALL')   
     text = '<center>\n'
     # Badges sorted per level
-    for level in ['D', 'E', 'Sa', 'R', 'P', 'G', 'S', 'P']:   
+    for level in ['D', 'E', 'Sa', 'R', 'P', 'G', 'S', 'B']:   
         for badgetext in [b for b in badges_earned if ('%s.png'%level in b or 
                                               "level=%s"%level in b)]:
             text += badgetext
