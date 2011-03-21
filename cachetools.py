@@ -46,6 +46,9 @@ from ConfigParser import SafeConfigParser as ConfigParser
 from ConfigParser import NoOptionError
 from coinParser import coinParser
 from newCacheParser import newCacheParser
+from collections import defaultdict
+from iso8601 import parse_datetime
+
 
 def main(gpx_filename, argv):   
     '''Read all sources, parse contents, calculate statistics and badges'''
@@ -69,22 +72,18 @@ def main(gpx_filename, argv):
             print("Usage: python [-i] <gpx-file> [-forceTBupdate] "
                   "[-checkForUpdates]")
             return(0)
-        
     # Read in config file.
     conf_parser = prepare_config()
     #prepare caching file
-    cache = prepare_caching()   
-   
+    cache = prepare_caching()
     # Configure connection manager for web spidering.    
     con_mngr_inst = ConnectionManager(pers.username, pers.password, 
                                       conf_parser.get('DEFAULT', 'proxy'))    
     # Set the connection manager to be used for geoTools.
-    geoTools.net = con_mngr_inst
-   
+    geoTools.net = con_mngr_inst   
     # Init the parsers.
     gpx_inst = gpxParser(pers)
-    badgepars_inst = badgeParser()
-   
+    badgepars_inst = badgeParser()   
     # Read the gpx file.
     try:
         with open(gpx_filename,'r') as filehandle:
@@ -130,6 +129,7 @@ def main(gpx_filename, argv):
     create_badges(con_mngr_inst, cache, force_tb_update)
     outputhtml()
     cleanup(con_mngr_inst)
+    return (pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
 
 def prepare_config():
     ''' General configuration from conf file'''    
@@ -215,7 +215,7 @@ def create_badges(con_mngr, cache_mngr, force_tb_update):
                  
     badgeManager.setStatus('Lost', pers.LostnFoundCount)
     print '10 Years! Cache ' + str(pers.LostnFoundCount)
-    ##### CONTAINERS #####3
+    ##### CONTAINERS #####
     print '\n',
     for key, value in zip(pers.containerCount.keys(), 
                           pers.containerCount.values()):
@@ -460,4 +460,21 @@ def cleanup(con_mngr):
 
 # If called directly execute main.
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2:])
+    (pers, gpx_inst, con_mngr_inst, 
+    badgepars_inst, badgeManaimportger) = main(sys.argv[1], sys.argv[2:])
+    cachebyday = defaultdict(lambda: 0)
+    cachebydate = defaultdict(lambda: 0)
+    for cache in gpx_inst.allCaches:
+        cachebyday[str(parse_datetime(cache.date).date())] += 1
+        cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
+    maxfind = max(cachebyday.values())
+    for (key, value) in zip(cachebyday.keys(), cachebyday.values()):
+        if value == maxfind:
+            maxfinddate = key
+    print("Found %i caches on %s"% (maxfind, maxfinddate))
+    print("Found caches on %d dates"% (len(cachebydate)))
+    for cache in gpx_inst.allCaches:
+        if cache.gid == 'GC2M8DB':
+            print cache.date
+
+

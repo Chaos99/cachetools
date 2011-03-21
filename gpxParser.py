@@ -24,7 +24,7 @@ class pers():
    Matrix = defaultdict(lambda: defaultdict(lambda: 0))   
    countryList = defaultdict(lambda: 0)
    stateList = defaultdict(lambda: defaultdict(lambda: 0))
-   allFound = []
+   _allFound = [] # possibly deprecated
    home = None
    maxDistance = [None, 0]
 
@@ -118,7 +118,7 @@ class gpxParser():
         return
          
    def data(self, data):
-      if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type') and 'groundspeak:attributes' not in pers.stack:
+      if 'wpt' in pers.stack and pers.stack[-1] not in ('time','wpt','name','groundspeak:type', 'groundspeak:date') and 'groundspeak:attributes' not in pers.stack:
          if ":" in pers.stack[-1]:
             exec("self.currentCache.%s = data"%(str(pers.stack[-1]).partition(':')[2]))
          else:
@@ -128,8 +128,14 @@ class gpxParser():
       elif pers.stack[-1] == 'groundspeak:type':
          if 'groundspeak:log' in pers.stack:
             self.currentCache.logtype = data
+            if 'Found it' in data:
+                self.currentCache.date = self.logtime
+            else:
+                self.currentCache.date = "1900-01-01T00:00:00Z"
          else:
             self.currentCache.type = data
+      elif pers.stack[-1] == 'groundspeak:date':
+          self.logtime = data.strip()
             
       if pers.stack[-2:] == ['wpt','name']:
          if not data.strip().startswith("GC"):
@@ -159,7 +165,7 @@ class gpxParser():
          if self.isown and self.isfound:
             self.countWords(data)
             self.hasownfoundlog = True
-            pers.allFound.append(self.currentName)
+            #pers.allFound.append(self.currentName)
             if 'FTF' in data:
                pers.FTFcount = pers.FTFcount + 1 
       elif 'groundspeak:log' in pers.stack and pers.stack[-1]=='groundspeak:finder':       
