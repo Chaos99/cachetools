@@ -75,9 +75,9 @@ def main(gpx_filename, argv):
     #prepare caching file
     cache = prepare_caching()   
    
-    # Configure connection manager for web spidering.
-    ConnectionManager.setProxy(conf_parser.get('DEFAULT', 'proxy'))
-    con_mngr_inst = ConnectionManager(pers.username, pers.password)
+    # Configure connection manager for web spidering.    
+    con_mngr_inst = ConnectionManager(pers.username, pers.password, 
+                                      conf_parser.get('DEFAULT', 'proxy'))    
     # Set the connection manager to be used for geoTools.
     geoTools.net = con_mngr_inst
    
@@ -113,7 +113,7 @@ def main(gpx_filename, argv):
         print("Badge definition HTML file could not be read from "
               "%s; downloading new copy."%(pers.badgeHTMLname)) 
               
-        badgedefinition = con_mngr_inst.getBadgeList()
+        badgedefinition = con_mngr_inst.getbadgelist()
         with open(pers.badgeHTMLname,'w') as filehandle:
             filehandle.write(badgedefinition)
    
@@ -268,7 +268,7 @@ def create_badges(con_mngr, cache_mngr, force_tb_update):
     except IOError:
         # Couldn't read file, download new.
         try:
-            statelist = con_mngr.getCountryList()
+            statelist = con_mngr.getcountrylist()
         except Exception:
             # Failed, abort.
             print "Not able to retrieve country list"
@@ -311,7 +311,7 @@ def create_badges(con_mngr, cache_mngr, force_tb_update):
         tbs   = int(cache_mngr.get('TRAVELITEMS', 'travelbugs'))
     else:
         print 'No Coin list cached, retrieving new data ...'
-        coinlist = con_mngr.getMyCoinList()
+        coinlist = con_mngr.getmycoinlist()
         coinlist = re.compile("<script([^>]*)>.*?</script>", 
                               re.DOTALL).sub("", coinlist)
         coinlist = re.compile("<span([^>]*)>.*?</span>", 
@@ -366,7 +366,7 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
     ncachep_inst = newCacheParser() 
     try:
         # Ask connection manager for an updated list of finds.
-        ncachep_inst.feed(con_mngr.getCacheList())
+        ncachep_inst.feed(con_mngr.getcachelist())
     except Exception():
         print("Couldn't download cache list. Maybe there are connection "
               "problems?\n Continuing without updating.")
@@ -388,7 +388,7 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
                 try:
                     # Ssk connection manager for the gpx file of the 
                     # new cache.
-                    newgpx.append(con_mngr.getSinglegpx(guid))
+                    newgpx.append(con_mngr.getsinglegpx(guid))
                 except Exception():
                     print("Couldn't download cache gpx. Maybe there are "
                           "connection problems?\n Aborting the update and "
@@ -401,7 +401,7 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
             for wpt in newgpx:
                 originalgpx = combinedgpx = con_mngr.combinegpx(originalgpx, wpt)
             print "Parsing new caches ...",      
-            con_mngr.saveTemp(originalgpx[parsefrom:])
+            spider.savetemp(originalgpx[parsefrom:])
             gpx_inst.feed(originalgpx[parsefrom:], 1)
             print "done"         
               

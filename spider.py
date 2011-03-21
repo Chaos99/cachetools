@@ -1,83 +1,100 @@
-import urllib2
+''' Holds classes and constants associated with connection to the web.'''
+from urllib2 import build_opener, HTTPCookieProcessor, HTTPRedirectHandler
+from urllib2 import ProxyHandler, Request, URLError, install_opener, urlopen
 from urllib import urlencode
 import cookielib
 import re
-import codecs
 import time
 import os.path
 import cgi
 
+BASEURL = "http://www.geocaching.com/" 
+KYLEURL = 'http://kylemills.net/Geocaching/'
+LOGINURL = BASEURL + 'login/default.aspx'
+SEARCHURL = BASEURL + 'seek/nearest.aspx'
+PROFILURL = BASEURL + 'profile/default.aspx'
+BADGEURL = KYLEURL + "BadgeGen/badges.html"
+STATELISTURL = KYLEURL + "BadgeGen/badgescripts/statelist.txt"
+PRIVATEURL = BASEURL + 'my/'
+USERAGENT = ("Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) "
+            "AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 "
+            "Mobile/1A543 Safari/419.3")
+GRACETIME = 5
 
-class ConnectionManager():   
-    proxyurl = None
-    loginurl = 'http://www.geocaching.com/login/default.aspx'
-    searchurl = 'http://www.geocaching.com/seek/nearest.aspx'
-    profileurl = "http://www.geocaching.com/profile/default.aspx"
-    badgeurl = "http://kylemills.net/Geocaching/BadgeGen/badges.html"
-    privateurl= "http://www.geocaching.com/my/"
-    useragent = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3"
-   
+def savetemp(pagetext, filename='temp.html'):
+    ''' General purpose function to save anything to a file.
 
-    @classmethod
-    def setProxy(cls, proxy):
-        if proxy != None and proxy != 'None':
-            cls.proxyurl=proxy
-      
-    def __init__(self,username,password):
-        self.cj = cookielib.LWPCookieJar("cookies.txt")
+    Defaults to 'temp.html' if no name given.
+    '''
+    with open(filename,'w') as filehandle:
+        filehandle.write(pagetext)
+            
+class ConnectionManager():
+    ''' Manage internet connection, as well as loading from geocaching.com.'''
+
+    def __init__(self, username, password, proxyurl=None):
+        ''' Init instance, use username and password for geocaching.com.'''
+        self.cjar = cookielib.LWPCookieJar("cookies.txt")
         try:
-            self.cj.load(ignore_discard = True)
-        except:
+            self.cjar.load(ignore_discard = True)
+        except(cookielib.LoadError):
             print "No old Cookies loaded, starting new session"
-        if self.proxyurl:
-            proxy = urllib2.ProxyHandler({'http' : self.proxyurl})      
-            opener = urllib2.build_opener(proxy, urllib2.HTTPCookieProcessor(self.cj), urllib2.HTTPRedirectHandler())
+        if proxyurl and proxyurl != 'None':
+            proxy = ProxyHandler({'http' : proxyurl})      
+            opener = build_opener(proxy, 
+                                  HTTPCookieProcessor(self.cjar),
+                                  HTTPRedirectHandler())
         else:
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj), urllib2.HTTPRedirectHandler())    
-        urllib2.install_opener(opener)
-        self.isLoggedIn = False
-        self.cachedFiles = []
-        self.viewstate = ""
+            opener = build_opener(HTTPCookieProcessor(self.cjar),
+                                  HTTPRedirectHandler()) 
+        install_opener(opener)
+        self.isloggedin = False
+        self.viewstate = ["",""]
         self.username = username
         self.password = password
-        self.graceTime = 3
-        self.lastConnection = 0
-        self.lastRequest = None
-    
+        self.lastconnection = 0
+        self.lastrequest = None
       
     def urlopen(self, request):
-        self.lastRequest = request 
-        while time.time() - self.lastConnection < self.graceTime:
-            sleep(0.5)
+        ''' Retrieve contents of given URL.'''
+        self.lastrequest = request 
+        while time.time() - self.lastconnection < GRACETIME:
+            time.sleep(0.5)
         try:
-            page = urllib2.urlopen(request)
-            self.cj.save(ignore_discard = True)
-        except:
-            print "Error retrieving %s"%request.get_full_url()
-        pageC = page.read()
+            page = urlopen(request)
+            self.cjar.save(ignore_discard = True)
+        except (URLError):
+            print("Error retrieving %s"% request.get_full_url())
+        pagecontent = page.read()
         page.close()
-        return pageC      
+        return pagecontent      
 
     def logon(self):
-        """Logs the user in to Geocaching.com."""
+        """Logs the user in to Geocaching.com.
+        
+        Uses cookies to keep connection between sessions.
+        Checks established connection before atempting login.
+        
+        """
         # Get the session STATE before requesting the login page
-        pageC = self.urlopen(self.loginurl)
-        if "You are logged in as" in pageC:
+        pagecontent = self.urlopen(LOGINURL)
+        if "You are logged in as" in pagecontent:
             print "Already logged in from previous session"
-            self.isLoggedIn = True
+            self.isloggedin = True
             return
         # Get the session STATE before requesting the login page
-        m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
-        self.viewstate = m.group(1)      
-        fromvalues = (('__VIEWSTATE', self.viewstate), 
+        ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
+                      pagecontent, re.S)
+        self.viewstate[0] = ma.group(1)      
+        fromvalues = (('__VIEWSTATE', self.viewstate[0]), 
                       ('ctl00$ContentBody$myUsername', self.username), 
                       ('ctl00$ContentBody$myPassword', self.password),
                       ( 'ctl00_ContentBody_cookie', 'on'), 
                       ('ctl00$ContentBody$Button1', 'Login'))
-        headers = { 'User-Agent' : self.useragent }
+        headers = { 'User-Agent' : USERAGENT }
         fromdata = urlencode(fromvalues)   
         # Login to the site
-        request = urllib2.Request(self.loginurl, fromdata, headers)
+        request = Request(LOGINURL, fromdata, headers)
         inpage = self.urlopen(request)      
         # Check that logon was successfull      
         if "You are logged in" not in inpage:
@@ -85,96 +102,100 @@ class ConnectionManager():
             'Probably wrong username or password.')
         else:
             print('Successfully logged on to geocaching.com') 
-            self.isLoggedIn = True     
+            self.isloggedin = True     
          
-    def getMyCoinList(self):
-        if not self.isLoggedIn:
+    def getmycoinlist(self):
+        ''' Retrieve the trackables web page from geocaching.com.'''
+        if not self.isloggedin:
             self.logon()
-        pageC = self.urlopen(self.profileurl)      
-        self.saveTemp(pageC)
-        m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
-        self.viewstate = m.group(1)
-        print "Profile page loaded..."      
-        fromvalues = (('__EVENTTARGET', 'ctl00$ContentBody$ProfilePanel1$lnkCollectibles'), 
+        pagecontent = self.urlopen(PROFILURL) 
+        savetemp(pagecontent)
+        ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"',
+                      pagecontent, re.S)
+        self.viewstate[0] = ma.group(1)
+        print "Profile page loaded..."
+        fromvalues = (('__EVENTTARGET', 
+                       'ctl00$ContentBody$ProfilePanel1$lnkCollectibles'), 
                       ('__EVENTARGUMENT', ''), 
-                      ('__VIEWSTATE', self.viewstate))
-        headers = { 'User-Agent' : self.useragent }
+                      ('__VIEWSTATE', self.viewstate[0]))
+        headers = { 'User-Agent' : USERAGENT }
         fromdata = urlencode(fromvalues)      
-        request = urllib2.Request(self.profileurl, fromdata, headers) 
+        request = Request(PROFILURL, fromdata, headers) 
         print "Loading Coin page ..."      
-        pageC = self.urlopen(request)
+        pagecontent = self.urlopen(request)
         print "... done!"
         #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
         #self.viewstate = m.group(1)
-        self.saveTemp(pageC,"result.html")
-        return (pageC)
-      
+        savetemp(pagecontent,"result.html")
+        return (pagecontent) 
    
-    def getSinglegpx(self, cid):      
+    def getsinglegpx(self, cid):
+        ''' Retrieve a gpx file for a given cache id or guid from gc.com'''
         filename = cid.strip().upper()+".gpx"
         if os.path.exists(filename):
-            pageC = open(filename,'r').read()
+            pagecontent = open(filename,'r').read()
             print "Read cached file for " + cid
-            return pageC
+            return pagecontent
         else:      
-            if not self.isLoggedIn:
+            if not self.isloggedin:
                 self.logon()
             if len(cid) < 10:
-                cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?wp=%s"%cid
+                cacheurl = BASEURL + 'seek/cache_details.aspx?wp=%s'% cid
             else:
-                cacheurl = "http://www.geocaching.com/seek/cache_details.aspx?guid=%s"%cid      
-            pageC = self.urlopen(cacheurl)
-            m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', pageC, re.S)
-            m2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', pageC, re.S)      
-            self.viewstate = m.group(1)
-            self.viewstate1 = m2.group(1)
-            self.saveTemp(pageC, "cache.html")
-            print "Cache page %s loaded..."%cid
+                cacheurl = BASEURL + 'seek/cache_details.aspx?guid=%s'% cid
+            pagecontent = self.urlopen(cacheurl)
+            ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
+                          pagecontent, re.S)
+            ma2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', 
+                           pagecontent, re.S)
+            self.viewstate[0] = ma.group(1)
+            self.viewstate[1] = ma2.group(1)
+            savetemp(pagecontent, "cache.html")
+            print "Cache page %s loaded..."% cid
             fromvalues = (('__EVENTTARGET', ''), 
                           ('__EVENTARGUMENT', ''), 
                           ('__VIEWSTATEFIELDCOUNT', '2'), 
-                          ('__VIEWSTATE', self.viewstate),
-                          ('__VIEWSTATE1',self.viewstate1), 
-                          ('ctl00$ContentBody$btnGPXDL','GPX file'))      
-            headers = { 'User-Agent' : self.useragent }
+                          ('__VIEWSTATE', self.viewstate[0]),
+                          ('__VIEWSTATE1',self.viewstate[1]), 
+                          ('ctl00$ContentBody$btnGPXDL','GPX file')) 
+            headers = { 'User-Agent' : USERAGENT }
             fromdata = urlencode(fromvalues)      
-            request = urllib2.Request(cacheurl, fromdata, headers)      
-            print("Loading GPX file for %s ..."%cid),
-            pageC = self.urlopen(request)
+            request = Request(cacheurl, fromdata, headers) 
+            print("Loading GPX file for %s ..."% cid),
+            pagecontent = self.urlopen(request)
             print "... done!"
-            self.saveTemp(pageC,"%s.gpx"%cid.upper())
-            return (pageC)
+            savetemp(pagecontent, "% s.gpx"% cid.upper())
+            return (pagecontent)
       
-    def getSingleCache(self, guid):
-        if not self.isLoggedIn:
+    def getsinglecache(self, guid):
+        ''' Retrieve the print page for a given GUID from gc.com.''' 
+        if not self.isloggedin:
             self.logon()
-        cacheurl = "http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"%guid
-        pageC = self.urlopen(cacheurl)      
-        self.saveTemp(pageC,"Cache.html")
-        return pageC
-      
-    def getCacheList(self):
-        if not self.isLoggedIn:
+        cacheurl = "http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"% guid
+        pagecontent = self.urlopen(cacheurl)      
+        savetemp(pagecontent,"Cache.html")
+        return pagecontent
+
+    def getcachelist(self):
+        ''' Get the last 30 days of logs from personal profile page.'''
+        if not self.isloggedin:
             self.logon()
-        pageC = self.urlopen(self.privateurl)      
-        self.saveTemp(pageC)      
+        pagecontent = self.urlopen(PRIVATEURL)      
+        savetemp(pagecontent)      
         print "Private page loaded..."            
-        self.saveTemp(pageC,"result.html")
-        return (pageC) 
-      
-    def getCountryList(self):
-        page = self.urlopen('http://kylemills.net/Geocaching/BadgeGen/badgescripts/statelist.txt')
+        savetemp(pagecontent,"result.html")
+        return (pagecontent) 
+
+    def getcountrylist(self):
+        ''' Get the state definition list from kyle mills webpage.''' 
+        page = self.urlopen(STATELISTURL)
         return page
-      
-    def getBadgeList(self):
-        f = self.urlopen(urllib2.Request(self.badgeurl))
-        return f
-   
-    def saveTemp(self, pagetext, filename='temp.html'):
-        tempfile = open(filename,'w')
-        tempfile.write(pagetext)
-        tempfile.close()
-      
+
+    def getbadgelist(self):
+        ''' Get the badge definition page from kyle mills webpage.'''
+        badgelist = self.urlopen(Request(BADGEURL))
+        return badgelist
+
     def combinegpx(self, first, second):
         '''merge two gpx files (contents), appending second to first'''
         waypoints = []
@@ -193,7 +214,8 @@ class ConnectionManager():
         for wpt in waypoints:
             start = wpt[:wpt.find('<groundspeak:logs>')+18]
             end = wpt[wpt.rfind('</groundspeak:logs'):]
-            data = re.compile("<groundspeak:log([^>]*)>.*?</groundspeak:log>", re.DOTALL).search(wpt)
+            data = re.compile("<groundspeak:log([^>]*)>.*?</groundspeak:log>", 
+                              re.DOTALL).search(wpt)
             logs_clean = []
             while(data):
                 if cgi.escape(self.username) in data.group(0):
@@ -202,13 +224,13 @@ class ConnectionManager():
                 # Remove first log, should be the same as matched above
                 wpt = wpt[wpt.find("</groundspeak:log>")+18:]
                 #search for next <groundspeak:log></groundspeak:log> pair
-                data = re.compile("<groundspeak:log([^>]*)>.*?</groundspeak:log>", re.DOTALL).search(wpt)
+                data = re.compile("<groundspeak:log([^>]*)>.*?</groundspeak:log>", 
+                                  re.DOTALL).search(wpt)
             logs = ''.join(logs_clean)
             point = start + logs + end
             waypoints_clean.append(point)
         
         text = ""
-        for a in waypoints_clean:
-            text+='\n' + a      
+        for wpt in waypoints_clean:
+            text += '\n' + wpt
         return first.rstrip()[:-6] + "\n" + text + "\n</gpx>"
- 
