@@ -1,9 +1,11 @@
 Various geocaching related python tools
 
 cachetools.py
-	calculates varios values from a pocket query gpx, turns them into html code for badges generated from Kyle Mills BadgeGen tool
+    Analyse the given gpx file and retrieve statistics for the geocaches listed.
+    Retrieve online information for badge definitions, geolocation and elevation 
+    of caches, trackables found and new geocaches not yet listed in the gpx file.
 	
-Usage: python cachetools.py <gpxfile> [-forceTBupdate] [-checkUpdate]
+Usage: python cachetools.py <gpxfile> [-f|--forceTBupdate] [-c|--checkUpdate]
 	
 	- gets settings from a config.cfg file, will generate template if not found (needs at least username and password)
 	- will download list of coins and TBs from you geocaching.com account
@@ -13,10 +15,33 @@ Usage: python cachetools.py <gpxfile> [-forceTBupdate] [-checkUpdate]
         - will download state district information if not provided
 
 	- all downloads are cached. delete cached files for re-download.
-	- use -forceTBupdate to re-download TB and Coin info
-	- use -checkUpdate to update local .gpx file with new logs from geocaching.com (premium members only) 
+	- use -f or --forceTBupdate to re-download TB and Coin info
+	- use -c or --checkUpdate to update local .gpx file with new logs from geocaching.com (premium members only) 
 	
-	- outputs temp.html with badges to be included in profile page or in other tools like GCStatistics
+	- outputs output.html with badges to be included in profile page or in other tools like GCStatistics
+
+
+Detailed description:
+
+    General configuration, including username, password, proxy configuration, badge
+    definition file name and home coordinates are read from a config.cfg file. A 
+    template is generated if no file is found.
+    
+    Downloaded informations about elevation, geolocation and trackables are cached 
+    in the cache.dat file. Use the -f option, delete this file or parts of it to 
+    force a re-download.
+    
+    Badge definition is downloaded on first run and saved as .html file 
+    (path given in config.cfg). Delete this file to force re-download.
+    
+    Use the -c option to update the loaded .gpx file with the newest finds from 
+    geocaching.com. Downloaded files are cached for error recovery, but deleted 
+    after successful integration in .gpx file. !!THE ORIGINAL gpx FILE IS ALTERED!
+    NO BACKUP IS MADE!!!
+    
+    Extensive statistics are outputed to console. Generated badges are saved to a
+    output.html file as a html table.
+
 
 
 Attribution:
