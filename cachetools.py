@@ -40,7 +40,7 @@ import getopt
 from badges import badgeManager, stateBadge
 from badgeParser import badgeParser
 from gpxParser import gpxParser, pers
-from spider import ConnectionManager
+from spider import ConnectionManager, savetemp
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
 from ConfigParser import NoOptionError
@@ -96,7 +96,8 @@ def main(gpx_filename, argv):
     print "Parsing caches from gpx ...",
     if check_for_updates:
         # Just leave the closing </gpx> out.
-        gpx_inst.feed(originalgpx[:-6], 0)
+        gpx_inst.feed(originalgpx[:originalgpx.rfind('</gpx>')], 0)
+        savetemp(originalgpx[:-6], 'first.gpx')
     else:
         gpx_inst.feed(originalgpx, 1)
     print "done"
@@ -367,13 +368,15 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
     try:
         # Ask connection manager for an updated list of finds.
         ncachep_inst.feed(con_mngr.getcachelist())
-    except Exception():
+    except Exception:
         print("Couldn't download cache list. Maybe there are connection "
               "problems?\n Continuing without updating.")
         gpx_inst.feed('</gpx>', 1)
         return
     found = [a.url[-36:] for a in gpx_inst.allCaches]
-    update = [unicode(b[2]) for b in ncachep_inst.entries if "Found" in b[0]]
+    update = [unicode(b[2]) 
+              for b in ncachep_inst.entries 
+              if ("Found" in b[0] or "Attended" in b[0])]
     print "Found %d Cache logs online"% len(update),
     new = [b for b in update if b not in found]
     if len(new) < len(found):
@@ -386,7 +389,7 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
             newgpx = []
             for guid in new:
                 try:
-                    # Ssk connection manager for the gpx file of the 
+                    # Ask connection manager for the gpx file of the 
                     # new cache.
                     newgpx.append(con_mngr.getsinglegpx(guid))
                 except Exception():
@@ -395,15 +398,14 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
                           "continuing without.")
                     gpx_inst.feed('</gpx>', 1)
                     return
-            parsefrom = len(originalgpx)-6
-            print parsefrom
+            parsefrom = originalgpx.rfind('</gpx>')
             
             for wpt in newgpx:
                 originalgpx = combinedgpx = con_mngr.combinegpx(originalgpx, wpt)
-            print "Parsing new caches ...",      
-            spider.savetemp(originalgpx[parsefrom:])
+            print "Parsing new caches ...",
+            savetemp(originalgpx[parsefrom:], 'second.gpx')
             gpx_inst.feed(originalgpx[parsefrom:], 1)
-            print "done"         
+            print "done"
               
             print "Updating .gpx file ...",
             with open(gpx_filename, 'w') as filehandle:
@@ -453,7 +455,7 @@ def outputhtml():
 
 def cleanup(con_mngr):
     '''Perform maintenance tasks'''
-    con_mngr.cj.save(ignore_discard=True)
+    con_mngr.cjar.save(ignore_discard=True)
 
 
 # If called directly execute main.

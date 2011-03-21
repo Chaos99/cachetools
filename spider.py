@@ -121,7 +121,7 @@ class ConnectionManager():
         headers = { 'User-Agent' : USERAGENT }
         fromdata = urlencode(fromvalues)      
         request = Request(PROFILURL, fromdata, headers) 
-        print "Loading Coin page ..."      
+        print("Loading Coin page ..."),
         pagecontent = self.urlopen(request)
         print "... done!"
         #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
@@ -201,20 +201,20 @@ class ConnectionManager():
         waypoints = []
         #search for <wpt></wpt> pair
         data = re.compile("<wpt([^>]*)>.*?</wpt>", re.DOTALL).search(second)
-        while(data):           
-            if not "<name>S" in data.group(0):
+        while(data):
+            if "<name>GC" in data.group(0):
                 #discard stages and other non-cache waypoints
                 waypoints.append(data.group(0))
             #remove first waypoint, should be the same as matched above
             second = second[second.find("</wpt>")+6:]
             #search for next <wpt></wpt> pair
             data = re.compile("<wpt([^>]*)>.*?</wpt>", re.DOTALL).search(second)
-        #todo: filter foreign logs
+        
         waypoints_clean = []      
         for wpt in waypoints:
             start = wpt[:wpt.find('<groundspeak:logs>')+18]
-            end = wpt[wpt.rfind('</groundspeak:logs'):]
-            data = re.compile("<groundspeak:log([^>]*)>.*?</groundspeak:log>", 
+            end = wpt[wpt.rfind('</groundspeak:logs>'):]
+            data = re.compile("<groundspeak:log ([^>]*)>.*?</groundspeak:log>", 
                               re.DOTALL).search(wpt)
             logs_clean = []
             while(data):
@@ -228,6 +228,7 @@ class ConnectionManager():
                                   re.DOTALL).search(wpt)
             logs = ''.join(logs_clean)
             point = start + logs + end
+            savetemp(point, 'wpt%s%i'% (second[18:19],len(waypoints_clean)))
             waypoints_clean.append(point)
         
         text = ""
