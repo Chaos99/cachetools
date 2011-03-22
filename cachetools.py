@@ -48,6 +48,8 @@ from coinParser import coinParser
 from newCacheParser import newCacheParser
 from collections import defaultdict
 from iso8601 import parse_datetime
+from gui import Application
+from Tkinter import Tk
 
 
 def main(gpx_filename, argv):   
@@ -476,5 +478,11 @@ if __name__ == "__main__":
     for cache in gpx_inst.allCaches:
         if cache.gid == 'GC2M8DB':
             print cache.date
+            
+    root = Tk()
+    app = Application(master=root)
+    app.mainloop()
+    root.destroy()
+
 
 
