@@ -181,9 +181,9 @@ class ConnectionManager():
         if not self.isloggedin:
             self.logon()
         pagecontent = self.urlopen(PRIVATEURL)      
-        savetemp(pagecontent)      
+        #savetemp(pagecontent)      
         print "Private page loaded..."            
-        savetemp(pagecontent,"result.html")
+        #savetemp(pagecontent,"result.html")
         return (pagecontent) 
 
     def getcountrylist(self):
