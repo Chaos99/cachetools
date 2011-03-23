@@ -1,6 +1,7 @@
 from Tkinter import *
 
 class Application(Frame):
+    ''' Represent the main application window.'''
     def say_hi(self):
         print "hi there, everyone!"
 
@@ -22,3 +23,4 @@ class Application(Frame):
         Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
+

@@ -49,7 +49,8 @@ from newCacheParser import newCacheParser
 from collections import defaultdict
 from iso8601 import parse_datetime
 from gui import Application
-from Tkinter import Tk
+from Tkinter import *
+from ttk import *
 
 
 def main(gpx_filename, argv):   
@@ -98,7 +99,7 @@ def main(gpx_filename, argv):
     if check_for_updates:
         # Just leave the closing </gpx> out.
         gpx_inst.feed(originalgpx[:originalgpx.rfind('</gpx>')], 0)
-        savetemp(originalgpx[:-6], 'first.gpx')
+        #savetemp(originalgpx[:-6], 'first.gpx')
     else:
         gpx_inst.feed(originalgpx, 1)
     print "done"
@@ -481,6 +482,8 @@ if __name__ == "__main__":
             
     root = Tk()
     app = Application(master=root)
+    app.master.title("CacheTools main window")
+    #app.master.anchor('center')
     app.mainloop()
     root.destroy()
 
