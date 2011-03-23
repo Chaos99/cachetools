@@ -8,6 +8,7 @@ class newCacheParser(HTMLParser):
       HTMLParser.__init__(self)
       self.stack=[]
       self.entity = None
+      self.guid = ""
       self.tableSig = ['html', 'body', 'form', 'div', 'div', 'div', 'div', 'div', 'div', 'table']      
       self.inTable = False
       self.rowCount =0
@@ -18,13 +19,17 @@ class newCacheParser(HTMLParser):
    def feed(self, text):
       # reset al previous values
       #self.reset()
-      self.__init__()
+      self.__init__()      
       # remove scripts and spans, cause they are malformated
       text = re.compile("<script([^>]*)>.*?</script>", re.DOTALL).sub("", text)
       text = re.compile("<iframe([^>]*)>.*?</iframe>", re.DOTALL).sub("", text)
       #text = re.compile("<span([^>]*)>.*?</span>", re.DOTALL).sub("", text)
-      open("result2.html","w").write(text)
-      HTMLParser.feed(self, text)
+      #open("result2.html","w").write(text)
+      try:
+        HTMLParser.feed(self, text)
+      except Exception as e:
+          print e
+          raise
       
    def handle_charref(self, name):
       #print 'charref ' + name
