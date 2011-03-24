@@ -36,6 +36,7 @@ import sys
 import re
 import os
 import getopt
+from calendar import monthrange
 
 from badges import badgeManager, stateBadge
 from badgeParser import badgeParser
@@ -48,6 +49,7 @@ from coinParser import coinParser
 from newCacheParser import newCacheParser
 from collections import defaultdict
 from iso8601 import parse_datetime
+
 
 
 def main(gpx_filename, argv):   
@@ -248,13 +250,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     print 'FTF Caches ' + str(pers.FTFcount)
    
     badgeManager.setStatus('Owner', 9)
-    #badgeManager.setStatus('Owner', 1)
-    #badgeManager.setStatus('Busy', 22)
-    #badgeManager.setStatus('Busy', 10)
-    badgeManager.setStatus('Daily', 93)
-    #badgeManager.setStatus('Daily', 4)
-    #badgeManager.setStatus('Calendar', 210)
-    #badgeManager.setStatus('Calendar', 34)
+    
     badgeManager.setStatus('Scuba', 0)
     badgeManager.setStatus('Host', 0)
    
@@ -346,6 +342,22 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     print("Found %i caches on %s"% (maxfind, maxfinddate))
     badgeManager.setStatus('Calendar', len(cachebydate))
     print("Found caches on %d dates"% (len(cachebydate)))
+    days = cachebyday.keys()
+    days.sort()
+    maxdays = dayscount = 1
+    prev = "0000-00-00"
+    for date in days:
+        if int(date[-2:]) == int(prev[-2:]) + 1:            
+            dayscount += 1
+        elif (int(date[-2:]) == 1 and 
+             int(prev[-2:]) == monthrange(int(prev[:4]) , int(prev[5:7]))[1]):
+            dayscount += 1
+        else:
+            maxdays = max(dayscount, maxdays)
+            dayscount = 1
+        prev = date
+    badgeManager.setStatus('Daily', maxdays)
+    print "Found caches on %i consecutive days"% maxdays
     
 
 def generate_type_badges(type_):
@@ -477,7 +489,7 @@ def cleanup(con_mngr):
 # If called directly, execute main.
 if __name__ == "__main__":
     (pers, gpx_inst, con_mngr_inst, 
-    badgepars_inst, badgeManaimportger) = main(sys.argv[1], sys.argv[2:])
+     badgepars_inst, badgeManaimportger) = main(sys.argv[1], sys.argv[2:])
 
 
 
