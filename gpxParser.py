@@ -128,10 +128,8 @@ class gpxParser():
       elif pers.stack[-1] == 'groundspeak:type':
          if 'groundspeak:log' in pers.stack:
             self.currentCache.logtype = data
-            if 'Found it' in data:
-                self.currentCache.date = self.logtime
-            else:
-                self.currentCache.date = "1900-01-01T00:00:00Z"
+            if 'Found it' in data or 'Attended' in data:
+                self.currentCache.date = self.logtime            
          else:
             self.currentCache.type = data
       elif pers.stack[-1] == 'groundspeak:date':

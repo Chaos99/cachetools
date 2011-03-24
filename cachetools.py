@@ -126,7 +126,7 @@ def main(gpx_filename, argv):
     # Create the standard badges from the website content.
     badgeManager.populate(badgepars_inst) 
     
-    create_badges(con_mngr_inst, cache, force_tb_update)
+    create_badges(gpx_inst, con_mngr_inst, cache, force_tb_update)
     outputhtml()
     cleanup(con_mngr_inst)
     return (pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
@@ -183,7 +183,7 @@ def prepare_caching():
               "generated.") 
     return cache
 
-def create_badges(con_mngr, cache_mngr, force_tb_update):
+def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     ''' Generate the badges from statistical data.
     
     Use the statistical data from the parser runs and the badge definitions to
@@ -249,11 +249,11 @@ def create_badges(con_mngr, cache_mngr, force_tb_update):
    
     badgeManager.setStatus('Owner', 9)
     #badgeManager.setStatus('Owner', 1)
-    badgeManager.setStatus('Busy', 22)
+    #badgeManager.setStatus('Busy', 22)
     #badgeManager.setStatus('Busy', 10)
     badgeManager.setStatus('Daily', 93)
     #badgeManager.setStatus('Daily', 4)
-    badgeManager.setStatus('Calendar', 210)
+    #badgeManager.setStatus('Calendar', 210)
     #badgeManager.setStatus('Calendar', 34)
     badgeManager.setStatus('Scuba', 0)
     badgeManager.setStatus('Host', 0)
@@ -330,6 +330,23 @@ def create_badges(con_mngr, cache_mngr, force_tb_update):
     print "Coins " + str(coins)
     badgeManager.setStatus('Travelbug', tbs)
     print "Travelbugs " + str(tbs)
+    
+    #### DATE ##########
+    print('\n'),
+    cachebyday = defaultdict(lambda: 0)
+    cachebydate = defaultdict(lambda: 0)
+    for cache in gpx_inst.allCaches:        
+        cachebyday[str(parse_datetime(cache.date).date())] += 1        
+        cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
+    maxfind = max(cachebyday.values())
+    for (key, value) in zip(cachebyday.keys(), cachebyday.values()):
+        if value == maxfind:
+            maxfinddate = key
+    badgeManager.setStatus('Busy', maxfind)
+    print("Found %i caches on %s"% (maxfind, maxfinddate))
+    badgeManager.setStatus('Calendar', len(cachebydate))
+    print("Found caches on %d dates"% (len(cachebydate)))
+    
 
 def generate_type_badges(type_):
     ''' Check if cache type has a badge and set status if yes. '''
@@ -382,7 +399,6 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
     if len(new) < len(found):
         print ", thereof %d were new."% len(new) 
         if new:
-            first = True
             # New will have the newest log first.
             # Reverse it so it's last in the file.
             new.reverse()
@@ -396,20 +412,20 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
                     print("Couldn't download cache gpx. Maybe there are "
                           "connection problems?\n Aborting the update and "
                           "continuing without.")
+                    # Abort parsing, feed closing tag
                     gpx_inst.feed('</gpx>', 1)
                     return
-            parsefrom = originalgpx.rfind('</gpx>')
-            
+            # Save the position up to where we parsed the original gpx
+            parsefrom = originalgpx.rfind('</gpx>')            
             for wpt in newgpx:
-                originalgpx = combinedgpx = con_mngr.combinegpx(originalgpx, wpt)
+                originalgpx = con_mngr.combinegpx(originalgpx, wpt)
             print "Parsing new caches ...",
-            savetemp(originalgpx[parsefrom:], 'second.gpx')
             gpx_inst.feed(originalgpx[parsefrom:], 1)
             print "done"
-              
+            
             print "Updating .gpx file ...",
             with open(gpx_filename, 'w') as filehandle:
-                filehandle.write(combinedgpx)         
+                filehandle.write(originalgpx)         
             print "done"
             # Do cleanup
             for guid in new:
@@ -458,23 +474,10 @@ def cleanup(con_mngr):
     con_mngr.cjar.save(ignore_discard=True)
 
 
-# If called directly execute main.
+# If called directly, execute main.
 if __name__ == "__main__":
     (pers, gpx_inst, con_mngr_inst, 
     badgepars_inst, badgeManaimportger) = main(sys.argv[1], sys.argv[2:])
-    cachebyday = defaultdict(lambda: 0)
-    cachebydate = defaultdict(lambda: 0)
-    for cache in gpx_inst.allCaches:
-        cachebyday[str(parse_datetime(cache.date).date())] += 1
-        cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
-    maxfind = max(cachebyday.values())
-    for (key, value) in zip(cachebyday.keys(), cachebyday.values()):
-        if value == maxfind:
-            maxfinddate = key
-    print("Found %i caches on %s"% (maxfind, maxfinddate))
-    print("Found caches on %d dates"% (len(cachebydate)))
-    for cache in gpx_inst.allCaches:
-        if cache.gid == 'GC2M8DB':
-            print cache.date
+
 
 
