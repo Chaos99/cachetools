@@ -472,7 +472,13 @@ def outputhtml():
     # Vomments for not generated badges 
     for badgetext in [b for b in badges_earned if 'generated' in b]:
         text += badgetext
-    text += '\n<p style="font-size:xx-small">\n----- The Groundspeak Geocaching Logo is a registered trademark of <a href="www.groundpeak.com" >Groundspeak, Inc</a>. Used with permission. The logo and geocaching.com icons are used with permission. ----- \n <a href="http://kylemills.net/BadgeGen">Badges and original GSAK script</a> designed created by Kyle Mills. -----\n</p>'
+    text += ('\n<p style="font-size:xx-small">\n----- The Groundspeak'
+             ' Geocaching Logo is a registered trademark of '
+             '<a href="www.groundpeak.com" >Groundspeak, Inc</a>. Used with '
+             'permission. The logo and geocaching.com icons are used with '
+             'permission. ----- \n <a href="http://kylemills.net/BadgeGen">'
+             'Badges and original GSAK script</a> designed created by '
+             'Kyle Mills. -----\n</p>')
     text += '\n</center>'
     try:
         with open('output.html','w') as filehandle:
@@ -490,7 +496,7 @@ def cleanup(con_mngr):
 # If called directly, execute main.
 if __name__ == "__main__":
     (pers, gpx_inst, con_mngr_inst, 
-     badgepars_inst, badgeManaimportger) = main(sys.argv[1], sys.argv[2:])
+     badgepars_inst, badge_manager) = main(sys.argv[1], sys.argv[2:])
 
 
 
