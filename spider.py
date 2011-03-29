@@ -83,9 +83,9 @@ class ConnectionManager():
             self.isloggedin = True
             return
         # Get the session STATE before requesting the login page
-        ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
+        mat = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
                       pagecontent, re.S)
-        self.viewstate[0] = ma.group(1)      
+        self.viewstate[0] = mat.group(1)      
         fromvalues = (('__VIEWSTATE', self.viewstate[0]), 
                       ('ctl00$ContentBody$myUsername', self.username), 
                       ('ctl00$ContentBody$myPassword', self.password),
@@ -110,9 +110,9 @@ class ConnectionManager():
             self.logon()
         pagecontent = self.urlopen(PROFILURL) 
         savetemp(pagecontent)
-        ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"',
+        mat = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"',
                       pagecontent, re.S)
-        self.viewstate[0] = ma.group(1)
+        self.viewstate[0] = mat.group(1)
         print "Profile page loaded..."
         fromvalues = (('__EVENTTARGET', 
                        'ctl00$ContentBody$ProfilePanel1$lnkCollectibles'), 
@@ -144,12 +144,12 @@ class ConnectionManager():
             else:
                 cacheurl = BASEURL + 'seek/cache_details.aspx?guid=%s'% cid
             pagecontent = self.urlopen(cacheurl)
-            ma = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
+            mat = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
                           pagecontent, re.S)
-            ma2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', 
+            mat2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', 
                            pagecontent, re.S)
-            self.viewstate[0] = ma.group(1)
-            self.viewstate[1] = ma2.group(1)
+            self.viewstate[0] = mat.group(1)
+            self.viewstate[1] = mat2.group(1)
             savetemp(pagecontent, "cache.html")
             print "Cache page %s loaded..."% cid
             fromvalues = (('__EVENTTARGET', ''), 
@@ -171,7 +171,8 @@ class ConnectionManager():
         ''' Retrieve the print page for a given GUID from gc.com.''' 
         if not self.isloggedin:
             self.logon()
-        cacheurl = "http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"% guid
+        cacheurl = ("http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=5"%
+                    guid)
         pagecontent = self.urlopen(cacheurl)      
         savetemp(pagecontent,"Cache.html")
         return pagecontent
@@ -228,7 +229,7 @@ class ConnectionManager():
                                   re.DOTALL).search(wpt)
             logs = ''.join(logs_clean)
             point = start + logs + end
-            savetemp(point, 'wpt%s%i'% (second[18:19],len(waypoints_clean)))
+            savetemp(point, 'wpt%s%i'% (second[18:19], len(waypoints_clean)))
             waypoints_clean.append(point)
         
         text = ""

@@ -36,11 +36,12 @@ import sys
 import re
 import os
 import getopt
+import time
 from calendar import monthrange
 
 from badges import badgeManager, stateBadge
 from badgeParser import badgeParser
-from gpxParser import gpxParser, pers
+from GpxParser import GpxParser, Pers
 from spider import ConnectionManager, savetemp
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
@@ -79,12 +80,12 @@ def main(gpx_filename, argv):
     #prepare caching file
     cache = prepare_caching()
     # Configure connection manager for web spidering.    
-    con_mngr_inst = ConnectionManager(pers.username, pers.password, 
+    con_mngr_inst = ConnectionManager(Pers.username, Pers.password,
                                       conf_parser.get('DEFAULT', 'proxy'))    
     # Set the connection manager to be used for geoTools.
     geoTools.net = con_mngr_inst   
     # Init the parsers.
-    gpx_inst = gpxParser(pers)
+    gpx_inst = GpxParser(Pers)
     badgepars_inst = badgeParser()   
     # Read the gpx file.
     try:
@@ -109,29 +110,29 @@ def main(gpx_filename, argv):
       
     ##### BADGE DEFINITION #####   
     try:
-        with open(pers.badgeHTMLname,'r') as filehandle:
+        with open(Pers.badgeHTMLname,'r') as filehandle:
             badgedefinition = filehandle.read()
     except(IOError):        
         print("Badge definition HTML file could not be read from "
-              "%s; downloading new copy."%(pers.badgeHTMLname)) 
+              "%s; downloading new copy."%(Pers.badgeHTMLname))
               
         badgedefinition = con_mngr_inst.getbadgelist()
-        with open(pers.badgeHTMLname,'w') as filehandle:
+        with open(Pers.badgeHTMLname,'w') as filehandle:
             filehandle.write(badgedefinition)
    
-    badgepars_inst.feed(badgedefinition)    
+    badgepars_inst.feed(badgedefinition)
     
-    print("All: " + str(pers.count) + "  With logs: " + str(pers.logcount) +
-          "  with own logs: " + str(pers.ownlogcount) + "  thereof found: " +
-          str(pers.ownfoundlogcount))
-    badgeManager.setCredentials(pers.username, True)
+    print("All: " + str(Pers.count) + "  With logs: " + str(Pers.logcount) +
+          "  with own logs: " + str(Pers.ownlogcount) + "  thereof found: " +
+          str(Pers.ownfoundlogcount))
+    badgeManager.setCredentials(Pers.username, True)
     # Create the standard badges from the website content.
     badgeManager.populate(badgepars_inst) 
     
     create_badges(gpx_inst, con_mngr_inst, cache, force_tb_update)
     outputhtml()
     cleanup(con_mngr_inst)
-    return (pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
+    return (Pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
 
 def prepare_config():
     ''' General configuration from conf file'''    
@@ -150,19 +151,19 @@ def prepare_config():
             filehandle.flush() 
         sys.exit(1)
     try:
-        pers.username = conf_parser.get('DEFAULT', 'username')
-        pers.password = conf_parser.get('DEFAULT', 'password')
+        Pers.username = conf_parser.get('DEFAULT', 'username')
+        Pers.password = conf_parser.get('DEFAULT', 'password')
     except NoOptionError:
         print "No username and/or password given in config file"
         sys.exit(1)
         
     if conf_parser.get('DEFAULT','home'):
         homestring = conf_parser.get('DEFAULT','home')
-        pers.home = [float(a.strip()) for a in homestring.split(',')]
+        Pers.home = [float(a.strip()) for a in homestring.split(',')]
     else:
-        pers.home = None
+        Pers.home = None
         
-    pers.badgeHTMLname = conf_parser.get('DEFAULT', 'badgeHTMLfile')
+    Pers.badgeHTMLname = conf_parser.get('DEFAULT', 'badgeHTMLfile')
     
     return conf_parser
 
@@ -193,16 +194,16 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     
     '''
     ##### LOGS ####
-    if pers.ownfoundlogcount > 0:
-        avgwordcount = pers.wordcount / pers.ownfoundlogcount 
+    if Pers.ownfoundlogcount > 0:
+        avgwordcount = Pers.wordcount / Pers.ownfoundlogcount
     else:
         avgwordcount = 0
     print "Average  word count: " + str(avgwordcount)
     badgeManager.setStatus('Author', avgwordcount)
    
     #### OVERALL COUNT #####
-    badgeManager.setStatus('Geocacher', pers.ownfoundlogcount)
-    print "Geocaches " + str(pers.ownfoundlogcount)
+    badgeManager.setStatus('Geocacher', Pers.ownfoundlogcount)
+    print "Geocaches " + str(Pers.ownfoundlogcount)
    
     ##### TYPES #####
     print '\n'
@@ -215,12 +216,12 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     for type_ in types:
         generate_type_badges(type_)
                  
-    badgeManager.setStatus('Lost', pers.LostnFoundCount)
-    print '10 Years! Cache ' + str(pers.LostnFoundCount)
+    badgeManager.setStatus('Lost', Pers.LostnFoundCount)
+    print '10 Years! Cache ' + str(Pers.LostnFoundCount)
     ##### CONTAINERS #####
     print '\n',
-    for key, value in zip(pers.containerCount.keys(), 
-                          pers.containerCount.values()):
+    for key, value in zip(Pers.containerCount.keys(),
+                          Pers.containerCount.values()):
         try:
             badgeManager.setStatus(key[:5], value)
             print key + ' ' + str(value)
@@ -233,7 +234,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     mcount = 0
     for dif in difficult:
         for ter in terrain:
-            amount = pers.Matrix[dif][ter]
+            amount = Pers.Matrix[dif][ter]
             print("%3d" % amount),
             if amount > 0: 
                 mcount += 1 
@@ -244,10 +245,10 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
    
     ###### OTHERS #####
     print '\n',
-    badgeManager.setStatus('Adventur', pers.HCCCount)
-    print 'HCC Caches ' + str(pers.HCCCount)
-    badgeManager.setStatus('FTF', pers.FTFcount)
-    print 'FTF Caches ' + str(pers.FTFcount)
+    badgeManager.setStatus('Adventur', Pers.HCCCount)
+    print 'HCC Caches ' + str(Pers.HCCCount)
+    badgeManager.setStatus('FTF', Pers.FTFcount)
+    print 'FTF Caches ' + str(Pers.FTFcount)
    
     badgeManager.setStatus('Owner', 9)
     
@@ -256,8 +257,8 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
    
     ##### COUNTRIES #######
     print '\n',
-    badgeManager.setStatus('Travelling', len(pers.countryList))
-    print 'Countries traveled ' + str(len(pers.countryList))
+    badgeManager.setStatus('Travelling', len(Pers.countryList))
+    print 'Countries traveled ' + str(len(Pers.countryList))
    
     try:
         with open("statelist.txt",'r') as filehandle:
@@ -281,23 +282,23 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     if statelist:
         # Only generate with valid statelist, else skip
         badgeManager.setCountryList(statelist)
-        for country in pers.countryList.keys():   
+        for country in Pers.countryList.keys():
             cbadge = stateBadge(country)
-            cbadge.setStatus(len(pers.stateList[country])) 
+            cbadge.setStatus(len(Pers.stateList[country]))
             badgeManager.addBadge(cbadge)      
-            print('Visited ' + str(len(pers.stateList[country])) + 
+            print('Visited ' + str(len(Pers.stateList[country])) +
                   ' state(s) in ' + country + "\n\t" + 
-                  str(pers.stateList[country].keys()))
+                  str(Pers.stateList[country].keys()))
    
     ##### GEOGRAPHY #######
     print('\n'),
-    badgeManager.setStatus('Clouds', pers.hMax)
-    print("Found cache above " + str(pers.hMax) + "m N.N.")
-    badgeManager.setStatus('Gound', pers.hMin)
-    print("Found cache below " + str(pers.hMin) + "m N.N.")
-    badgeManager.setStatus('Distance', pers.maxDistance[1])
-    print("Found cache " + str(pers.maxDistance[0]) + " in " + 
-          str(pers.maxDistance[1]) + "km distance")
+    badgeManager.setStatus('Clouds', Pers.hMax)
+    print("Found cache above " + str(Pers.hMax) + "m N.N.")
+    badgeManager.setStatus('Gound', Pers.hMin)
+    print("Found cache below " + str(Pers.hMin) + "m N.N.")
+    badgeManager.setStatus('Distance', Pers.max_distance[1])
+    print("Found cache " + str(Pers.max_distance[0]) + " in " +
+          str(Pers.max_distance[1]) + "km distance")
        
     #### COINS ##########
     print('\n'),
@@ -331,7 +332,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     print('\n'),
     cachebyday = defaultdict(lambda: 0)
     cachebydate = defaultdict(lambda: 0)
-    for cache in gpx_inst.allCaches:        
+    for cache in gpx_inst.all_caches:
         cachebyday[str(parse_datetime(cache.date).date())] += 1        
         cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
     maxfind = max(cachebyday.values())
@@ -362,14 +363,14 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
 
 def generate_type_badges(type_):
     ''' Check if cache type has a badge and set status if yes. '''
-    if type_ in pers.typeCount.keys():
-        keys = [key for key in pers.typeCount.keys() 
+    if type_ in Pers.typeCount.keys():
+        keys = [key for key in Pers.typeCount.keys()
                     if type_[:5].lower() in key.lower()]
         if len(keys) == 1:
             try:
                 badgeManager.setStatus(type_[:5].lower(), 
-                                        pers.typeCount[keys[0]])
-                print type_ + ' ' + str(pers.typeCount[keys[0]])
+                                        Pers.typeCount[keys[0]])
+                print type_ + ' ' + str(Pers.typeCount[keys[0]])
             except NameError('BadgeName'):
                 print("No Match for Cachetype %s found. Nothing was set."%
                         type_)
@@ -402,7 +403,7 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
               "problems?\n Continuing without updating.")
         gpx_inst.feed('</gpx>', 1)
         return
-    found = [a.url[-36:] for a in gpx_inst.allCaches]
+    found = [a.url[-36:] for a in gpx_inst.all_caches]
     update = [unicode(b[2]) 
               for b in ncachep_inst.entries 
               if ("Found" in b[0] or "Attended" in b[0])]
@@ -495,8 +496,10 @@ def cleanup(con_mngr):
 
 # If called directly, execute main.
 if __name__ == "__main__":
+    t0 = time.time()
     (pers, gpx_inst, con_mngr_inst, 
      badgepars_inst, badge_manager) = main(sys.argv[1], sys.argv[2:])
+    print time.time() - t0, "seconds"
 
 
 
