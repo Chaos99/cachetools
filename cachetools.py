@@ -36,11 +36,10 @@ import sys
 import re
 import os
 import getopt
-import time
 from calendar import monthrange
 
 from badges import badgeManager, stateBadge
-from badgeParser import badgeParser
+from BadgeParser import BadgeParser
 from GpxParser import GpxParser, Pers
 from spider import ConnectionManager, savetemp
 from geoTools import geoTools
@@ -86,7 +85,7 @@ def main(gpx_filename, argv):
     geoTools.net = con_mngr_inst   
     # Init the parsers.
     gpx_inst = GpxParser(Pers)
-    badgepars_inst = badgeParser()   
+    badgepars_inst = BadgeParser()
     # Read the gpx file.
     try:
         with open(gpx_filename,'r') as filehandle:
@@ -496,10 +495,8 @@ def cleanup(con_mngr):
 
 # If called directly, execute main.
 if __name__ == "__main__":
-    t0 = time.time()
     (pers, gpx_inst, con_mngr_inst, 
      badgepars_inst, badge_manager) = main(sys.argv[1], sys.argv[2:])
-    print time.time() - t0, "seconds"
 
 
 

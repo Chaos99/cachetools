@@ -10,7 +10,7 @@ class badgeManager():
    
     @classmethod
     def populate(cls, h):
-        ''' Init badges with results of a badgeParser run.'''
+        ''' Init badges with results of a BadgeParser run.'''
         if cls.user != '':
             badge.setUser(cls.user,cls.isMultiple)
         else:
@@ -67,7 +67,9 @@ class badgeManager():
         if len(candidates) == 1:
             return candidates[0]
         elif len(candidates) > 1:
-            return reduce(lambda x,y: x if len(x.name) < len(y.name) else y, candidates)
+            return reduce(lambda x,y: x
+                          if len(x.name) < len(y.name)
+                          else y, candidates)
         else: 
             errtext = ("Sorry, no match for badge name %s\n in badges: %s"%
                         (name, str([a.name for a in cls.badges])))
@@ -76,9 +78,11 @@ class badgeManager():
     @classmethod
     def setCountryList(cls, clist):
         ''' Sets the list to be used for state badge level computation.'''
-        cdict = {}
+        cdict = dict()
         for line in clist.split('\n'):
-            cdict[line.partition(',')[0].strip()] = int(line.partition(',')[2].strip())
+            name = line.partition(',')[0].strip()
+            value = int(line.partition(',')[2].strip())
+            cdict[name] = value
         cls.countryList = cdict
 
 class badge():
@@ -91,8 +95,9 @@ class badge():
     num = 10
     goal = 90
    
-    def __init__(self, _name, _desc='awarded for programming batch classes', _verbs='has done', _verbm='have done', _icon='Trad'):
-        ''' Init with name and optional description, verb (singular + plural) and icon base name.'''
+    def __init__(self, _name, _desc='awarded for programming batch classes',
+                 _verbs='has done', _verbm='have done', _icon='Trad'):
+        ''' Init with name and optional description, verb and icon base name.'''
         self.name  = _name
         self.desc = _desc
         self.verbs = _verbs
@@ -126,25 +131,30 @@ class badge():
             raise
 
    
-    def setStatus(self, _num):
+    def setStatus(self, num):
         ''' Set the current status value, compute the badge level.'''
-        self.num = _num
-        #if self.goals.isempty() :
+        self.num = num
         self.level = None
-        if self.goals[1] > self.goals[0]:
-            for g,l in zip(self.goals, self.levels):
-                if _num >= g:
-                    self.level = l
-                    self.goal = self.goals[self.goals.index(g)+1] if l != 'D' else 0
-                else:
-                    pass
+        if self.goals[1] >= self.goals[0]:
+            # increasing goals
+            for goal,level in zip(self.goals, self.levels):
+                if num >= goal:
+                    self.level = level
+                    if level != 'D':
+                        next_goal = self.goals[self.goals.index(goal)+1]
+                        self.goal = next_goal
+                    else:
+                        self.goal = 0
         else:
-            for g,l in zip(self.goals, self.levels):
-                if _num <= g:
-                    self.level = l
-                    self.goal = self.goals[self.goals.index(g)+1] if l != 'D' else 0
-                else:
-                    pass
+            # decreasing goal
+            for goal,level in zip(self.goals, self.levels):
+                if num <= goal:
+                    self.level = level
+                    if level != 'D':
+                        next_goal = self.goals[self.goals.index(goal)+1]
+                        self.goal = next_goal
+                    else:
+                        self.goal = 0
    
     def overridePath(self, _path):
         ''' Set the icon path for this bdge, if different from class default.'''
@@ -157,20 +167,42 @@ class badge():
             return ''
         verb = self.verbm if self.userIsMult else self.verbs
         if self.level == 'D':
-            alt = "%s, %s | %s %s %d, %s reached the highest level"%(self.name, self.desc, escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'have' if self.userIsMult else 'has')
-            return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+            alt =("%s, %s | %s %s %d, %s reached the highest level"%
+                  (self.name,
+                   self.desc,
+                   escape(self.user).encode('ascii', 'xmlcharrefreplace'),
+                   verb,
+                   self.num,
+                   'have' if self.userIsMult else 'has'))
+            return('<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%
+                   (self.path, self.icon, self.level, alt, alt))
         if self.level != None:
-            alt = "%s, %s | %s %s %d, %s %d (+%d) for next level"%(self.name, self.desc,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'need' if self.userIsMult else 'needs', self.goal, self.goal-self.num)
-            return '<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%(self.path, self.icon, self.level, alt, alt)
+            alt = ("%s, %s | %s %s %d, %s %d (+%d) for next level"%
+                   (self.name,
+                    self.desc,
+                    escape(self.user).encode('ascii', 'xmlcharrefreplace'),
+                    verb, self.num,
+                    'need' if self.userIsMult else 'needs',
+                    self.goal,
+                    self.goal-self.num))
+            return('<img src="%s%s%s.png" width=80px\n\talt  = "%s" \n\ttitle= "%s"\n/>\n'%
+                   (self.path, self.icon, self.level, alt, alt))
         else:
-            return '<! No %s generated. %s %s only %d. %s %d (+%d) for level 1.>\n'%(self.name,  escape(self.user).encode('ascii', 'xmlcharrefreplace'), verb, self.num, 'Need' if self.userIsMult else 'Needs', self.goals[0], self.goals[0]-self.num)
+            return('<! No %s generated. %s %s only %d. %s %d (+%d) for level 1.>\n'%
+                   (self.name,
+                    escape(self.user).encode('ascii', 'xmlcharrefreplace'),
+                    verb,
+                    self.num,
+                    'Need' if self.userIsMult else 'Needs',
+                    self.goals[0],
+                    self.goals[0]-self.num))
 
 class stateBadge(badge):
     ''' Special class for state badges generated for specific countries.''' 
     def __init__(self, country, _iconPath=None):
         ''' Init badge with state name and optional icon path.'''
         self.name  = 'State award %s'%country
-        self.desc = 'award for finding caches in a percentage of states in %s'%country
+        self.desc = 'award for finding caches in a percentage of states in %s'% country
         self.verbs = 'has visited'
         self.verbm = 'have visited' 
         if _iconPath == None:
