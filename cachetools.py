@@ -244,10 +244,16 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
    
     ###### OTHERS #####
     print '\n',
-    badgeManager.setStatus('Adventur', Pers.HCCCount)
-    print 'HCC Caches ' + str(Pers.HCCCount)
-    badgeManager.setStatus('FTF', Pers.FTFcount)
-    print 'FTF Caches ' + str(Pers.FTFcount)
+    hccs = [a for a in gpx_inst.all_caches
+            if a.terrain == u'5' and a.difficulty == u'5']
+    badgeManager.setStatus('Adventur', len(hccs))
+    print('HCC Caches: ' + str(len(hccs)) +
+          " (" + str([a.name for a in hccs]) + ")")
+    
+    ftfs = [a for a in gpx_inst.all_caches if 'FTF' in a.text]
+    badgeManager.setStatus('FTF', len(ftfs))
+    print('FTF Caches: ' + str(len(ftfs)) +
+          " (" + str([a.name for a in ftfs]) + ")")
    
     badgeManager.setStatus('Owner', 9)
     

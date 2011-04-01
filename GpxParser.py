@@ -59,8 +59,8 @@ class Pers():
     tenCount = 0
     containerCount = {}
     dateCount = {}
-    HCCCount = 0
-    FTFcount = 0
+    #HCCCount = 0
+    #FTFcount = 0
     LostnFoundCount = 0
     Matrix = defaultdict(lambda: defaultdict(lambda: 0))
     countryList = defaultdict(lambda: 0)
@@ -238,8 +238,8 @@ class GpxParser():
                 count_words(data)
                 self.hasownfoundlog = True
                 #Pers.allFound.append(self.current_name)
-                if 'FTF' in data:
-                    Pers.FTFcount = Pers.FTFcount + 1
+                #if 'FTF' in data:
+                    #Pers.FTFcount = Pers.FTFcount + 1
         elif('groundspeak:log' in self.stack and
             self.stack[-1] == 'groundspeak:finder'):
             if data == Pers.username:
@@ -258,8 +258,8 @@ class GpxParser():
         elif self.stack[-1] == 'groundspeak:terrain':
             self.current_terrain = float(data)
             Pers.Matrix[self.current_difficult][self.current_terrain] += 1
-            if self.current_terrain == 5 and self.current_difficult == 5:
-                Pers.HCCCount = Pers.HCCCount + 1
+            #if self.current_terrain == 5 and self.current_difficult == 5:
+                #Pers.HCCCount = Pers.HCCCount + 1
         elif self.stack[-1] == 'groundspeak:date':
             try:
                 self.last_date = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')
