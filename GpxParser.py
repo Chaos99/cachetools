@@ -185,7 +185,8 @@ class GpxParser():
         if('wpt' in self.stack and
             self.stack[-1] not in ('time','wpt','name','groundspeak:type',
                                 'groundspeak:date') and
-            'groundspeak:attributes' not in self.stack):
+            'groundspeak:attributes' not in self.stack and
+            'groundspeak:travelbugs' not in self.stack):
             if ":" in self.stack[-1]:
                 exec("self.current_cache.%s = data"%
                     (str(self.stack[-1]).partition(':')[2]))
@@ -202,6 +203,7 @@ class GpxParser():
                 self.current_cache.type = data
         elif self.stack[-1] == 'groundspeak:date':
             self.logtime = data.strip()
+        
                 
         if self.stack[-2:] == ['wpt','name']:
             if not data.strip().startswith("GC"):
