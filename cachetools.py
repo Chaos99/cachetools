@@ -338,6 +338,8 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     cachebyday = defaultdict(lambda: 0)
     cachebydate = defaultdict(lambda: 0)
     for cache in gpx_inst.all_caches:
+        if 'Z' not in cache.date:
+            cache.date += 'Z'
         cachebyday[str(parse_datetime(cache.date).date())] += 1        
         cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
     maxfind = max(cachebyday.values())
