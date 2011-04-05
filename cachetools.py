@@ -268,10 +268,16 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
           " (" + str([a.name for a in ftfs]) + ")")
 
     print('\n'),
-    if(cache_mngr.has_option('OWNCACHES', 'caches_hidden') and
-        not force_owned_update):
-            owned = int(cache_mngr.get('OWNCACHES', 'caches_hidden'))
-            ownedcaches = cache_mngr.get('OWNCACHES','caches')
+    if(not force_owned_update):
+            try:
+                owned = int(cache_mngr.get('OWNCACHES', 'caches_hidden'))
+                ownedcaches = cache_mngr.get('OWNCACHES','caches')
+                owned_events = int(cache_mngr.get('OWNCACHES', 'owned_events'))
+            except NoOptionError:
+                print "Cached data incomplete, please redownload with -o"
+                owned = 0
+                ownedcaches = []
+                owned_events = 0
     else:
         print 'No list of hidden caches cached, retrieving new data ...'
         ownlist = con_mngr.get_owner_list()
@@ -282,17 +288,23 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
         ownparser = OwnParser()
         ownparser.feed(ownlist)
         owned = ownparser.owncount
+        owned_events = ownparser.own_event_count
         ownedcaches = ownparser.owncaches
         cache_mngr.set('OWNCACHES', 'caches_hidden', str(owned))
-        cache_mngr.set('OWNCACHES', 'caches', str(ownparser.owncaches))
+        cache_mngr.set('OWNCACHES', 'owned_events', str(owned_events))
+        cache_mngr.set('OWNCACHES', 'caches', str(ownedcaches))
         with open('cache.dat', 'ab') as cachefile:
             cache_mngr.write(cachefile)
    
     badgeManager.setStatus('Owner', owned)
     print "Owner of " + str(owned) + ' Caches: ' + str(ownedcaches)
+
+    badgeManager.setStatus('Host', owned_events)
+    print "Hosted " + str(owned_events) + ' Events.'
+
     
     badgeManager.setStatus('Scuba', 0)
-    badgeManager.setStatus('Host', 0)
+    
    
     ##### COUNTRIES #######
     print '\n',

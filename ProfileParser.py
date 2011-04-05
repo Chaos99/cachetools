@@ -57,12 +57,12 @@ class OwnParser(HTMLParser):
         HTMLParser.__init__(self)
         self.stack=[]
         self.entity = None
-        self.tableSig = ['div', 'table', 'tbody', 'tr', 'td', 'a']
-        self.totalSig = ['html', 'body', 'div', 'div', 'table', 'tr', 'td',
-                         'strong']
+        self.nameSig = ['div', 'table', 'tbody', 'tr', 'td', 'a']
+        self.typeSig = ['div', 'table', 'tbody', 'tr', 'td', 'img']
         self.atTB = False
         self.owncaches = []
         self.owncount = 0
+        self.own_event_count = 0
         
     def handle_charref(self, name):
         print 'charref ' + name   
@@ -72,6 +72,10 @@ class OwnParser(HTMLParser):
     
     def handle_starttag(self, name, attrs):      
         self.stack.append(name)
+        if name == 'img' and 'src' in [a[0] for a in attrs]:
+            if '6.gif' in [a[1] for a in attrs if a[0] == 'src']:
+                self.own_event_count += 1
+                
         #print self.stack
         
     def handle_endtag(self, name):
@@ -87,7 +91,7 @@ class OwnParser(HTMLParser):
             self.stack = oldstack
          
     def handle_data(self, data):
-        if self.stack == self.tableSig:
+        if self.stack == self.nameSig:
             self.owncount += 1
             self.owncaches.append(data.strip())
             #print 'Found ' + data.strip()
