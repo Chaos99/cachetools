@@ -57,17 +57,21 @@ def main(gpx_filename, argv):
     
     # Check for command line options.
     force_tb_update = False
+    force_owned_update = False
     check_for_updates = False
     try:
-        opts, args = getopt.getopt(argv, "fch", ["forceTBupdate", 
-                                            "checkForUpdates", "help"])
+        opts, args = getopt.getopt(argv, "toch", ["forceTBupdate",
+                                                  "forceOwnUpdate", 
+                                                  "checkForUpdates", "help"])
     except getopt.GetoptError:           
-        print("Usage: python [-i] <gpx-file> [-forceTBupdate] "
-              "[-checkForUpdates]")
+        print("Usage: python [-i] <gpx-file> [--forceTBupdate|-t] "
+              "[--forceOwnupdate|-o] [--checkForUpdates|-c]")
         sys.exit(2)
     for opt, args in opts:
-        if opt in ("-f", "--forceTBupdate"):
+        if opt in ("-t", "--forceTBupdate"):
             force_tb_update = True
+        elif opt in ('-o', '--forceOwnupdate'):
+            force_owned_update = True
         elif opt in ('-c', '--checkForUpdates'):
             check_for_updates = True
         elif opt in ('-h', '--help'):
@@ -128,7 +132,7 @@ def main(gpx_filename, argv):
     # Create the standard badges from the website content.
     badgeManager.populate(badgepars_inst) 
     
-    create_badges(gpx_inst, con_mngr_inst, cache, force_tb_update)
+    create_badges(gpx_inst, con_mngr_inst, cache, force_tb_update, force_owned_update)
     outputhtml()
     cleanup(con_mngr_inst)
     return (Pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
@@ -173,19 +177,27 @@ def prepare_caching():
         cache.read('cache.dat')
         if not cache.has_section('TRAVELITEMS'):
             raise KeyError("TRAVELITEMS")
-    except (IOError, KeyError):
-        cache.add_section('TRAVELITEMS')
+        if not cache.has_section('OWNCACHES'):
+            raise KeyError("OWNCACHES")
+    except KeyError as e:
+        cache.add_section(e.args[0])
+        print("No Travelbug/ Own Caches section found . A new one was "
+              "generated.")
+    except IOError:
+        print("No cache file found . A new one was "
+              "generated.")
+    finally:
         try:
             with open('cache.dat', 'wb') as cachefile:
                 cache.write(cachefile)
             cache.read('cache.dat')
         except IOError:
             print "Cachefile could not be written. Continuing without saving."
-        print("No cache file or no Travelbug section found . A new one was "
-              "generated.") 
+ 
     return cache
 
-def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
+def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
+                  force_owned_update):
     ''' Generate the badges from statistical data.
     
     Use the statistical data from the parser runs and the badge definitions to
@@ -254,8 +266,30 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
     badgeManager.setStatus('FTF', len(ftfs))
     print('FTF Caches: ' + str(len(ftfs)) +
           " (" + str([a.name for a in ftfs]) + ")")
+
+    print('\n'),
+    if(cache_mngr.has_option('OWNCACHES', 'caches_hidden') and
+        not force_owned_update):
+            owned = int(cache_mngr.get('OWNCACHES', 'caches_hidden'))
+            ownedcaches = cache_mngr.get('OWNCACHES','caches')
+    else:
+        print 'No list of hidden caches cached, retrieving new data ...'
+        ownlist = con_mngr.get_owner_list()
+        ownlist = re.compile("<script([^>]*)>.*?</script>",
+                              re.DOTALL).sub("", ownlist)
+        ownlist = re.compile("<span([^>]*)>.*?</span>",
+                              re.DOTALL).sub("", ownlist)
+        ownparser = OwnParser()
+        ownparser.feed(ownlist)
+        owned = ownparser.owncount
+        ownedcaches = ownparser.owncaches
+        cache_mngr.set('OWNCACHES', 'caches_hidden', str(owned))
+        cache_mngr.set('OWNCACHES', 'caches', str(ownparser.owncaches))
+        with open('cache.dat', 'ab') as cachefile:
+            cache_mngr.write(cachefile)
    
-    badgeManager.setStatus('Owner', 9)
+    badgeManager.setStatus('Owner', owned)
+    print "Owner of " + str(owned) + ' Caches: ' + str(ownedcaches)
     
     badgeManager.setStatus('Scuba', 0)
     badgeManager.setStatus('Host', 0)
@@ -325,7 +359,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
         tbs = coinparser.TBCount
         cache_mngr.set('TRAVELITEMS', 'travelbugs', str(tbs))
         cache_mngr.set('TRAVELITEMS', 'coins', str(coins))
-        with open('cache.dat', 'ab') as cachefile:
+        with open('cache.dat', 'wb') as cachefile:
             cache_mngr.write(cachefile)
    
     badgeManager.setStatus('Coin', coins)

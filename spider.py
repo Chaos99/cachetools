@@ -241,8 +241,8 @@ class ConnectionManager():
         
     def get_owner_list(self):
         ''' Get the search results page for cached hidden by "uname"'''
-        if os.path.exists('owner.html'):
-            pagecontent = open('owner.html','r').read()
+        if os.path.exists('owned.html'):
+            pagecontent = open('owned.html','r').read()
             print "Read cached file for owned caches" 
             return pagecontent
 
@@ -250,5 +250,6 @@ class ConnectionManager():
             if not self.isloggedin:
                 self.logon()
             pagecontent = self.urlopen(OWNERURL)
+            savetemp(pagecontent, "owned.html")
             return pagecontent
         
