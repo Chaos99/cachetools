@@ -15,14 +15,11 @@ class CoinParser(HTMLParser):
         self.TBCount = 0
         self.TotalCount = 0
         self.CoinCount = 0
-   
-    def handle_charref(self, name):
-        print 'charref ' + name   
 
-    def handle_entityref(self, name):      
+    def handle_entityref(self, name):
         self.entity = self.unescape('&'+name+';')
 
-    def handle_starttag(self, name, attrs):      
+    def handle_starttag(self, name, attrs):
         self.stack.append(name)
         #print self.stack
       

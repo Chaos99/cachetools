@@ -111,7 +111,7 @@ class ConnectionManager():
         if not self.isloggedin:
             self.logon()
         pagecontent = self.urlopen(PROFILURL) 
-        savetemp(pagecontent)
+        #savetemp(pagecontent)
         mat = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"',
                       pagecontent, re.S)
         self.viewstate[0] = mat.group(1)
@@ -128,7 +128,7 @@ class ConnectionManager():
         print "... done!"
         #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
         #self.viewstate = m.group(1)
-        savetemp(pagecontent,"coin.html")
+        #savetemp(pagecontent,"coin.html")
         return (pagecontent) 
    
     def getsinglegpx(self, cid):
@@ -250,6 +250,6 @@ class ConnectionManager():
             if not self.isloggedin:
                 self.logon()
             pagecontent = self.urlopen(OWNERURL)
-            savetemp(pagecontent, "owned.html")
+            #savetemp(pagecontent, "owned.html")
             return pagecontent
         

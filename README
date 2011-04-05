@@ -5,17 +5,19 @@ cachetools.py
     Retrieve online information for badge definitions, geolocation and elevation 
     of caches, trackables found and new geocaches not yet listed in the gpx file.
 	
-Usage: python cachetools.py <gpxfile> [-f|--forceTBupdate] [-c|--checkUpdate]
+Usage: python cachetools.py <gpxfile> [-t|--forceTBupdate] [-c|--checkUpdate] [-o|--forceOwnupdate]
 	
 	- gets settings from a config.cfg file, will generate template if not found (needs at least username and password)
 	- will download list of coins and TBs from you geocaching.com account
+    - will download list of caches hidden by the user from geocaching.com
 	- will download list of badges and ranges/conditions from kyle mills website
 	- will download list of countries for state badges from kyle mills website
         - will download elevation data for all geocaches
         - will download state district information if not provided
 
 	- all downloads are cached. delete cached files for re-download.
-	- use -f or --forceTBupdate to re-download TB and Coin info
+	- use -t or --forceTBupdate to re-download TB and Coin info
+    - use -o or --forceOwnupdate to re-download list of own caches hidden
 	- use -c or --checkUpdate to update local .gpx file with new logs from geocaching.com (premium members only) 
 	
 	- outputs output.html with badges to be included in profile page or in other tools like GCStatistics
