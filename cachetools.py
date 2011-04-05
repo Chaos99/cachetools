@@ -483,9 +483,9 @@ def check_updates(con_mngr, gpx_inst, originalgpx, gpx_filename):
             print "done"
             # Do cleanup
             for guid in new:
-                if os.path.exists(guid + ".gpx"):
+                if os.path.exists(guid.strip().upper() + ".gpx"):
                     try:
-                        os.remove(guid + ".gpx")
+                        os.remove(guid.strip().upper() + ".gpx")
                     except OSError:
                         print('Problems removing temporary file %s, aborting '
                               'deletion.'%(guid + ".gpx"))
