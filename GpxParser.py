@@ -65,7 +65,7 @@ class Pers():
     Matrix = defaultdict(lambda: defaultdict(lambda: 0))
     countryList = defaultdict(lambda: 0)
     stateList = defaultdict(lambda: defaultdict(lambda: 0))
-    _allFound = [] # possibly deprecated
+    #_allFound = [] # possibly deprecated
     home = None
     max_distance = [None, 0]
 

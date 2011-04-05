@@ -45,7 +45,7 @@ from spider import ConnectionManager, savetemp
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
 from ConfigParser import NoOptionError
-from coinParser import coinParser
+from ProfileParser import CoinParser, OwnParser
 from newCacheParser import newCacheParser
 from collections import defaultdict
 from iso8601 import parse_datetime
@@ -319,7 +319,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update):
                               re.DOTALL).sub("", coinlist)
         coinlist = re.compile("<span([^>]*)>.*?</span>", 
                               re.DOTALL).sub("", coinlist)
-        coinparser = coinParser()
+        coinparser = CoinParser()
         coinparser.feed(coinlist)
         coins = coinparser.CoinCount
         tbs = coinparser.TBCount

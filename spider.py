@@ -14,6 +14,7 @@ LOGINURL = BASEURL + 'login/default.aspx'
 SEARCHURL = BASEURL + 'seek/nearest.aspx'
 PROFILURL = BASEURL + 'profile/default.aspx'
 BADGEURL = KYLEURL + "BadgeGen/badges.html"
+OWNERURL = BASEURL + "my/owned.aspx"
 STATELISTURL = KYLEURL + "BadgeGen/badgescripts/statelist.txt"
 PRIVATEURL = BASEURL + 'my/'
 USERAGENT = ("Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) "
@@ -37,7 +38,7 @@ class ConnectionManager():
         self.cjar = cookielib.LWPCookieJar("cookies.txt")
         try:
             self.cjar.load(ignore_discard = True)
-        except(cookielib.LoadError):
+        except(cookielib.LoadError, IOError):
             print "No old Cookies loaded, starting new session"
         if proxyurl and proxyurl != 'None':
             proxy = ProxyHandler({'http' : proxyurl})      
@@ -58,10 +59,11 @@ class ConnectionManager():
     def urlopen(self, request):
         ''' Retrieve contents of given URL.'''
         self.lastrequest = request 
-        while time.time() - self.lastconnection < GRACETIME:
-            time.sleep(0.5)
+        while (time.time() - self.lastconnection) < GRACETIME:
+            time.sleep(5)
         try:
             page = urlopen(request)
+            self.lastconnection = time.time()
             self.cjar.save(ignore_discard = True)
         except (URLError):
             print("Error retrieving %s"% request.get_full_url())
@@ -126,7 +128,7 @@ class ConnectionManager():
         print "... done!"
         #m = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', inpage, re.S)
         #self.viewstate = m.group(1)
-        savetemp(pagecontent,"result.html")
+        savetemp(pagecontent,"coin.html")
         return (pagecontent) 
    
     def getsinglegpx(self, cid):
@@ -236,3 +238,17 @@ class ConnectionManager():
         for wpt in waypoints_clean:
             text += '\n' + wpt
         return first.rstrip()[:-6] + "\n" + text + "\n</gpx>"
+        
+    def get_owner_list(self):
+        ''' Get the search results page for cached hidden by "uname"'''
+        if os.path.exists('owner.html'):
+            pagecontent = open('owner.html','r').read()
+            print "Read cached file for owned caches" 
+            return pagecontent
+
+        else:
+            if not self.isloggedin:
+                self.logon()
+            pagecontent = self.urlopen(OWNERURL)
+            return pagecontent
+        
