@@ -5,7 +5,6 @@ from datetime import datetime
 from collections import defaultdict
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
-from copy import deepcopy
 
 def count_words(text):
     ''' Count word-like blocks of letters in logs.'''
@@ -74,29 +73,43 @@ class Waypoint():
     ''' Struct to hold waypoint information.'''
     class GeoCache():
         ''' Struct like class to hold a single Geocached parsed from gpx.'''
+        
         class Log():
             ''' Sub-struct to hold saved logs.'''
             def __init__(self):
                 pass
+            
         class Travelbug():
             ''' Sub-struct to hold travelbugs.'''
             def __init__(self):
                 pass
+            
         class Attribute():
             ''' Sub-struct to hold attributes.'''
             def __init__(self, aid, inc):
                 self.id = int(aid)
                 self.inc = int(inc)
                 self.name = None
+        
         def __init__(self, **keys):
             #self.owner = {}
             self.attributes = []
             self.logs = []
             self.travelbugs = []
             self.__dict__.update(keys)
+
+            self.country = None
+            self.available = None
+            self.archived = None
+            self.state = None
+            self.owner_id = None
+            
     def __init__(self, coords):
         self.coords = coords
         self.cache = None
+        self.height = None
+        self.name = None
+        self.distance = None
         
 class GpxParser():
     ''' Parser for pocket query gpx files from Geocaching.com.'''
@@ -116,7 +129,7 @@ class GpxParser():
         self.current_name = None
         self.logtime = None
         self.cache = ConfigParser()
-        self.current_cache = None
+        self.current_wpt = None
         self.all_caches = []
         self.ignore_wpt = False
         self.current_country = None
@@ -153,7 +166,7 @@ class GpxParser():
             self.current_wpt.cache.available = attrs['available']
             self.current_wpt.cache.archived = attrs['archived']
         elif name == 'groundspeak:attribute':
-            attribute = Waypoint.GeoCache.Attribute(attrs['id'],attrs['inc'])
+            attribute = Waypoint.GeoCache.Attribute(attrs['id'], attrs['inc'])
             self.current_wpt.cache.attributes.append(attribute)
         elif name == 'groundspeak:log':
             self.current_wpt.cache.logs.append(Waypoint.GeoCache.Log())
@@ -182,13 +195,13 @@ class GpxParser():
             else:
                 if not self.haslog:
                     print("Cache without log: " +
-                           str(self.current_cache.gid).encode('ascii', 'ignore'))
+                           str(self.current_wpt.name).encode('ascii', 'ignore'))
                 if not self.hasownlog:
                     print("Cache without own log: " +
-                           str(self.current_cache.gid).encode('ascii', 'ignore'))
+                           str(self.current_wpt.name).encode('ascii', 'ignore'))
                 if not self.hasownfoundlog:
                     print("Cache without own found log: " +
-                          str(self.current_cache.gid).encode('ascii', 'ignore'))
+                          str(self.current_wpt.name).encode('ascii', 'ignore'))
                 else:
                     Pers.ownfoundlogcount = Pers.ownfoundlogcount + 1
                     self.all_caches.append(self.current_wpt)
@@ -224,15 +237,18 @@ class GpxParser():
              'groundspeak:attributes' not in self.stack and
              'groundspeak:logs' not in self.stack and
              'groundspeak:travelbugs' not in self.stack):
-            exec("self.current_wpt.cache.%s = data"%(str(self.stack[-1]).partition(':')[2]))
+            data_wo_prefix = str(self.stack[-1]).partition(':')[2]
+            exec("self.current_wpt.cache.%s = data"%(data_wo_prefix))
         elif('groundspeak:attribute' in self.stack):
-           self.current_wpt.cache.attributes[-1].name = data
+            self.current_wpt.cache.attributes[-1].name = data
         elif(self.stack[-1] not in ('groundspeak:log') and
              'groundspeak:log' in self.stack):
-            exec("self.current_wpt.cache.logs[-1].%s = data"%(str(self.stack[-1]).partition(':')[2]))
+            data_wo_prefix = str(self.stack[-1]).partition(':')[2]
+            exec("self.current_wpt.cache.logs[-1].%s = data"%(data_wo_prefix))
         elif(self.stack[-1] not in ('groundspeak:travelbug') and
              'groundspeak:travelbug' in self.stack):
-           exec("self.current_wpt.cache.travelbugs[-1].%s = data"%(str(self.stack[-1]).partition(':')[2]))
+            data_wo_prefix = str(self.stack[-1]).partition(':')[2]
+            exec("self.current_wpt.cache.travelbugs[-1].%s = data"%(data_wo_prefix))
 
         elif self.stack[-2:] == ['wpt','name']:
             if not data.startswith("GC"):
