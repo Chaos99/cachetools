@@ -256,13 +256,16 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
    
     ###### OTHERS #####
     print '\n',
-    hccs = [a for a in gpx_inst.all_caches
-            if a.terrain == u'5' and a.difficulty == u'5']
+    try:
+        hccs = [wpt.cache for wpt in gpx_inst.all_caches
+                if wpt.cache.terrain == u'5' and wpt.cache.difficulty == u'5']
+    except AttributeError:
+        return gpx_inst.all_caches
     badgeManager.setStatus('Adventur', len(hccs))
     print('HCC Caches: ' + str(len(hccs)) +
           " (" + str([a.name for a in hccs]) + ")")
     
-    ftfs = [a for a in gpx_inst.all_caches if 'FTF' in a.text]
+    ftfs = [a.cache for a in gpx_inst.all_caches if 'FTF' in a.cache.logs[0].text]
     badgeManager.setStatus('FTF', len(ftfs))
     print('FTF Caches: ' + str(len(ftfs)) +
           " (" + str([a.name for a in ftfs]) + ")")
@@ -383,11 +386,12 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     print('\n'),
     cachebyday = defaultdict(lambda: 0)
     cachebydate = defaultdict(lambda: 0)
-    for cache in gpx_inst.all_caches:
-        if 'Z' not in cache.date:
-            cache.date += 'Z'
-        cachebyday[str(parse_datetime(cache.date).date())] += 1        
-        cachebydate[parse_datetime(cache.date).date().strftime('%m-%d')] += 1
+    for wpt in gpx_inst.all_caches:
+        if 'Z' not in wpt.cache.logs[0].date:
+            wpt.cache.logs[0].date += 'Z'
+        found = wpt.cache.logs[0].date
+        cachebyday[str(parse_datetime(found).date())] += 1
+        cachebydate[parse_datetime(found).date().strftime('%m-%d')] += 1
     maxfind = max(cachebyday.values())
     for (key, value) in zip(cachebyday.keys(), cachebyday.values()):
         if value == maxfind:
@@ -551,6 +555,6 @@ def cleanup(con_mngr):
 if __name__ == "__main__":
     (pers, gpx_inst, con_mngr_inst, 
      badgepars_inst, badge_manager) = main(sys.argv[1], sys.argv[2:])
-
+    c = gpx_inst.all_caches[0]
 
 

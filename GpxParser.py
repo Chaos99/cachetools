@@ -5,6 +5,7 @@ from datetime import datetime
 from collections import defaultdict
 from geoTools import geoTools
 from ConfigParser import SafeConfigParser as ConfigParser
+from copy import deepcopy
 
 def count_words(text):
     ''' Count word-like blocks of letters in logs.'''
@@ -69,24 +70,34 @@ class Pers():
     home = None
     max_distance = [None, 0]
 
-class GeoCache():
-    ''' Struct like class to hold a single Geocached parsed from gpx.'''
-    class Logs():
-        ''' Sub-struct to hold saved logs.'''
-        def __init__(self, lid):
-            self.lid = lid
-            self.finder = dict(uid=None, name=None)
-    def __init__(self, **keys):
-        self.gid = ""
-        self.owner = {}
-        self.attributes = {}
-        self.logs = {}
-        self.travelbugs = {}
-        self.coords = None
-        self.placed = None
-        self.height = None
-        self.__dict__.update(keys)
-
+class Waypoint():
+    ''' Struct to hold waypoint information.'''
+    class GeoCache():
+        ''' Struct like class to hold a single Geocached parsed from gpx.'''
+        class Log():
+            ''' Sub-struct to hold saved logs.'''
+            def __init__(self):
+                pass
+        class Travelbug():
+            ''' Sub-struct to hold travelbugs.'''
+            def __init__(self):
+                pass
+        class Attribute():
+            ''' Sub-struct to hold attributes.'''
+            def __init__(self, aid, inc):
+                self.id = int(aid)
+                self.inc = int(inc)
+                self.name = None
+        def __init__(self, **keys):
+            #self.owner = {}
+            self.attributes = []
+            self.logs = []
+            self.travelbugs = []
+            self.__dict__.update(keys)
+    def __init__(self, coords):
+        self.coords = coords
+        self.cache = None
+        
 class GpxParser():
     ''' Parser for pocket query gpx files from Geocaching.com.'''
     def __init__(self, _pers):
@@ -113,7 +124,6 @@ class GpxParser():
         self.current_time = None
         self.last_date = None
         self.current_terrain = None
-        self.current_height = None
         self.current_coords = None
 
         self.cache.read('cache.dat')
@@ -136,11 +146,29 @@ class GpxParser():
         self.stack.append(name)
         if name == 'wpt':
             Pers.count  += 1
-            self.current_coords = (float(attrs['lat']), float(attrs['lon']))
+            coords = (float(attrs['lat']), float(attrs['lon']))
+            self.current_wpt = Waypoint(coords)
+        elif name == 'groundspeak:cache':
+            self.current_wpt.cache = Waypoint.GeoCache(id = int(attrs['id']))
+            self.current_wpt.cache.available = attrs['available']
+            self.current_wpt.cache.archived = attrs['archived']
+        elif name == 'groundspeak:attribute':
+            attribute = Waypoint.GeoCache.Attribute(attrs['id'],attrs['inc'])
+            self.current_wpt.cache.attributes.append(attribute)
         elif name == 'groundspeak:log':
+            self.current_wpt.cache.logs.append(Waypoint.GeoCache.Log())
             self.haslog = True
             Pers.logcount = Pers.logcount + 1
-    
+        elif name == 'groundspeak:owner':
+            self.current_wpt.cache.owner_id = attrs['id']
+        elif name == 'groundspeak:finder':
+            self.current_wpt.cache.logs[-1].finder_id = attrs['id']
+        elif name == 'groundspeak:travelbug':
+            trb = Waypoint.GeoCache.Travelbug()
+            self.current_wpt.cache.travelbugs.append(trb)
+            self.current_wpt.cache.travelbugs[-1].id = attrs['id']
+            self.current_wpt.cache.travelbugs[-1].ref = attrs['ref']
+            
     def end(self, name):
         ''' process end tags; handle stack; finalize wpt; handle EOF.'''
         if self.stack.pop() != name:
@@ -154,16 +182,16 @@ class GpxParser():
             else:
                 if not self.haslog:
                     print("Cache without log: " +
-                           str(self.current_name).encode('ascii', 'ignore'))
+                           str(self.current_cache.gid).encode('ascii', 'ignore'))
                 if not self.hasownlog:
                     print("Cache without own log: " +
-                           str(self.current_name).encode('ascii', 'ignore'))
+                           str(self.current_cache.gid).encode('ascii', 'ignore'))
                 if not self.hasownfoundlog:
                     print("Cache without own found log: " +
-                          str(self.current_name).encode('ascii', 'ignore'))
+                          str(self.current_cache.gid).encode('ascii', 'ignore'))
                 else:
                     Pers.ownfoundlogcount = Pers.ownfoundlogcount + 1
-                    self.all_caches.append(self.current_cache)
+                    self.all_caches.append(self.current_wpt)
                 
             self.haslog = False
             self.hasownlog = False
@@ -182,54 +210,64 @@ class GpxParser():
     
     def data(self, data):
         ''' Handle data, call special handlers, count and store attributes.'''
+        data = data.strip()
         if('wpt' in self.stack and
-            self.stack[-1] not in ('time','wpt','name','groundspeak:type',
-                                'groundspeak:date') and
+            self.stack[-1] not in ('wpt', 'name') and
+            'groundspeak:cache' not in self.stack and
             'groundspeak:attributes' not in self.stack and
+            'groundspeak:logs' not in self.stack and
             'groundspeak:travelbugs' not in self.stack):
-            if ":" in self.stack[-1]:
-                exec("self.current_cache.%s = data"%
-                    (str(self.stack[-1]).partition(':')[2]))
-            else:
-                exec("self.current_cache.%s = data"%(str(self.stack[-1])))
-        elif self.stack[-2:] == ['wpt','time']:
-            self.current_time = data
-        elif self.stack[-1] == 'groundspeak:type':
-            if 'groundspeak:log' in self.stack:
-                self.current_cache.logtype = data
-                if 'Found it' in data or 'Attended' in data:
-                    self.current_cache.date = self.logtime
-            else:
-                self.current_cache.type = data
-        elif self.stack[-1] == 'groundspeak:date':
-            self.logtime = data.strip()
-        
-                
-        if self.stack[-2:] == ['wpt','name']:
-            if not data.strip().startswith("GC"):
+            exec("self.current_wpt.%s = data"%(str(self.stack[-1])))
+        elif(self.stack[-1] not in ('groundspeak:state',
+                                    'groundspeak:cache') and
+             'groundspeak:cache' in self.stack and
+             'groundspeak:attributes' not in self.stack and
+             'groundspeak:logs' not in self.stack and
+             'groundspeak:travelbugs' not in self.stack):
+            exec("self.current_wpt.cache.%s = data"%(str(self.stack[-1]).partition(':')[2]))
+        elif('groundspeak:attribute' in self.stack):
+           self.current_wpt.cache.attributes[-1].name = data
+        elif(self.stack[-1] not in ('groundspeak:log') and
+             'groundspeak:log' in self.stack):
+            exec("self.current_wpt.cache.logs[-1].%s = data"%(str(self.stack[-1]).partition(':')[2]))
+        elif(self.stack[-1] not in ('groundspeak:travelbug') and
+             'groundspeak:travelbug' in self.stack):
+           exec("self.current_wpt.cache.travelbugs[-1].%s = data"%(str(self.stack[-1]).partition(':')[2]))
+
+        elif self.stack[-2:] == ['wpt','name']:
+            if not data.startswith("GC"):
                 # woah, ran into a waypoint
                 self.ignore_wpt = True
                 Pers.count  -= 1
                 return
-            self.current_name = data
-            self.get_height(self.current_name, self.current_coords)
+            name = data
+            height = self.get_height(name, self.current_coords)
+            # internal model
+            self.current_wpt.name = name
+            self.current_wpt.height = height
             if Pers.home:
-                dist = geoTools.get_distance(Pers.home, self.current_coords)
+                dist = geoTools.get_distance(Pers.home, self.current_wpt.coords)
+                self.current_wpt.distance = dist
                 if dist > Pers.max_distance[1]:
                     Pers.max_distance = (data, dist)
                 else:
                     Pers.max_distance = Pers.max_distance
-            # internal model
-            self.current_cache = GeoCache(gid = data)
-            self.current_cache.coords = self.current_coords
-            self.current_cache.placed = self.current_time
-            self.current_cache.height = self.current_height
-    
-        elif(self.stack[-1]=="desc"  and "10 Years!" in data):
+
+        elif self.stack[-1] == "groundspeak:state":
+            if data == "":
+                gid = self.current_wpt.name
+                coords = self.current_wpt.coords
+                data = self.get_state(gid, coords)
+            country = self.current_wpt.cache.country
+            Pers.stateList[country][data] += 1
+            self.current_wpt.cache.state = data
+
+            
+        if(self.stack[-1]=="desc"  and "10 Years!" in data):
             Pers.LostnFoundCount += 1
         elif('groundspeak:log' not in self.stack and
             self.stack[-1] == 'groundspeak:type'):
-            count_type(data.strip())
+            count_type(data)
         elif('groundspeak:log' in self.stack and
             self.stack[-1] == 'groundspeak:type'):
             if data == 'Found it' or data == 'Attended':
@@ -254,7 +292,7 @@ class GpxParser():
             if '10 Years!' in data:
                 Pers.tenCount = Pers.tenCount + 1
         elif self.stack[-1] == 'groundspeak:container':
-            count_container(data.strip())
+            count_container(data)
         elif self.stack[-1] == 'groundspeak:difficulty':
             self.current_difficult = float(data)
         elif self.stack[-1] == 'groundspeak:terrain':
@@ -269,12 +307,9 @@ class GpxParser():
                 self.last_date = datetime.strptime(data,'%Y-%m-%dT%H:%M:%S')
         elif self.stack[-1] == "groundspeak:country":
             #and data not in Pers.countryList:
-            Pers.countryList[data.strip()] += 1
-            self.current_country = data.strip()
-        elif self.stack[-1] == "groundspeak:state":
-            if data.strip() == "":
-                data = self.get_state(self.current_name, self.current_coords)
-            Pers.stateList[self.current_country][data.strip()] += 1
+            Pers.countryList[data] += 1
+            self.current_country = data
+
     
     def get_height(self, name, coords):
         ''' Ask GeoTools for height, compute min and max.'''
@@ -283,7 +318,7 @@ class GpxParser():
         else:
             height = geoTools.get_height(coords)
             self.cache.set('HEIGHT', name, str(height))
-        self.current_height = height
+        #self.current_height = height
         try:
             Pers.hMax = height if height > Pers.hMax else Pers.hMax
             Pers.hMin = height if height < Pers.hMin else Pers.hMin
@@ -292,6 +327,7 @@ class GpxParser():
             # happens once
             Pers.hMax = height
             Pers.hMin = height
+        return height
     
     def get_state(self, name, coords):
         ''' Get state for geocache, either from cache or by asking geotools.'''
