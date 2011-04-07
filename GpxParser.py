@@ -27,13 +27,6 @@ def count_type(name):
     else:
         Pers.typeCount[name] = 1
 
-def count_container(name):
-    ''' Produce a histogram if cache containers.'''
-    if name in Pers.containerCount.keys():
-        Pers.containerCount[name] = Pers.containerCount[name] + 1
-    else:
-        Pers.containerCount[name] = 1
-
 def count_date(date):
     ''' Produce histogram of days, months and years; possible deprecated.'''
     if date.year not in Pers.dateCount.keys():
@@ -57,12 +50,11 @@ class Pers():
     words = []
     typeCount = {}
     tenCount = 0
-    containerCount = {}
+    #containerCount = {}
     dateCount = {}
     #HCCCount = 0
     #FTFcount = 0
-    LostnFoundCount = 0
-    Matrix = defaultdict(lambda: defaultdict(lambda: 0))
+    #LostnFoundCount = 0
     countryList = defaultdict(lambda: 0)
     stateList = defaultdict(lambda: defaultdict(lambda: 0))
     #_allFound = [] # possibly deprecated
@@ -133,10 +125,8 @@ class GpxParser():
         self.all_caches = []
         self.ignore_wpt = False
         self.current_country = None
-        self.current_difficult = None
         self.current_time = None
         self.last_date = None
-        self.current_terrain = None
         self.current_coords = None
 
         self.cache.read('cache.dat')
@@ -279,9 +269,8 @@ class GpxParser():
             self.current_wpt.cache.state = data
 
             
-        if(self.stack[-1]=="desc"  and "10 Years!" in data):
-            Pers.LostnFoundCount += 1
-        elif('groundspeak:log' not in self.stack and
+
+        if('groundspeak:log' not in self.stack and
             self.stack[-1] == 'groundspeak:type'):
             count_type(data)
         elif('groundspeak:log' in self.stack and
@@ -307,15 +296,6 @@ class GpxParser():
         elif self.stack[-1] == 'groundspeak:name':
             if '10 Years!' in data:
                 Pers.tenCount = Pers.tenCount + 1
-        elif self.stack[-1] == 'groundspeak:container':
-            count_container(data)
-        elif self.stack[-1] == 'groundspeak:difficulty':
-            self.current_difficult = float(data)
-        elif self.stack[-1] == 'groundspeak:terrain':
-            self.current_terrain = float(data)
-            Pers.Matrix[self.current_difficult][self.current_terrain] += 1
-            #if self.current_terrain == 5 and self.current_difficult == 5:
-                #Pers.HCCCount = Pers.HCCCount + 1
         elif self.stack[-1] == 'groundspeak:date':
             try:
                 self.last_date = datetime.strptime(data,'%Y-%m-%dT%H:%M:%SZ')

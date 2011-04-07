@@ -36,6 +36,7 @@ import sys
 import re
 import os
 import getopt
+import time
 from calendar import monthrange
 
 from badges import badgeManager, stateBadge
@@ -91,6 +92,7 @@ def main(gpx_filename, argv):
     gpx_inst = GpxParser(Pers)
     badgepars_inst = BadgeParser()
     # Read the gpx file.
+    start = time.time()
     try:
         with open(gpx_filename,'r') as filehandle:
             originalgpx = filehandle.read()
@@ -106,7 +108,7 @@ def main(gpx_filename, argv):
     else:
         gpx_inst.feed(originalgpx, 1)
     print "done"
-   
+    end = time.time()
     # Check for updates.
     if check_for_updates:
         check_updates(con_mngr_inst, gpx_inst, originalgpx, gpx_filename)
@@ -135,6 +137,7 @@ def main(gpx_filename, argv):
     create_badges(gpx_inst, con_mngr_inst, cache, force_tb_update, force_owned_update)
     outputhtml()
     cleanup(con_mngr_inst)
+    print "Parsing: " + str(end-start)
     return (Pers, gpx_inst, con_mngr_inst, badgepars_inst, badgeManager)
 
 def prepare_config():
@@ -226,26 +229,38 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
    
     for type_ in types:
         generate_type_badges(type_)
-                 
-    badgeManager.setStatus('Lost', Pers.LostnFoundCount)
-    print '10 Years! Cache ' + str(Pers.LostnFoundCount)
+    lostn = len([a for a in gpx_inst.all_caches if 'Lost and Found' in a.desc])
+    badgeManager.setStatus('Lost', lostn)
+    print '10 Years! Cache ' + str(lostn)
+    
     ##### CONTAINERS #####
     print '\n',
-    for key, value in zip(Pers.containerCount.keys(),
-                          Pers.containerCount.values()):
+    types = [u'Not chosen', u'Large', u'Micro', u'Regular', u'Small', u'Other']
+    found_types = [a.cache.container for a in gpx_inst.all_caches]
+    container_hist = {}
+    for con in found_types:
+        container_hist[con] = container_hist.get(con,0) + 1
+    
+    for key in types:
         try:
-            badgeManager.setStatus(key[:5], value)
-            print key + ' ' + str(value)
+            badgeManager.setStatus(key[:5], container_hist.get(key,0))
+            print key + ' ' + str(container_hist.get(key,0))
         except NameError:
             print key + " No Match"      
 
     ######### D/T Matrix #############
     print '\n\t',
-    difficult = terrain = [1, 1.5 , 2 , 2.5 , 3, 3.5, 4, 4.5, 5]
+
+    dtm = [(float(a.cache.difficulty), float(a.cache.terrain))
+           for a in gpx_inst.all_caches]
+    matrix = defaultdict(lambda: defaultdict(lambda: 0))
+    for pair in dtm:
+        matrix[pair[0]][pair[1]] = matrix[pair[0]].get(pair[1],0) + 1
+    difficult = terrain = [1.0, 1.5 , 2.0 , 2.5 , 3.0, 3.5, 4.0, 4.5, 5.0]
     mcount = 0
     for dif in difficult:
         for ter in terrain:
-            amount = Pers.Matrix[dif][ter]
+            amount = matrix[dif][ter]
             print("%3d" % amount),
             if amount > 0: 
                 mcount += 1 
@@ -254,7 +269,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
    
     badgeManager.setStatus('Matrix', mcount)
    
-    ###### OTHERS #####
+    ####### OTHERS #####
     print '\n',
     try:
         hccs = [wpt.cache for wpt in gpx_inst.all_caches
@@ -304,9 +319,10 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
 
     badgeManager.setStatus('Host', owned_events)
     print "Hosted " + str(owned_events) + ' Events.'
-
     
-    badgeManager.setStatus('Scuba', 0)
+    scuba = [a.name for a in gpx_inst.all_caches
+             if (5,1) in [(b.id, b.inc) for b in a.cache.attributes]]
+    badgeManager.setStatus('Scuba', len(scuba))
     
    
     ##### COUNTRIES #######
