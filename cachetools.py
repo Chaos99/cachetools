@@ -207,6 +207,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     create badges and set their status.
     
     '''
+    all = gpx_inst.all_caches
     ##### LOGS ####
     if Pers.ownfoundlogcount > 0:
         avgwordcount = Pers.wordcount / Pers.ownfoundlogcount
@@ -229,14 +230,14 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
    
     for type_ in types:
         generate_type_badges(type_)
-    lostn = len([a for a in gpx_inst.all_caches if 'Lost and Found' in a.desc])
+    lostn = len([a for a in all if 'Lost and Found' in a.desc])
     badgeManager.setStatus('Lost', lostn)
     print '10 Years! Cache ' + str(lostn)
     
     ##### CONTAINERS #####
     print '\n',
     types = [u'Not chosen', u'Large', u'Micro', u'Regular', u'Small', u'Other']
-    found_types = [a.cache.container for a in gpx_inst.all_caches]
+    found_types = [a.cache.container for a in all]
     container_hist = {}
     for con in found_types:
         container_hist[con] = container_hist.get(con,0) + 1
@@ -252,7 +253,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     print '\n\t',
 
     dtm = [(float(a.cache.difficulty), float(a.cache.terrain))
-           for a in gpx_inst.all_caches]
+           for a in all]
     matrix = defaultdict(lambda: defaultdict(lambda: 0))
     for pair in dtm:
         matrix[pair[0]][pair[1]] = matrix[pair[0]].get(pair[1],0) + 1
@@ -272,15 +273,15 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     ####### OTHERS #####
     print '\n',
     try:
-        hccs = [wpt.cache for wpt in gpx_inst.all_caches
+        hccs = [wpt.cache for wpt in all
                 if wpt.cache.terrain == u'5' and wpt.cache.difficulty == u'5']
     except AttributeError:
-        return gpx_inst.all_caches
+        return all
     badgeManager.setStatus('Adventur', len(hccs))
     print('HCC Caches: ' + str(len(hccs)) +
           " (" + str([a.name for a in hccs]) + ")")
     
-    ftfs = [a.cache for a in gpx_inst.all_caches if 'FTF' in a.cache.logs[0].text]
+    ftfs = [a.cache for a in all if 'FTF' in a.cache.logs[0].text]
     badgeManager.setStatus('FTF', len(ftfs))
     print('FTF Caches: ' + str(len(ftfs)) +
           " (" + str([a.name for a in ftfs]) + ")")
@@ -320,15 +321,19 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     badgeManager.setStatus('Host', owned_events)
     print "Hosted " + str(owned_events) + ' Events.'
     
-    scuba = [a.name for a in gpx_inst.all_caches
+    scuba = [a.name for a in all
              if (5,1) in [(b.id, b.inc) for b in a.cache.attributes]]
     badgeManager.setStatus('Scuba', len(scuba))
     
    
     ##### COUNTRIES #######
     print '\n',
-    badgeManager.setStatus('Travelling', len(Pers.countryList))
-    print 'Countries traveled ' + str(len(Pers.countryList))
+    travel = [a.cache.country for a in all]
+    travel_hist = {}
+    for country in travel:
+        travel_hist[country] = travel_hist.get(country, 0) + 1
+    badgeManager.setStatus('Travelling', len(travel_hist))
+    print 'Countries traveled ' + str(len(travel_hist)) + ': '+ str(travel_hist)
    
     try:
         with open("statelist.txt",'r') as filehandle:
@@ -352,7 +357,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     if statelist:
         # Only generate with valid statelist, else skip
         badgeManager.setCountryList(statelist)
-        for country in Pers.countryList.keys():
+        for country in travel_hist.keys():
             cbadge = stateBadge(country)
             cbadge.setStatus(len(Pers.stateList[country]))
             badgeManager.addBadge(cbadge)      
@@ -402,7 +407,7 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
     print('\n'),
     cachebyday = defaultdict(lambda: 0)
     cachebydate = defaultdict(lambda: 0)
-    for wpt in gpx_inst.all_caches:
+    for wpt in all:
         if 'Z' not in wpt.cache.logs[0].date:
             wpt.cache.logs[0].date += 'Z'
         found = wpt.cache.logs[0].date

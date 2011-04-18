@@ -84,14 +84,18 @@ class newCacheParser(HTMLParser):
             self.stack = oldstack
         
             
-    def handle_data(self, data):      
+    def handle_data(self, data):
         #we are exclusively interested in the tables contents
         if self.stack[:len(self.tableSig)] == self.tableSig:
             if self.stack[-2:] == ['tr','td'] and self.date == '':
                 self.date = data.strip()
             if self.stack[-3:] == ['tr','td','a'] and self.nameToFollow:            
-                if self.entity != None:               
-                    self.cname = (self.cname + self.entity + data)               
+                if self.entity != None:
+                    try:
+                        self.cname = (self.cname + self.entity + data)
+                    except UnicodeDecodeError:
+                        print 'Character encoding error'
+                        self.cname = (self.cname + data)
                     self. entity = None
                 else:
                     self.cname = data

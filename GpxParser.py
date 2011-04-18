@@ -314,6 +314,8 @@ class GpxParser():
         else:
             height = geoTools.get_height(coords)
             self.cache.set('HEIGHT', name, str(height))
+            with open('cache.dat', 'wb') as cachefile:
+                self.cache.write(cachefile)
         #self.current_height = height
         try:
             Pers.hMax = height if height > Pers.hMax else Pers.hMax
@@ -332,4 +334,6 @@ class GpxParser():
         else:
             state = geoTools.get_state(coords)
             self.cache.set('STATE', name, state)
+            with open('cache.dat', 'wb') as cachefile:
+                self.cache.write(cachefile)
         return state
