@@ -247,7 +247,7 @@ class GpxParser():
                 Pers.count  -= 1
                 return
             name = data
-            height = self.get_height(name, self.current_coords)
+            height = self.get_height(name, self.current_wpt.coords)
             # internal model
             self.current_wpt.name = name
             self.current_wpt.height = height
@@ -313,7 +313,7 @@ class GpxParser():
             height = self.cache.getfloat('HEIGHT', name)
         else:
             height = geoTools.get_height(coords)
-            self.cache.set('HEIGHT', name, str(height))
+            #self.cache.set('HEIGHT', name, str(height))
             with open('cache.dat', 'wb') as cachefile:
                 self.cache.write(cachefile)
         #self.current_height = height

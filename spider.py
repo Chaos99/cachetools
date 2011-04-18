@@ -17,9 +17,7 @@ BADGEURL = KYLEURL + "BadgeGen/badges.html"
 OWNERURL = BASEURL + "my/owned.aspx"
 STATELISTURL = KYLEURL + "BadgeGen/badgescripts/statelist.txt"
 PRIVATEURL = BASEURL + 'my/'
-USERAGENT = ("Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) "
-            "AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 "
-            "Mobile/1A543 Safari/419.3")
+USERAGENT = ("Mozilla/5.0")
 GRACETIME = 5
 
 def savetemp(pagetext, filename='temp.html'):
@@ -133,6 +131,7 @@ class ConnectionManager():
    
     def getsinglegpx(self, cid):
         ''' Retrieve a gpx file for a given cache id or guid from gc.com'''
+        #print('trying to get data for %s'% cid)
         filename = cid.strip().upper()+".gpx"
         if os.path.exists(filename):
             pagecontent = open(filename,'r').read()
@@ -145,28 +144,34 @@ class ConnectionManager():
                 cacheurl = BASEURL + 'seek/cache_details.aspx?wp=%s'% cid
             else:
                 cacheurl = BASEURL + 'seek/cache_details.aspx?guid=%s'% cid
+            #print('Get page from url: %s'% cacheurl)
             pagecontent = self.urlopen(cacheurl)
-            mat = re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"', 
-                          pagecontent, re.S)
-            mat2 = re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"', 
-                           pagecontent, re.S)
-            self.viewstate[0] = mat.group(1)
-            self.viewstate[1] = mat2.group(1)
-            savetemp(pagecontent, "cache.html")
-            print "Cache page %s loaded..."% cid
-            fromvalues = (('__EVENTTARGET', ''), 
-                          ('__EVENTARGUMENT', ''), 
-                          ('__VIEWSTATEFIELDCOUNT', '2'), 
-                          ('__VIEWSTATE', self.viewstate[0]),
-                          ('__VIEWSTATE1',self.viewstate[1]), 
-                          ('ctl00$ContentBody$btnGPXDL','GPX file')) 
+            savetemp(pagecontent, "opage.html")
+            #print "saved as opage.html"
+            mat=[]
+            mat.append(re.match(r'.+?id="__VIEWSTATE"\s+value="(.+?)"',
+                          pagecontent, re.S))
+            mat.append(re.match(r'.+?id="__VIEWSTATE1"\s+value="(.+?)"',
+                           pagecontent, re.S))
+            mat.append(re.match(r'.+?id="__VIEWSTATE2"\s+value="(.+?)"',
+                           pagecontent, re.S))
+            print "Cache page for %s loaded."% cid
+            fromvalues = (('__EVENTTARGET', ''),
+                          ('__EVENTARGUMENT', ''),
+                          ('__VIEWSTATEFIELDCOUNT', '3'),
+                          ('__VIEWSTATE', mat[0].group(1)),
+                          ('__VIEWSTATE1', mat[1].group(1)),
+                          ('__VIEWSTATE2', mat[2].group(1)),
+                          ('ctl00$ContentBody$btnGPXDL','GPX file'))
             headers = { 'User-Agent' : USERAGENT }
-            fromdata = urlencode(fromvalues)      
-            request = Request(cacheurl, fromdata, headers) 
+            fromdata = urlencode(fromvalues)
+            request = Request(cacheurl, fromdata, headers)
+            #print("Created request with data: %s \n"% request.data)
             print("Loading GPX file for %s ..."% cid),
             pagecontent = self.urlopen(request)
-            print "... done!"
-            savetemp(pagecontent, "% s.gpx"% cid.upper())
+            print " done!"
+            savetemp(pagecontent, filename)
+            #savetemp(pagecontent)
             return (pagecontent)
       
     def getsinglecache(self, guid):
