@@ -156,21 +156,34 @@ class ConnectionManager():
             mat.append(re.match(r'.+?id="__VIEWSTATE2"\s+value="(.+?)"',
                            pagecontent, re.S))
             print "Cache page for %s loaded."% cid
-            fromvalues = (('__EVENTTARGET', ''),
-                          ('__EVENTARGUMENT', ''),
-                          ('__VIEWSTATEFIELDCOUNT', '3'),
-                          ('__VIEWSTATE', mat[0].group(1)),
-                          ('__VIEWSTATE1', mat[1].group(1)),
-                          ('__VIEWSTATE2', mat[2].group(1)),
-                          ('ctl00$ContentBody$btnGPXDL','GPX file'))
+            if mat[2] :
+                fromvalues = (('__EVENTTARGET', ''),
+                              ('__EVENTARGUMENT', ''),
+                              ('__VIEWSTATEFIELDCOUNT', '3'),
+                              ('__VIEWSTATE', mat[0].group(1)),
+                              ('__VIEWSTATE1', mat[1].group(1)),
+                              ('__VIEWSTATE2', mat[2].group(1)),
+                              ('ctl00$ContentBody$btnGPXDL','GPX file'))
+            else:
+                fromvalues = (('__EVENTTARGET', ''),
+                              ('__EVENTARGUMENT', ''),
+                              ('__VIEWSTATEFIELDCOUNT', '2'),
+                              ('__VIEWSTATE', mat[0].group(1)),
+                              ('__VIEWSTATE1', mat[1].group(1)),                              
+                              ('ctl00$ContentBody$btnGPXDL','GPX file'))
             headers = { 'User-Agent' : USERAGENT }
             fromdata = urlencode(fromvalues)
             request = Request(cacheurl, fromdata, headers)
             #print("Created request with data: %s \n"% request.data)
             print("Loading GPX file for %s ..."% cid),
             pagecontent = self.urlopen(request)
-            print " done!"
             savetemp(pagecontent, filename)
+            if "An Error Has Occurred" in pagecontent:                
+                #raise(URLError)
+                print " Error while loading gpx!!!"
+                return ''
+            else:
+                print " done!"            
             #savetemp(pagecontent)
             return (pagecontent)
       
