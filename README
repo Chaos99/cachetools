@@ -1,5 +1,7 @@
 Various geocaching related python tools
 
+(geocaching.com login service does no longer work in this version)
+
 cachetools.py
     Analyse the given gpx file and retrieve statistics for the geocaches listed.
     Retrieve online information for badge definitions, geolocation and elevation 
