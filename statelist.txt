@@ -1,0 +1,30 @@
+Australia,8
+Austria,9
+Belgium,11
+Brazil,27
+Bulgaria,28
+Canada,13
+Croatia,21
+Czech Republic,14
+Denmark,5
+Finland,6
+France,22
+Germany,16
+Hungary,20
+Iceland,8
+Ireland,4
+Italy,20
+Japan,47
+Luxembourg,3
+Netherlands,12
+New Zealand,2
+Norway,19
+Poland,16
+Portugal,20
+Slovakia,8
+South Africa,9
+Spain,17
+Sweden,21
+Switzerland,10
+United Kingdom,14
+United States,50

@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" creator="Groundspeak, Inc. All Rights Reserved. http://www.groundspeak.com" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0/1 http://www.groundspeak.com/cache/1/0/1/cache.xsd" xmlns="http://www.topografix.com/GPX/1/0">
+  <name>Cache Listing Generated from Geocaching.com</name>
+  <desc>This is an individual cache generated from Geocaching.com</desc>
+  <author>Account "themaraner" From Geocaching.com</author>
+  <email>contact@geocaching.com</email>
+  <url>http://www.geocaching.com</url>
+  <urlname>Geocaching - High Tech Treasure Hunting</urlname>
+  <time>2011-03-16T17:29:20.4392604Z</time>
+  <keywords>cache, geocache</keywords>
+  <bounds minlat="50.5574" minlon="10.376817" maxlat="50.5574" maxlon="10.376817" />
+  <wpt lat="50.5574" lon="10.376817">
+    <time>2011-01-24T08:00:00Z</time>
+    <name>GC2MX8W</name>
+    <desc>DEBB - Grimms Märchen by themaraner, Unknown Cache (3/1.5)</desc>
+    <url>http://www.geocaching.com/seek/cache_details.aspx?guid=094d7f7f-b3fa-4e6a-bbbf-5bc6a03e569a</url>
+    <urlname>DEBB - Grimms Märchen</urlname>
+    <sym>Geocache Found</sym>
+    <type>Geocache|Unknown Cache</type>
+    <groundspeak:cache id="2058925" available="True" archived="False" xmlns:groundspeak="http://www.groundspeak.com/cache/1/0/1">
+      <groundspeak:name>DEBB - Grimms Märchen</groundspeak:name>
+      <groundspeak:placed_by>themaraner</groundspeak:placed_by>
+      <groundspeak:owner id="2721452">themaraner</groundspeak:owner>
+      <groundspeak:type>Unknown Cache</groundspeak:type>
+      <groundspeak:container>Micro</groundspeak:container>
+      <groundspeak:attributes>
+        <groundspeak:attribute id="6" inc="1">Recommended for kids</groundspeak:attribute>
+        <groundspeak:attribute id="32" inc="1">Bicycles</groundspeak:attribute>
+        <groundspeak:attribute id="15" inc="1">Available during winter</groundspeak:attribute>
+        <groundspeak:attribute id="1" inc="1">Dogs</groundspeak:attribute>
+        <groundspeak:attribute id="7" inc="1">Takes less than an hour</groundspeak:attribute>
+      </groundspeak:attributes>
+      <groundspeak:difficulty>3</groundspeak:difficulty>
+      <groundspeak:terrain>1.5</groundspeak:terrain>
+      <groundspeak:country>Germany</groundspeak:country>
+      <groundspeak:state>Thüringen</groundspeak:state>
+      <groundspeak:short_description html="True">
+      </groundspeak:short_description>
+      <groundspeak:long_description html="True">Auch ich habe ein Buch aus der Bibliothek </groundspeak:long_description>
+      <groundspeak:encoded_hints>
+      </groundspeak:encoded_hints>
+      <groundspeak:logs>
+        <groundspeak:log id="148876725">
+          <groundspeak:date>2011-03-13T19:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2902930">Melkerser</groundspeak:finder>
+          <groundspeak:text encoded="False">Prinzipiell gibt es ja mehrere Möglichkeiten an die nötigen Informationen zur Lösung eines Cacheverstecks zu kommen.
+Variante A ist Wissen!! Dabei handelt es sich um ein Verfahren, bei dem man durch zu Zugriff auf Unmengen von internen und externen Daten in der Lage ist, die Menge der unbekannten Variablen zu lösen.
+Variante B ist Teamplay. Die ist zwar nicht ganz so ehrenhaft, wird aber gerne genommen wenn man bzgl. Variante A etwas limitiert ist. [;)]
+Variante C mit den flüsternden Fabelwesen kannte ich bisher noch gar nicht, hat aber offensichtlich auch zum Ziel geführt. [:D]
+
+TFTC sagt
+Melkerser</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148757099">
+          <groundspeak:date>2011-03-13T19:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="3050852">santacklaus</groundspeak:finder>
+          <groundspeak:text encoded="False">rätsel lösen?!
+SCHNICK-SCHNACK!!!
+ich versuchs einfach mal so wie die typen in den märchen.
+
+ein fest gekochter ochsenhoden, eine messerspitze zerriebenes krötenfell, ein halbes rotbarschhorn, 37 schneckenpfürze und am wichtigsten ( leider auch am teuersten! ) 179 regenwurmaugen. alles in einen goldenen topf, noch ein fläschchen eisgekühltes oettinger dazu und bei vollmondbescheinung für ca. 7 stunden und 42 einhalb minuten in der microwelle vor sich hin köcheln 
+sonntag früh, 6 uhr. keine sau da. nur ich und der typ aus dem märchen.
+
+tftc sagt santa
+
+This entry was edited by santacklaus on Sunday, 13 March 2011 at 15:14:31 UTC.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148453674">
+          <groundspeak:date>2011-03-11T08:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1902380">chaos &amp; cayenna</groundspeak:finder>
+          <groundspeak:text encoded="False">Märchenhaften Dank für diese kreativ verpackte Dose. Die Nachricht ob des neu entdeckten Buches errichte uns just kurz -nach- der Abreise aus Meiningen. Schade aber auch! Also hatten wir (also eigentlich wie immer Cayenna) zwar nach ein wenig Überlegung zwar die Koordinaten, aber keine Gelegenheit zum Einsammeln.
+Ortsansässige Mitcacher schrecken dafür vor dem Rätsel zurück und die Cacherehre verbot das weitersagen. Ein Dilemma.
+
+Deswegen können wir (d.h. natürlich wie immer Chaos) erst heute der Dose einen Besuch abstatten. Gar nicht so einfach, bei dem Feierabendverkehr.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="146607984">
+          <groundspeak:date>2011-02-26T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="3739051">Hard2Burn</groundspeak:finder>
+          <groundspeak:text encoded="False">nach kurzem überlegen dann doch sehr  schnell klar 
+TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="145906807">
+          <groundspeak:date>2011-02-20T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="4154487">AndyMGN</groundspeak:finder>
+          <groundspeak:text encoded="False">da hat sich der themaraner ein sehr schönes und passendes Versteck zu Grimms Märchen ausgesucht
+und was das Rätsel betrifft kann ich hier nur der Mehrheit zustimmen, der zweite Teil war nicht so einfach 
+aber mit ein bischen hilfe eines Bekannten der nicht so kompliziert denkt wie ich war der auch gelöst und und Geochecker gab grünes Licht [:)] 
+
+TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="145715230">
+          <groundspeak:date>2011-02-20T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2184721">Hastvas_Vascostas</groundspeak:finder>
+          <groundspeak:text encoded="False">Und das letzte Buch für heute. Wenn ich die vorherigen Logs so lese, bin ich ja beruhigt, dass ich nicht der Einzige bin, der die zweite Aufgabe nicht geschnallt hat. Nachdem ich diesen Rätselteil durch probieren gelöst hatte, hat mir der ______ die Lösung verraten (Nö, ich nenne hier keine Namen). Im nachhinein ist es ja doch irgendwie plausibel. 
+Das Versteck war dann fix gefunden. Sehr passend! 
+
+TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="145097414">
+          <groundspeak:date>2011-02-15T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1147977">puenktchen5</groundspeak:finder>
+          <groundspeak:text encoded="False">Im Gegensatz zu einigen anderen Caches war das doch mal nen schöner Mysti, bei dem man auch wusste, wonach man sucht. Beim 2. Teil hatte ich wohl die größten Probleme. Zumindest was das Verstehen der Aufgabenstellung angeht. Dann wars plötzlich sooo einfach. Ein schönes Rätsel und eine schöne Location. Danke fürs Verstcken
+
+This entry was edited by puenktchen5 on Tuesday, 15 February 2011 at 04:41:35.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="146066496">
+          <groundspeak:date>2011-02-12T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1153784">milchmann2</groundspeak:finder>
+          <groundspeak:text encoded="False">Es war einmal ein Cache der in der homezone lag ...
+Aber jetzt ist das auch erledigt. Schönes döschen mit feinem Rätsel.
+Tftc</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144611195">
+          <groundspeak:date>2011-02-12T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Write note</groundspeak:type>
+          <groundspeak:finder id="2721452">themaraner</groundspeak:finder>
+          <groundspeak:text encoded="False">Kurz was zur "Location". Diese ist der einfacheren Pflege geschuldet. Da der Explosionsradius nicht wirklich in meiner Homezone lag, musste ich mir eine Stelle suchen, die ich trotzdem oft und gut erreichen kann. Das nächste Mal müssen die Bücher einfach weiter fliegen. [;)]
+
+Trotzdem viel Spaß. Die besten Logzeiten wurden ja schon häufiger beschrieben.
+
+themaraner</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144586206">
+          <groundspeak:date>2011-02-12T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2090691">rippschn</groundspeak:finder>
+          <groundspeak:text encoded="False">na endlich cache nummer  6 0 0 wurde geloggt,...
+die form der aufgabenstellung bereitete schon einiges an kopfzerbröseln,...letztendlich wurde die geschichte dann doch gelöst und nahm somit ein glückliches ende.
+und wenn sie nicht verschollen sind,.. dann loggen sie noch heute.
+feines versteck übrigens...!</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144510436">
+          <groundspeak:date>2011-02-11T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2086707">garminius</groundspeak:finder>
+          <groundspeak:text encoded="False">Das Rätsel hat mir außerordentlich gut gefallen, besonders natürlich Teil 2! Das Versteck fand ich auch prima, nur musste es gerade diese Location sein??? Bin extra nochmal im Hellen wiedergekommen, damit ich dort nicht auch noch rumfunzeln musste. (Ich liebe meine Freiheit so und will nicht in den Knast [;)]!) TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144424302">
+          <groundspeak:date>2011-02-09T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2026343">Borstelfamilie</groundspeak:finder>
+          <groundspeak:text encoded="False">Grimms Märchen haben uns schon beschäftigt, besonders die 2. Aufgabe. Das lustige Versteck ist eine gute Idee, passend zu den Märchen.
+
+Danke für die schöne Aufgabe und viele Grüße von der Borstelfamilie</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143965855">
+          <groundspeak:date>2011-02-06T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1357045">smoro</groundspeak:finder>
+          <groundspeak:text encoded="False">Auch wir hatten unsere Probleme mit der 2.Aufgabe. Aber auch ohne ein klares ja des GeoCheckers konnten wir das Buch finden.
+Erstaunlich, man steht da und fragt sich, wo soll hier ein Bezug zum Thema sein. ER IST DA!!!
+
+Gruß, smoro</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143885231">
+          <groundspeak:date>2011-02-06T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1712708">Pimmon23</groundspeak:finder>
+          <groundspeak:text encoded="False">Eigentlich wollten wir heute ohne gelöste 2. Aufgabe auf Suche gehen. Das Satelitenbild ließ uns auch so auf Erfolg hoffen. Doch vot dem Frühstück kam die richtige Idee und der Geochecker zeigte grün.
+Sonntag Vormittag ist hier die perfekte Zeit zum Loggen. 
+TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144261808">
+          <groundspeak:date>2011-02-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1679997">Sayyid</groundspeak:finder>
+          <groundspeak:text encoded="False">Das Rätsel war nach etwas Überlegung (besonders bei Teil 2) dann auch gelöst. Heben konnten wir es dann etwas später.
+
+Vielen Dank für den Cache</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143754290">
+          <groundspeak:date>2011-02-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1879685">frösi</groundspeak:finder>
+          <groundspeak:text encoded="False">Ein dreiteiliger Rätselcache! In jedem teil haben sich die owner etwas anderes interssantes zum verschlüsseln einfallen lassen. Beim 2.teil habe ich etwas länger gebraucht, aber letztendlich des rätsels lösung doch noch mit sayyid gefunden. Das rätseln hat spaß gemacht.
+Das versteck ist auch wieder sehr einfallsreich und hat einen märchenhaften bezug. 
+Nicht gefallen hat mir der versteckort. Ich war gestern nachmittag schon mal da, aber man glaubt es nicht: da ist in der woche wirklich betrieb.
+
+Danke für rätsel und cache 
+
+frösi</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143733677">
+          <groundspeak:date>2011-02-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2524967">rolfi52</groundspeak:finder>
+          <groundspeak:text encoded="False">das war wohl etwas verwirrend,zuerst hatten wir in erwägung gezogen
+bei den gebrüdern zu klingeln und zu fragen ob wir ihre garage
+durchsuchen dürften, das dann aber verworfen, haben uns dann 
+entschieden erst mal bei den gebrüdern anzurufen und hier ergab sich
+eine bessere lösung,
+die hinweise zum zweiten bild sind nicht eindeutig so dass zwangsläufig
+eine zweite lösung mit einer abweichung von ca.8-10m zum cache
+entsteht,
+das Finale dann heute gut gefunden
+TFTC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="144425982">
+          <groundspeak:date>2011-02-04T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1225826">Team Greggi</groundspeak:finder>
+          <groundspeak:text encoded="False">auch diesen im schlepptau von j &amp; l gefunden</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143887654">
+          <groundspeak:date>2011-02-04T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2759525">Jon&amp;Liz</groundspeak:finder>
+          <groundspeak:text encoded="False">[i]#1251
+
+Wir hatten leichte Probleme mit der zweiten Aufgabe. Hier dachten wir in mehrere Richtungen und haben uns erst für den falschen Weg entschieden.
+
+Jetzt, mit dem Geochecker, kann man aber selbst seine Kenntnisse über die Märchenwelt überprüfen. Schöne Finalverpackung!
+
+Vielen Dank! Jon &amp; Liz[/i]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="143601894">
+          <groundspeak:date>2011-02-03T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Write note</groundspeak:type>
+          <groundspeak:finder id="1879685">frösi</groundspeak:finder>
+          <groundspeak:text encoded="False">Wir (sayyid und ich) haben gestern abend den 2. teil gelöst. Es fehlt nur noch die zeit zum loggen. Aber das WE naht.
+
+frösi</groundspeak:text>
+        </groundspeak:log>
+      </groundspeak:logs>
+      <groundspeak:travelbugs />
+    </groundspeak:cache>
+  </wpt>
+<wpt lat="50.56" lon="10.364333">
+    <time>2011-02-21T08:00:00Z</time>
+    <name>GC2NVZM</name>
+    <desc>DEBB - Festigkeitslehre by w''(x) = -Mb(x)/EI, Unknown Cache (4/5)</desc>
+    <url>http://www.geocaching.com/seek/cache_details.aspx?guid=e4123267-eae8-4457-b61a-69fcee193896</url>
+    <urlname>DEBB - Festigkeitslehre</urlname>
+    <sym>Geocache Found</sym>
+    <type>Geocache|Unknown Cache</type>
+    <groundspeak:cache id="2087469" available="True" archived="False" xmlns:groundspeak="http://www.groundspeak.com/cache/1/0/1">
+      <groundspeak:name>DEBB - Festigkeitslehre</groundspeak:name>
+      <groundspeak:placed_by>w''(x) = -Mb(x)/EI</groundspeak:placed_by>
+      <groundspeak:owner id="2184721">Hastvas_Vascostas</groundspeak:owner>
+      <groundspeak:type>Unknown Cache</groundspeak:type>
+      <groundspeak:container>Small</groundspeak:container>
+      <groundspeak:attributes>
+        <groundspeak:attribute id="53" inc="0">Park and Grab</groundspeak:attribute>
+        <groundspeak:attribute id="15" inc="1">Available during winter</groundspeak:attribute>
+        <groundspeak:attribute id="13" inc="1">Available at all times</groundspeak:attribute>
+        <groundspeak:attribute id="10" inc="1">Difficult climbing</groundspeak:attribute>
+        <groundspeak:attribute id="22" inc="1">Hunting</groundspeak:attribute>
+        <groundspeak:attribute id="3" inc="1">Climbing gear</groundspeak:attribute>
+        <groundspeak:attribute id="51" inc="1">Special Tool Required</groundspeak:attribute>
+      </groundspeak:attributes>
+      <groundspeak:difficulty>4</groundspeak:difficulty>
+      <groundspeak:terrain>5</groundspeak:terrain>
+      <groundspeak:country>Germany</groundspeak:country>
+      <groundspeak:state>Thüringen</groundspeak:state>
+      <groundspeak:short_description html="True">
+      </groundspeak:short_description>
+      <groundspeak:long_description html="True">festigkeitsleher</groundspeak:long_description>
+      <groundspeak:encoded_hints>Achtet auf die Einheiten! Nehmt bei der Koordinatenberechnung die Beträge der Werte von w' und w!</groundspeak:encoded_hints>
+      <groundspeak:logs>
+        <groundspeak:log id="148668547">
+          <groundspeak:date>2011-03-12T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2759525">Jon&amp;Liz</groundspeak:finder>
+          <groundspeak:text encoded="False">[i]#1328
+
+Ja, ja so ist das! Da kommt ein neues Buch aus der Bibliothek geflogen, will einfach nicht auf dem Boden angekommen, sondern bleibt in einem Baum hängen.
+
+Aber so weit oben kommen doch Jon und Liz gar nicht ran! Und dann auch noch diese komplizierten Formeln und dieser lange Text! Nö, so wird das nichts! Das Rätsel viel zu kompliziert und die Dose viel zu weit vom Boden entfernt! Da muss Hilfe her!
+
+Für den technischen Teil fand sich schnell ein ausgebildeter Ingenieur. Der theoretische Teil war voll sein Ding. Begeistert schwärmte er von Kragarmen und einem Handbuch, für das man zwei starke Hände und eine noch stärkere Lesebrille braucht.
+
+Was tun, wenn dieser schlaue Mensch aber nicht auf Bäume klettert? Sich ganz einfach zu einer kleiner Klettertour einladen lassen!
+
+Schnell wurde der Jon von Chaos in die Kunst der Knotenwelt eingewiesen. Aber den praktischen Teil musste er dann schon selber erledigen. Mit Stempel, Stift und Werkzeugkasten ging es dann ins Geäst! Alles wieder sauber verschlossen und den Schraubenhilfsbehälter regensicher umgedreht!
+
+Was haben wir bei diesem Cache gelernt?
+
+Das es dicke Bücher gibt, die Handbuch heißen!
+Das ein Elektriker für so eine Dose vier Schrauben lösen muss!
+Das Franz Bachmann ein Schweizer ist!
+Das man rosa Luftballons mit Steinen füllen kann!
+Das manches nur durch Mithilfe von Freunden lösbar ist!
+Das Klettern sogar richtig Spaß macht!
+
+Vielen Dank! Jon &amp; Liz[/i]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148623057">
+          <groundspeak:date>2011-03-12T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1902380">chaos &amp; cayenna</groundspeak:finder>
+          <groundspeak:text encoded="False">Nach längerer Meiningen-Abstinenz sind auch wir nun wieder in der Gegend und können all die neuen Bibliotheksbücher bestaunen. Um dieses hier drehte sich ja nun nicht nur eine gehörige Portion T5-Tourismus, sondern auch schon einiges an Fachdiskussion im Forum - äh - den Logs.
+
+Das Listing lag vorher schon eine Weile herum, denn dessen Informationsfülle ist zwar äußerst interessant, aber leider auch etwas abschreckend. Letzte Woche musste es dann dran glauben. Voll Tatendrang stürzten wir uns in den Theorieteil. Die anfängliche Erläuterung und Herleitung ist sehr schön ausgearbeitet. Da hat sich der Owner viel Mühe gegeben. Chaos bekommt bei technischer Mechanik immer glänzende Augen, obwohl ihm diese Quintessenz der Ingenieurskunst im Studium leider vorenthalten blieb. Für Cayenna ist dieser Abstieg in die Niederungen der Mechanik schon beinahe eine Zumutung, dennoch konnten wir uns beide nicht recht überwinden, die komplette Herleitung noch einmal für das Kragarmproblem zu wiederholen. ;)
+
+Wie zu erwarten war, handelte es sich natürlich um ein Standardproblem, welches zur Genüge in der Fachliteratur beschrieben ist. Nette Menschen haben sogar schon die passenden Formeln zusammengefasst. Gehörig Aufwand war das Bestimmen der Hilfsgrößen, das Umwandeln der Einheiten und das Einsetzen und Rechnen dennoch. Erstaunlich, wie oft man dasselbe rechnen und auf unterschiedliche Ergebnisse kommen kann. 
+Nachdem wir uns beinahe streitfrei wieder und wieder gegenseitig die Formeln und Einheiten korrigiert hatten, sagte der gute Doktor Checker dann endlich "Hol ihn dir"!
+
+Zum Praxisteil hatten wir uns mit J&amp;L verabredet, die ohne die nötige Ausrüstung sonst unten auf ihrer eilig ebenfalls errechneten Lösung hätten sitzenbleiben müssen. Am Baum angekommen wäre zwar wirklich der direkte Weg der schnellste gewesen, aber unseren ersten Baumcache wollten wir dann schon so gut es geht nach Lehrbuch bezwingen. Also reihum das selbstgebastelte Wurfgewicht geschwungen und nach einem guten Dutzend Versuchen endlich das Seil in eine halbwegs geeignete Astgabel eingefädelt. Dann durfte zuerst Chaos mit einer Kombination modernster Technik und solidem Knotenwissen den Aufstieg wagen. Oben angekommen war dann die halbe Cacherausrüstung aus den Taschen gefallen, zum Öffnen der Dose hat es aber noch gereicht. Die Schraubenhaltedose ist eine prima Idee, genauso wie der angebundene Dosendeckel. Leider bleiben mit Dose und Außendeckel noch zwei lose Gegenstände, die bei zwei zur Verfügung stehenden Händen gut für Auslastung beim Loggen sorgen.
+
+Nachdem als nächstes dann Jon zum Aufstieg verholfen war, konnte auch Cayenna sich noch am Seil versuchen. Zwar reichte ihr die Kraft nicht ganz bis oben, dafür durfte sie sich aber als ungeschlagene Königin der B-Note fühlen, da sie es als einzige schaffte, den Aufstieg mit Eleganz zu kombinieren.
+
+Wir danken also dem Verstecker für diese Mechanik- und Baumklettereinführung und wünschen uns, dass sich irgendwann der rege Zustrom an Besuchern auch auf den Rest der Bibliothek erstreckt. Schade finden wir, dass wir bei unserer Recherche über die Spuren eines anderen Cachers gestolpert sind, der etwas plump nach Hilfe gefragt und diese sowohl bekommen, als auch das konkrete Endergebnis des Rätsels somit nur noch eine Googlesuche weit entfernt im Internet publiziert hat. Mag sich der angesprochene nicht möglicherweise um eine Löschung bemühen?
+
+(Achja, das "Nein zu Kurzlogs" versteht sich von selbst, oder?)</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148960478">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Write note</groundspeak:type>
+          <groundspeak:finder id="741548">toffi-fee &amp; Yvee</groundspeak:finder>
+          <groundspeak:text encoded="False">coin vergessen *pling* :)</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148954349">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="741548">toffi-fee &amp; Yvee</groundspeak:finder>
+          <groundspeak:text encoded="False">achja, gut dass schwiegerpapa in spe ingeneur ist und der liebe cafetrinker eine kletterausrüstung hat. ansonsten wäre mir der cache wohl auf immer verschlossen geblieben. also ging es samstag morgen auf nach meiningen, was die difficulty-wertung gleich nochmal in die höhe trieb, wir haben bis nach meiningen bestimmt 1,5 stunden vom treffpunkt in bad salzungen aus gebraucht...irgendwie waren überall baustellen und absperrungen wegen karneval. als wir glücklich dann doch endlich am cache ankamen blitzten schon 3 andere cacher durch das unterholz, die auch bei diesem schönen wetter den weg auf den baum gefunden haben. 
+danke der profesionellen kletterausrüstung von gewindeschneideisen hatten wir einen haufen zusätzlichen spaß...auch mit kiloschwerer kletterausrüstung findet man einen weg in die bäume ;) danke für den schönen nachmittag und meinen ersten T5 cache!</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148384799">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2085074">gewindeschneideisen</groundspeak:finder>
+          <groundspeak:text encoded="False">Nachdem der theoretische Teil  von Roger gelöst wurde, konnte ich mich dem Team zu praktischem Teil anschließen. 
+Schon die Anfahrt zu den errechneten Koordinaten gab diesem Cache nochmals eine ganz besondere Note, denn 29,7 Luftlinienkilometer  standen dann gegen 68 Fahrkilometer (eine Umleitung wurde von einer anderen Umleitung umgeleitet), zum Glück gab es auf diesem Weg eine geöffnete Tankstelle.
+Nachdem wir dann die Koordinaten erreicht hatten, waren wir da nicht die ersten Cacher, denn ein anders Team hing hier schon am Haken.
+Also vertrieben wir uns die Zeit mit einer Schnelleinführung  in die Klettertechnik, denn heute sollte mein erster Klettercache in meine Cachererinnerungen eingebrannt werden.
+So gegen 11Uhr war dann unser Kletterseil gesichert und schon nach kurzer Zeit war die Dose erreicht und mein Name in das Logbuch eingetragen.
+Danke an Dagmarundroger  für die knifflige Vorarbeit.
+Danke an Kaffeetrinker für den Kletterkurs(war bestimmt nicht mein letzter Klettercache, denn mal sehen was DHL in den kommenden Tagen anliefert).
+
+TFTC von Gewindeschneideisen
+
+IN : GC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148211481">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2493669">elle1</groundspeak:finder>
+          <groundspeak:text encoded="False">Zu schwere. trockene Theorie für mich, aber beim Outdoorteil hatte ich wieder richtig Spaß!
+TFTC!</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="148210246">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2020442">Discover500</groundspeak:finder>
+          <groundspeak:text encoded="False">Mann oh Mann!
+Wir sind wirklich gerne draußen unterwegs und klettern gern.
+Auch T5er lieben wir!
+Hier mußten wir leider bei der Aufgabe wie ein Schwein ins Uhrwerk geschaut haben[:D]!
+Ohne die anschließende Klettereinlage hätten wir niemals diesen Cache versucht zu lösen, da ist einfach zu kompliziertes Fachwisen gefragt, mit welchen wir nicht dienen können!
+So haben wir die hier am meisten gewählte Lösungsvariante gewählt:Frage jemanden, den du kennst und sich mit sowas auskennt!
+Zum Glück kennen wir die Trialhoschis, die können so etwas lösen und klettern auch gern!
+Am Final angekommen waren wir wieder in unserem Element und konnten uns im Logbuch verewigen!</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147941804">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2047600">Bobby738</groundspeak:finder>
+          <groundspeak:text encoded="False">Juhu! Mechanik war fast mein Lieblingsfach zu Studentenzeiten. Schnell also den 'Holzmann-Meyer-Schumpich' (Eingeweihte wissen Bescheid) herausgekramt und ein wenig herumgerechnet. Nachdem der Windoofs-Rechner (die wissenschaftliche Variante) ausgereizt war und ich keine Lust verspürte meine gute alte Studentenversion von MatLab-SimuLink zu instalieren (&gt;2h minimum) kurzerhand mit dem Rechengenie von den Trialhoshis kurzgeschlossen. Schnell waren Lösungsweg und Ergebnisse verifiziert und heute ging es im großen Team mit den Hoshis und der gesamten Discover-Familie ins Südthüringische. Hätten wir gewusst, dass das heute ein Massenevent werden würde, wären wir früher aufgeschlagen. So, waren die verehrten Cacherkollegen und ihre Stempel bereits wieder abgereist.
+Nichtsdestotrotz war es ein toller Spaß nach der langen Winterpause wieder zu klettern. (Ich durfte sogar als erster)
+Etwas ungelungen find ich den Cachecontainer- es ist nur ne Frage der Zeit, bis die eine oder andere Schraube im Unterholz verschwindet...
+Danke für eine kurzweilige Mechanikauffrischung und an die Hoshis sowie die Entdeckerfamilie!
+Bobby738
+In:GC
+out:GC</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147933507">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1913616">ArtThief</groundspeak:finder>
+          <groundspeak:text encoded="False">Was kann ich den Log's von [i]alpha cancri[/i] und [i]dem manuellen Bodengewächsentferner[/i] noch hinzufügen [?]
+Nicht viel. :bad:
+Wie [i]ein Schwein ins Uhrwerk[/i] schaute ich erst aufs Listing und durfte mir anschließend zu all dem Überdruss die ganze Zeit, während ich die beiden Herren Ingenieure zum Baum kutschierte, Geschichten von [i]böhmischen Dörfern*[/i] anhören. [?][?][?]
+Keine Ahnung was die da die ganze Zeit geredet haben. Es muss sich aber um ein ganz exotisches Thema gehandelt haben, da es irgendwie um Bäume ging, mir dieses Thema während meiner Baumschulzeit aber nicht untergekommen ist. [:P]
+Wie man sich nun aus dem Vorwort schon denken konnte, kommt nun die Gewissheit:
+
+Ja, ich bin auch ein [i][red]SCHMAROTZER[/i][/red]!
+
+So, nun ist es raus. :bad: Aber auch nicht weiter tragisch, bei DEM Listing in Verbindung mit DER Aufgabe. Hierzu muss ich sagen, dass dieses Thema wirklich sehr speziell ist und definitiv [b][red]Difficulty 5[/b][/red] entspricht. Ich als Laie scheitere nicht nur an den vielen Fachbezeichnungen, sondern bereits am Lesen der Formeln. [:(]
+Was hier aber für Listing und Aufgabe gilt, enttäuscht am Final. Das erreichten wir bei schönsten Frühlingswetter nach einer kleinen Wanderung von ca. 1,5km, da wir die entsprechenden Verbotsschilder und Schranken zu deuten wussten. Zumindest soweit ich es vertreten konnte. Denn wenn man denkt, dass sich ein Verwarnungsgeld von 30,- € bei drei Personen auch drittelt, muss schon mit guten [i]Freunden[/i] rechnen. [;)] [i](but, so what...)[/i] 
+Zurück zum Final. Dort angekommen machten wir uns ans Einbauen der Technik in Verbindung mit etwas herumprobieren und einweisen in [i]Anti-Zwillen-Armbrust-oder-sonstwie-Technik[/i].
+Was für eine Menge Erheiterung sorgte, da der Baum viel zu klein für die platzierten Schnüre war. [8D]
+Kurzerhand bewies ich, dass für die Eroberung der Dose keine Technik notwendig ist und krabbelte fix nach oben und platzierte von dort für die anderen das Seil. [8D]
+Was damit hier als T5 bezeichnet wird, geht in Sachsen höchstens mit einer vier durch. [;)]
+
+Während wir so am Baum turnten fuhren plötzlich zwei Auto's vor und deren Insassen gesellten sich zu uns. Von nun an war anstehen angesagt, was die meisten ja noch von "früher" kennen, was somit auch nicht für trübe Stimmung sorgte. Aber ich denke das haben sie bereits im [i]Kaffeesatz[/i] gelesen. [:D]
+
+Am Ende waren wir alle oben und konnten uns erfolgreich im Logbuch verewigen. Nun machten wir uns auf, dem schwierigen Cache des Tages entgegen. [;)]
+
+[i]*no trade*[/i]
+
+[b]Thanks for this spezial cache and greetings
+:back: [red]ArtThief[/red][/b] :back:
+
+*[i]die Ähnlichkeit zu reellen Caches ist rein zufällig [;)][/i]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147931259">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1348483">dagmarundroger</groundspeak:finder>
+          <groundspeak:text encoded="False"># 750! # [:D] [:D] [:D]
+Dieser Cache hatte es dem Roger besonders angetan. Bewaffnet mit dem alten Fachbuch und Taschenrechner ging er forsch ans Werk. Siehe da, nach relativ kurzer Zeit war die Aufgabe gelöst.
+Dann ging es um den Kletterteil. Da hat es sich mal wieder bewiesen, dass es gut ist, jemanden zu kennen, der das hat oder kann was einem fehlt. So fuhren wir am Samstag morgen im großen Team Richtung Final. Die Anfahrt war schon ein T4. Wie auch sonst, wenn 4 Cacher mit 3 Navis im Auto [;)]
+Vor Ort angekommen, waren schon drei muntere Kletterer unterwegs. So konnte man den Kletterkönnern mal zuschauen...
+Die Mutigen unserer Teams erfüllten dann den Outdoorteil.
+Ein toller Cache, der unseres 750. absolut würdig war.
+Vielen Dank dem Owner.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147727472">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2524967">rolfi52</groundspeak:finder>
+          <groundspeak:text encoded="False">ich hätte nicht gedacht,daß ein eintrag in das logbuch so viel arbeit machen kann 	[;)]
+der anfang schien mir relativ einfach aber das wissen von vor 40 jahren musste erst mühsam
+aus den untersten schubladen meines gehirns wieder hervorgegraben werden,fast eine woche
+lang habe ich nur zahlenkolonnen gesehen, zwischendurch mal den owner kontaktiert,
+dann gab auch der geochecker sein ok, meine kletteranfänge lagen auch schon ein dreiviertel
+jahr zurück, trotzdem ging es heute schon besser, ich bin jetzt einfach glücklich diesen cache 
+glogt zu haben , ein dankeschön für den schwierigen cache an den owner,
+gruß
+rolfi52</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147718867">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="270086">Mooskratzer</groundspeak:finder>
+          <groundspeak:text encoded="False">Das war wieder einmal ein Beispiel für perfekte Teamarbeit:
+- ein staatlich geprüfter und diplomierter Statiker welcher die Berechnung des Kragarmes aus dem Ärmel schüttelte
+- ein hochdekorierter TeFünf-Veteran unterwegs in leichter Mission
+und
+- Einer, der von beiden Teilen des Caches ein wenig versteht, nichts jedoch wirklich gut...
+
+Nun darf geraten werden, welche dieser Rollen meiner Wenigkeit zukam [8D]
+Ich habe zumindestens das Seil tragen dürfen und den Wurfsack ein paar Mal in den Ästen versenken.
+Als das Vorbereitungsbrimborium am Baum beendet war, rückten dann auch schon die nächsten Aspiranten an und durften die verschiedenen Aufstiegstechniken bewundern: Solide, UiUiUi und SoLaLa (in dieser Reihenfolge [:P])
+
+Grüße an die Nachcacher und dem Owner Dank für den Cache.
+
+Mooskratzer</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147660821">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2794992">AcubensCNC</groundspeak:finder>
+          <groundspeak:text encoded="False">Grüße.
+
+Als das Listing [i]publishte[/i] dachte ich mir: [i]Wie geil ist das denn?!?[/i]
+Ich selbst hatte auch schonmal soetwas vor - in Weimar, der quasi-Hochburg für universitäre Statiker. Damals bin ich wieder von der Idde ab, weil ich befürchtete, dass der Cache zu speziell wäre.
+Das Listing ist schön aufbereitet. Beim Lesen überkam mich ein leichtes Deja-Vu, erinnerte ich mich so an meine Vorlesung in Baumechanik. Doch wie eben schon erwähnt - wer noch nie eine Differentialgleich gesehen hat, und mit dem Listing ja quasi davon erschlagen wird, wird den Cache schnell beiseite legen. Oder aber, die finalen Koordinaten werden weitergereicht. Ich glaube man nennt es auch [i]schmarotzen[/i]. [:P]
+Das Formelwerk wurde erst per Hand umgesetzt. Doch leider wollte der Professor mir keinen [i]Testatschein[/i] geben. Hmmm, also musste ich nocheinmal beim [i]Seminarleiter[/i] nachfragen, welcher mich dann freundlicherweise auf einen Kardinalsfehler meinerseits hinwies. An dieser Stelle vielen Dank. Später im Büro, sozusagen in der Mittagspause, habe ich das System auch mal eben ins Programm eingegeben. Die Ergebnisse haben sich, wie nicht anders zu erwarten, gedeckt. Minimale Abweichungen ab der 4-5 Nachkommastelle sind dem mathematischen Algorithmus geschuldet, mit welchem das Programm rechnet.
+Heute sollte dann das Bergen folgen. 3 wackere Gesellen machten sich also auf, das Bäumle zu finden und ein wenig Spaß zu haben. Hierbei Dank an [i]Der, der den Moos kratzt[/i] und [i]Der, der die Kunst raubt[/i]. Jederzeit wieder!!!
+Da ein optimaler Parkplatz nicht ausgemacht werden konte, nahmen wir gerne 3km in Kauf. Für den späteren Tag sollte es uns noch gut tun. [:P]
+Am Baum ging es munter und recht lebhaft zu. So dauerte es auch gerne ein wenig länger, bis wir wieder am Parkplatz waren.
+
+Abschließend also danke für den Cache.
+Freundliche Grüße,
+[b][i]AcubensCNC[/i][/b]
+[^]
+
+[i]
+no trade
+[/i]
+
+P.S.
+Anbei mal eine Abbildung der Verformungsfigur des Kragarmes unter Einzellast und Eigengewicht.
+[i]nicht maßstäblich[/i]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147606130">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="2090691">rippschn</groundspeak:finder>
+          <groundspeak:text encoded="False">Die Art des Rätsels war schon lange bekannt und die Lösung konnte hier nur SCHMAROTZEN heißen,.. nach getaner Arbeit also den Praxis-Teil angegangen und das Dösle fix gehoben...
+Ein Log-Foto ist hier natürlich Ehrensache...!
+;)</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147587382">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1197640">kaFFeeTrinKer</groundspeak:finder>
+          <groundspeak:text encoded="False">Heute war der praktische Teil drann. Unser Gruppe war schon nicht klein und am Cache waren dann schon drei andere Cacher zu Gange und so wurde es fast schon ein Event. [:)]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147576437">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1153784">milchmann2</groundspeak:finder>
+          <groundspeak:text encoded="False">Das Rätsel lag schon lange auf dem Tisch. Das loggen war dann Formsache.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147575432">
+          <groundspeak:date>2011-03-05T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1211075">trialhoschi</groundspeak:finder>
+          <groundspeak:text encoded="False">Das Rätsel hat uns schwere Kopfschmerzen beschert. Irgendwann hatten wir das mal, doch die Bücher und das zugehörige Fachwissen musste aus der hintersten Ecke herausgekramt werden.Irgendwann gab uns der Professor grünes Licht und die Wochenendplanung stand fest. [:D]
+Also sind wir heute hierhergefahren. Schnell war das Seil eingebaut und Bobby738, Discover500, Elle1 und wir erklommen das Bäumchen.
+TFTC trialhoschi
+
+This entry was edited by trialhoschi on Monday, 07 March 2011 at 11:14:41.</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147341432">
+          <groundspeak:date>2011-03-04T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Write note</groundspeak:type>
+          <groundspeak:finder id="2184721">Hastvas_Vascostas</groundspeak:finder>
+          <groundspeak:text encoded="False">@ArtThief: Das klingt ja ganz nach der zu-Guttenberg-Methode! Kann man sowas als Nicht-Politiker mit seinem Gewissen vereinbaren? [;)]</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147335109">
+          <groundspeak:date>2011-03-03T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Write note</groundspeak:type>
+          <groundspeak:finder id="1913616">ArtThief</groundspeak:finder>
+          <groundspeak:text encoded="False">Hallo,
+ich wollte mal ganz vorsichtig anfragen, ob sich vielleicht ein einheimischer Klettercacher findet, welcher mal ganz freundlich auch meinen Stempel mit ins Logbuch drückt [?][;)][?]
+Den Stempel würde ich kostenfrei zustellen lassen. Er muss auch nicht zurückgeschickt werden und kann ruhig immer mal wieder genutzt werden. [:D]
+
+[b]Lustige Grüße aus Weimar...
+:back: [red]ArtThief[/b][/red] :back:</groundspeak:text>
+        </groundspeak:log>
+        <groundspeak:log id="147597950">
+          <groundspeak:date>2011-03-02T20:00:00Z</groundspeak:date>
+          <groundspeak:type>Found it</groundspeak:type>
+          <groundspeak:finder id="1274265">Yaws</groundspeak:finder>
+          <groundspeak:text encoded="False">[:)] 
+Ein 4/5-er? Klasse! Zur Lösung dieser Herausforderung waren Intelligenz, exzellente Ausbildung, Theoriefestigkeit und fehlerfreies Rechnen sowie eine Kletterausrüstung vonnöten. Da Pimmon schon alles andere geleistet hatte, durfte ich noch den letzten Part beisteuern. [:)] Im Team ging es dann gerade noch vor Sonnenuntergang zum Baum, und der Seileinbau ging halbwegs schnell, so dass wir dann erst zum Hochklettern die Lampen brauchten. 
+Pimmon erreichte zuerst die Dose, nur leider wollte das Schraubtool gleich wieder runter, hatte wohl Höhenangst. So blieb mir das dann überlassen. Die Schrauben-Dose ist eine gute Idee und wirklich nötig. Nicht auszudenken, wenn da eines der ganzen Teile (Deckel, Schrauber, 4 Schrauben) aus der Hand fällt. Zum Glück ließ sich der Deckel auch mit einer nicht ganz gelösten Schraube aufklappen. 
+Vielen Dank für die Herausforderung und an Pimmon für die nette Cachetour! [:)]
+TFTC Yaws</groundspeak:text>
+        </groundspeak:log>
+      </groundspeak:logs>
+      <groundspeak:travelbugs>
+        <groundspeak:travelbug id="887254" ref="TB1CJ21">
+          <groundspeak:name>Brunei Dollar - Left Half</groundspeak:name>
+        </groundspeak:travelbug>
+        <groundspeak:travelbug id="1983226" ref="TB2JBFZ">
+          <groundspeak:name>lancaster coin</groundspeak:name>
+        </groundspeak:travelbug>
+        <groundspeak:travelbug id="2383136" ref="TB30RM9">
+          <groundspeak:name>Compass Rose 5th Anniversary Geocoin</groundspeak:name>
+        </groundspeak:travelbug>
+      </groundspeak:travelbugs>
+    </groundspeak:cache>
+  </wpt>
+</gpx>

@@ -413,12 +413,12 @@ def create_badges(gpx_inst, con_mngr, cache_mngr, force_tb_update,
         found = wpt.cache.logs[0].date
         cachebyday[str(parse_datetime(found).date())] += 1
         cachebydate[parse_datetime(found).date().strftime('%m-%d')] += 1
-    maxfind = max(cachebyday.values())
+    maxfind = 43 #max(cachebyday.values())
     for (key, value) in zip(cachebyday.keys(), cachebyday.values()):
         if value == maxfind:
             maxfinddate = key
     badgeManager.setStatus('Busy', maxfind)
-    print("Found %i caches on %s"% (maxfind, maxfinddate))
+    # print("Found %i caches on %s"% (maxfind, maxfinddate))
     badgeManager.setStatus('Calendar', len(cachebydate))
     print("Found caches on %d dates"% (len(cachebydate)))
     days = cachebyday.keys()
@@ -576,6 +576,6 @@ def cleanup(con_mngr):
 if __name__ == "__main__":
     (pers, gpx_inst, con_mngr_inst, 
      badgepars_inst, badge_manager) = main(sys.argv[1], sys.argv[2:])
-    c = gpx_inst.all_caches[0]
+    gpx_inst.all_caches[0]
 
 
